@@ -23,10 +23,13 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "administration",
-        name: "administration",
         children: [
           {
             path: "",
+            redirect: "/administration/dashboard",
+          },
+          {
+            path: "dashboard",
             name: "administration/DashboardPage",
             component: () => import("@/pages/administration/DashboardPage.vue"),
           },
@@ -78,7 +81,22 @@ const routes: RouteRecordRaw[] = [
             component: () => import("@/pages/categories/CategoryEditPage.vue"),
             props: true,
           },
-
+          {
+            path: "groups",
+            name: "administration/GroupsPage",
+            component: () => import("@/pages/administration/GroupsPage.vue"),
+          },
+          {
+            path: "groups/new",
+            name: "administration/groups/GroupNewPage",
+            component: () => import("@/pages/administration/groups/GroupNewPage.vue"),
+          },
+          {
+            path: "groups/:groupId/edit",
+            name: "administration/groups/GroupEditPage",
+            component: () => import("@/pages/administration/groups/GroupEditPage.vue"),
+            props: true,
+          },
           {
             path: "users",
             name: "users/UsersPage",
@@ -99,7 +117,6 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "archive-items",
-        name: "archive-item/ArchiveItemListPage",
         children: [
           {
             path: "",
@@ -125,7 +142,6 @@ const routes: RouteRecordRaw[] = [
 
       {
         path: "decisions",
-        name: "decisions/DecisionListPage",
         children: [
           {
             path: "",

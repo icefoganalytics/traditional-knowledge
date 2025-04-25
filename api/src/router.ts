@@ -24,6 +24,7 @@ import {
   CategoriesController,
   CurrentUserController,
   DecisionsController,
+  GroupsController,
   IntegrationController,
   RetentionsController,
   SourcesController,
@@ -97,6 +98,13 @@ router
   .get(DecisionsController.show)
   .patch(DecisionsController.update)
   .delete(DecisionsController.destroy)
+
+router.route("/api/groups").get(GroupsController.index).post(GroupsController.create)
+router
+  .route("/api/groups/:groupId")
+  .get(GroupsController.show)
+  .patch(GroupsController.update)
+  .delete(GroupsController.destroy)
 
 // if no other routes match, return a 404
 router.use("/api", (_req: Request, res: Response) => {

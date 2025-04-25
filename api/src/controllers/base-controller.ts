@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express"
-import { Attributes, Model, WhereOptions } from "@sequelize/core"
-import { isEmpty } from "lodash"
+import { type NextFunction, type Request, type Response } from "express"
+import { type Attributes, type Model, type Order, type WhereOptions } from "@sequelize/core"
+import { isEmpty, isNil } from "lodash"
 
 import User from "@/models/user"
 import { type BaseScopeOptions } from "@/policies"
@@ -12,6 +12,16 @@ export type Actions = "index" | "show" | "new" | "edit" | "create" | "update" | 
 type ControllerRequest = Request & {
   currentUser: User
 }
+
+/** Keep in sync with web/src/api/base-api.ts */
+export type ModelOrder = Order &
+  (
+    | [string, string]
+    | [string, string, string]
+    | [string, string, string, string]
+    | [string, string, string, string, string]
+    | [string, string, string, string, string, string]
+  )
 
 // Keep in sync with web/src/api/base-api.ts
 const MAX_PER_PAGE = 1000
@@ -190,6 +200,19 @@ export class BaseController<TModel extends Model = never> {
     }
 
     return scopes
+  }
+
+  buildOrder(
+    overridableOrder: ModelOrder[] = [],
+    nonOverridableOrder: ModelOrder[] = []
+  ): ModelOrder[] | undefined {
+    const orderQuery = this.query.order as unknown as ModelOrder[] | undefined
+
+    if (isNil(orderQuery)) {
+      return [...nonOverridableOrder, ...overridableOrder]
+    }
+
+    return [...nonOverridableOrder, ...orderQuery, ...overridableOrder]
   }
 
   private determineLimit(perPage: number) {

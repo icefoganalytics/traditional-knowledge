@@ -79,5 +79,5 @@ export const MAIL_SERVICE = process.env.MAIL_SERVICE || "Outlook365"
 export const MAIL_USER = process.env.MAIL_USER || ""
 export const MAIL_PASS = process.env.MAIL_PASS || ""
 
-export const BLOB_CONNECTIONSTRING = process.env.BLOB_CONNECTIONSTRING || ""
+export const BLOB_CONNECTION_STRING = process.env.BLOB_CONNECTION_STRING || ""
 export const BLOB_CONTAINER = process.env.BLOB_CONTAINER || ""

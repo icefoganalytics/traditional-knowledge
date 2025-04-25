@@ -46,7 +46,7 @@ export const AWS_LOGGING_ACCESS_ID = process.env.AWS_LOGGING_ACCESS_ID || ""
 export const AWS_LOGGING_ACCESS_KEY = process.env.AWS_LOGGING_ACCESS_KEY || ""
 export const DEFAULT_LOG_LEVEL = process.env.DEFAULT_LOG_LEVEL || "debug"
 
-export const BLOB_CONNECTIONSTRING = process.env.BLOB_CONNECTIONSTRING || ""
+export const BLOB_CONNECTION_STRING = process.env.BLOB_CONNECTION_STRING || ""
 export const BLOB_CONTAINER = process.env.BLOB_CONTAINER || ""
 
 export const PDF_SIGNER_JAR = process.env.PDF_SIGNER_JAR || ""

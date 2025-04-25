@@ -28,6 +28,20 @@ x-default-environment: &default-environment
   TIMESTAMP_SERVER: "http://timestamp.digicert.com"
   SSL_FULL_CHAIN_PATH: "/etc/ssl/certs/fullchain.pem"
   SSL_CERT_KEY_PATH: "/etc/ssl/private/icefog.pem"
+  BLOB_CONTAINER: "traditional-knowledge-development"
+
+x-shared-watch:
+  - &gitignore-sync
+    path: ./.gitignore
+    target: /usr/src/.gitignore
+    action: sync
+  - &prettierrc-sync
+    path: ./.prettierrc.yaml
+    target: /usr/src/.prettierrc.yaml
+    action: sync
+  - &docker-compose-rebuild
+    path: ./docker-compose.development.yml
+    action: rebuild
 
 services:
   api:
@@ -48,21 +62,23 @@ services:
       - cache
     develop:
       watch:
+        - *gitignore-sync
+        - *prettierrc-sync
+        - *docker-compose-rebuild
+        - path: ./api/package.json
+          target: /usr/src/api/package.json
+          action: sync+restart
+        - path: ./api/package-lock.json
+          action: rebuild
         - path: ./api
           target: /usr/src/api
           action: sync
           ignore:
             - node_modules/
-        - path: ./.gitignore
-          target: /usr/src/.gitignore
-          action: sync
-        - path: ./.prettierrc.yaml
-          target: /usr/src/.prettierrc.yaml
-          action: sync
-        - path: ./api/package.json
-          action: rebuild
-        - path: ./api/package-lock.json
-          action: rebuild
+            - src/initializers
+        - path: ./api/src/initializers
+          target: /usr/src/api/src/initializers
+          action: sync+restart
 
   web:
     build:
@@ -76,21 +92,20 @@ services:
       - api
     develop:
       watch:
+        - *gitignore-sync
+        - *prettierrc-sync
+        - *docker-compose-rebuild
+        - path: ./web/package.json
+          target: /usr/src/web/package.json
+          action: sync+restart
+        - path: ./web/package-lock.json
+          target: /usr/src/web/package-lock.json
+          action: rebuild
         - path: ./web
           target: /usr/src/web
           action: sync
           ignore:
             - node_modules/
-        - path: ./.gitignore
-          target: /usr/src/.gitignore
-          action: sync
-        - path: ./.prettierrc.yaml
-          target: /usr/src/.prettierrc.yaml
-          action: sync
-        - path: ./web/package.json
-          action: rebuild
-        - path: ./web/package-lock.json
-          action: rebuild
 
   test_api:
     build:
@@ -114,14 +129,9 @@ services:
       - cache
     develop:
       watch:
-        - path: ./.gitignore
-          target: /usr/src/.gitignore
-          action: sync
-        - path: ./.prettierrc.yaml
-          target: /usr/src/.prettierrc.yaml
-          action: sync
-        - path: ./api/package.json
-          action: rebuild
+        - *gitignore-sync
+        - *prettierrc-sync
+        - *docker-compose-rebuild
         - path: ./api/package-lock.json
           action: rebuild
 
@@ -196,21 +206,23 @@ services:
       - cache
     develop:
       watch:
+        - *gitignore-sync
+        - *prettierrc-sync
+        - *docker-compose-rebuild
+        - path: ./archiver/package.json
+          target: /usr/src/archiver/package.json
+          action: sync+restart
+        - path: ./archiver/package-lock.json
+          action: rebuild
         - path: ./archiver
           target: /usr/src/archiver
           action: sync
           ignore:
             - node_modules/
-        - path: ./.gitignore
-          target: /usr/src/.gitignore
-          action: sync
-        - path: ./.prettierrc.yaml
-          target: /usr/src/.prettierrc.yaml
-          action: sync
-        - path: ./archiver/package.json
-          action: rebuild
-        - path: ./archiver/package-lock.json
-          action: rebuild
+            - src/initializers/
+        - path: ./api/src/initializers
+          target: /usr/src/api/src/initializers
+          action: sync+restart
 
 volumes:
   db_data:

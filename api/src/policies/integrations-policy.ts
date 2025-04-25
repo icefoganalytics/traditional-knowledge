@@ -3,7 +3,7 @@ import { Attributes, FindOptions } from "@sequelize/core"
 import { Path } from "@/utils/deep-pick"
 import { ArchiveItem, User } from "@/models"
 import { PolicyFactory } from "@/policies/base-policy"
-import { isNil, isUndefined } from "lodash"
+import { isUndefined } from "lodash"
 
 export class IntegrationsPolicy extends PolicyFactory(ArchiveItem) {
   show(): boolean {
@@ -11,8 +11,6 @@ export class IntegrationsPolicy extends PolicyFactory(ArchiveItem) {
   }
 
   create(): boolean {
-    if (isNil(this.source)) return false
-
     return true
   }
 

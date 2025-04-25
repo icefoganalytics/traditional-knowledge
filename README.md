@@ -37,15 +37,16 @@
 
 1. In the `api` folder.
 
-2. Create a `.env.development` file with this content. It must match the config in `docker-compose.development.yml`
+2. Create a `.env.development` file with the following content:
 
    ```bash
-   VITE_AUTH0_DOMAIN=https://dev-0tc6bn14.eu.auth0.com
-   VITE_AUTH0_AUDIENCE=testing
-   VITE_AUTH0_CLIENT_ID=mNqPwPZ5M1VXkEH6e8OgEaxmmWfxecwo
+   BLOB_CONNECTION_STRING=....
    ```
 
-3. Go back to the top level directory.
+   See `docker-compose.development.yml` -> `x-default-environment` for optional values that you can customize as needed.
+   Only the `BLOB_CONNECTION_STRING` must be manually supplied during setup as it is a secret type value.
+
+3. Go back to the top level directory, and do the same in the `archive` folder.
 
 4. [Set up the `dev`](#set-up-dev-command) command, or use `docker compose -f docker-compose.development.yml` instead of `dev` in all instructions.
 

@@ -1,13 +1,13 @@
 import { v4 as uuidV4 } from "uuid"
 import { BlobServiceClient } from "@azure/storage-blob"
-import { BLOB_CONNECTIONSTRING, BLOB_CONTAINER } from "@/config"
+import { BLOB_CONNECTION_STRING, BLOB_CONTAINER } from "@/config"
 
 export class FileStorageService {
   private serviceClient
   private containerClient
 
   constructor() {
-    this.serviceClient = BlobServiceClient.fromConnectionString(BLOB_CONNECTIONSTRING)
+    this.serviceClient = BlobServiceClient.fromConnectionString(BLOB_CONNECTION_STRING)
     this.containerClient = this.serviceClient.getContainerClient(BLOB_CONTAINER)
   }
 

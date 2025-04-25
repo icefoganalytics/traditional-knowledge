@@ -19,7 +19,9 @@ export const BASE_CRUMB = {
 export const ADMIN_CRUMB = {
   title: "Administration Dashboard",
   disabled: false,
-  to: { name: "administration/DashboardPage" },
+  to: {
+    name: "administration/DashboardPage",
+  },
   exact: true,
 }
 

@@ -24,7 +24,7 @@ export class IntegrationController extends BaseController<ArchiveItem> {
         })
       }
 
-      const policy = this.buildPolicy(source)
+      const policy = this.buildPolicy()
       if (!policy.create()) {
         return this.response.status(403).json({
           message: "You are not authorized to create items",
@@ -152,8 +152,8 @@ export class IntegrationController extends BaseController<ArchiveItem> {
     }
   }
 
-  private buildPolicy(source: Source, archiveItem: ArchiveItem = ArchiveItem.build()) {
-    return new IntegrationsPolicy(source, archiveItem)
+  private buildPolicy(archiveItem: ArchiveItem = ArchiveItem.build()) {
+    return new IntegrationsPolicy(this.currentUser, archiveItem)
   }
 }
 

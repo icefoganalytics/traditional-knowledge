@@ -39,7 +39,7 @@ Polices can be used in the following ways:
      }
 
      private buildPolicy(accessGrant: AccessGrant) {
-       return new AccessGrantsPolicy(this.currentUser, accessGrant)
+       return new AccessGrantPolicy(this.currentUser, accessGrant)
      }
    }
    ```
@@ -47,7 +47,7 @@ Polices can be used in the following ways:
 2. The previous example also demostrates a second way of using policies. The "permitted attributes" pattern. A policy can also be used to provide an "allow list" of attributes that a user is allowed to submit for a given controller action.
 
    ```ts
-   export class AccessGrantsPolicy extends BasePolicy<AccessGrant> {
+   export class AccessGrantPolicy extends BasePolicy<AccessGrant> {
      permittedAttributes(): Path[] {
        return ["supportId", "grantLevel", "accessType", "isProjectDescriptionRequired"]
      }
@@ -62,7 +62,7 @@ Polices can be used in the following ways:
      async index() {
        const where = this.buildWhere()
        const scopes = this.buildFilterScopes()
-       const scopedAccessGrants = AccessGrantsPolicy.applyScope(scopes, this.currentUser)
+       const scopedAccessGrants = AccessGrantPolicy.applyScope(scopes, this.currentUser)
 
        const totalCount = await scopedAccessGrants.count({ where })
        const accessGrants = await scopedAccessGrants.findAll({
@@ -83,7 +83,7 @@ The `policyScope` method is used to add a scope to the given model. This scope i
 i.e.
 
 ```ts
-export class AccessRequestsPolicy extends PolicyFactory(AccessRequest) {
+export class AccessRequestPolicy extends PolicyFactory(AccessRequest) {
   static policyScope(user: User): FindOptions<Attributes<AccessRequest>> {
     if (user.isSystemAdmin || user.isBusinessAnalyst) {
       return {}
@@ -150,7 +150,7 @@ export class AccessGrantsController extends BaseController<AccessGrant> {
   async index() {
     const where = this.buildWhere()
     const scopes = this.buildFilterScopes()
-    const scopedAccessGrants = AccessGrantsPolicy.applyScope(scopes, this.currentUser)
+    const scopedAccessGrants = AccessGrantPolicy.applyScope(scopes, this.currentUser)
 
     const totalCount = await scopedAccessGrants.count({ where })
     const accessGrants = await scopedAccessGrants.findAll({
@@ -219,7 +219,7 @@ export class AccessGrantsController extends BaseController<AccessGrant> {
   }
 
   private buildPolicy(accessGrant: AccessGrant) {
-    return new AccessGrantsPolicy(this.currentUser, accessGrant)
+    return new AccessGrantPolicy(this.currentUser, accessGrant)
   }
 }
 ```
@@ -227,7 +227,7 @@ export class AccessGrantsController extends BaseController<AccessGrant> {
 and the policy
 
 ```ts
-export class AccessGrantsPolicy extends BasePolicy<AccessGrant> {
+export class AccessGrantPolicy extends BasePolicy<AccessGrant> {
   create(): boolean {
     // some code that might returns true
     return false

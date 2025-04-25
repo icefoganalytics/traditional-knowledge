@@ -1,53 +1,61 @@
 import db from "@/db/db-client"
 
 // Models
-import User from "@/models/user"
-import UserPermission from "@/models/user-permission"
-import Source from "@/models/source"
-import Retention from "@/models/retention"
-import Category from "@/models/category"
 import ArchiveItem from "@/models/archive-item"
-import ArchiveItemAudit from "./archive-item-audit"
+import ArchiveItemAudit from "@/models/archive-item-audit"
 import ArchiveItemCategory from "@/models/archive-item-category"
 import ArchiveItemFile from "@/models/archive-item-file"
+import Category from "@/models/category"
+import Group from "@/models/group"
+import Retention from "@/models/retention"
+import Source from "@/models/source"
 import SourceCategory from "@/models/source-category"
+import User from "@/models/user"
+import UserGroup from "@/models/user-group"
+import UserPermission from "@/models/user-permission"
 
 db.addModels([
-  User,
-  UserPermission,
   ArchiveItem,
-  Source,
-  Retention,
-  Category,
   ArchiveItemAudit,
   ArchiveItemCategory,
   ArchiveItemFile,
+  Category,
+  Group,
+  Retention,
+  Source,
   SourceCategory,
+  User,
+  UserGroup,
+  UserPermission,
 ])
 
 // Lazy load scopes
-User.establishScopes()
-UserPermission.establishScopes()
 ArchiveItem.establishScopes()
-Source.establishScopes()
-Retention.establishScopes()
-Category.establishScopes()
-ArchiveItemCategory.establishScopes()
 ArchiveItemAudit.establishScopes()
+ArchiveItemCategory.establishScopes()
 ArchiveItemFile.establishScopes()
+Category.establishScopes()
+Group.establishScopes()
+Retention.establishScopes()
+Source.establishScopes()
 SourceCategory.establishScopes()
+User.establishScopes()
+UserGroup.establishScopes()
+UserPermission.establishScopes()
 
 export {
-  User,
-  UserPermission,
-  Source,
   ArchiveItem,
-  Retention,
-  Category,
-  ArchiveItemCategory,
   ArchiveItemAudit,
+  ArchiveItemCategory,
   ArchiveItemFile,
+  Category,
+  Group,
+  Retention,
+  Source,
   SourceCategory,
+  User,
+  UserGroup,
+  UserPermission,
 }
 
 // Special db instance will all models loaded

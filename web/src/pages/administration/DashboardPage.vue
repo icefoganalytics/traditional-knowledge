@@ -14,6 +14,17 @@
         <v-col>
           <v-card
             color="info"
+            title="Groups"
+            subtitle="Manage Current Groups"
+            :to="{
+              name: 'administration/GroupsPage',
+            }"
+          >
+          </v-card>
+        </v-col>
+        <v-col>
+          <v-card
+            color="info"
             title="Sources"
             subtitle="Manage Sources"
             :to="{ name: 'administration/SourceListPage' }"

@@ -1,14 +1,15 @@
 import {
-  type CreationOptional,
   DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  type NonAttribute,
   sql,
+  type CreationOptional,
+  type InferAttributes,
+  type InferCreationAttributes,
+  type NonAttribute,
 } from "@sequelize/core"
 import {
   Attribute,
   AutoIncrement,
+  BelongsToMany,
   Default,
   HasMany,
   Index,
@@ -19,7 +20,9 @@ import {
 import { isNil } from "lodash"
 
 import BaseModel from "@/models/base-model"
-import UserPermission from "./user-permission"
+import Group from "@/models/group"
+import UserGroup from "@/models/user-group"
+import UserPermission from "@/models/user-permission"
 
 /** Keep in sync with web/src/api/users-api.ts */
 export enum UserRoles {
@@ -134,6 +137,15 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
   }
 
   // Associations
+  @HasMany(() => UserGroup, {
+    foreignKey: {
+      name: "userId",
+      allowNull: false,
+    },
+    inverse: "user",
+  })
+  declare userOrganizations?: NonAttribute<UserGroup[]>
+
   @HasMany(() => UserPermission, {
     foreignKey: "userId",
     inverse: {
@@ -141,6 +153,26 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
     },
   })
   declare userPermissions?: NonAttribute<UserPermission[]>
+
+  @BelongsToMany(() => Group, {
+    through: () => UserGroup,
+    foreignKey: "userId",
+    otherKey: "groupId",
+    inverse: "users",
+    throughAssociations: {
+      fromSource: "userGroups",
+      toSource: "user",
+      fromTarget: "userGroups",
+      toTarget: "group",
+    },
+  })
+  declare groups?: NonAttribute<Group[]>
+  /**
+   * Created by User.belongsToMany(Group), refers to a direct connection to a given User
+   * Populated by by { include: [{ association: "groups", through: { attributes: [xxx] } }] }
+   * See https://sequelize.org/docs/v7/querying/select-in-depth/#eager-loading-the-belongstomany-through-model
+   */
+  declare userGroup?: NonAttribute<UserGroup>
 
   // Scopes
   static establishScopes(): void {

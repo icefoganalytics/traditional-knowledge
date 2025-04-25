@@ -14,7 +14,7 @@
   "dependencies": {
     "@auth0/auth0-vue": "^2.3.3",
     "@mdi/font": "^7.4.47",
-    "@vueuse/router": "^11.2.0",
+    "@vueuse/router": "^13.1.0",
     "axios": "^1.6.8",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",

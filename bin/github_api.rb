@@ -10,7 +10,7 @@ require 'uri'
 #   <issue_owner>-issue-<issue_number>/<issue_title>
 class GithubApi
   GITHUB_TOKEN = ENV['GITHUB_TOKEN']
-  GITHUB_REPO = 'icefoganalytics/digital-vault' # Format: 'owner/repo'
+  GITHUB_REPO = 'icefoganalytics/traditional-knowledge' # Format: 'owner/repo'
   GITHUB_API_BASE = 'https://api.github.com'
 
   def self.build_branch_name(github_issue_url)

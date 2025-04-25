@@ -28,6 +28,7 @@ import {
   IntegrationController,
   RetentionsController,
   SourcesController,
+  UserGroupsController,
   UsersController,
 } from "@/controllers"
 
@@ -105,6 +106,13 @@ router
   .get(GroupsController.show)
   .patch(GroupsController.update)
   .delete(GroupsController.destroy)
+
+router.route("/api/user-groups").get(UserGroupsController.index).post(UserGroupsController.create)
+router
+  .route("/api/user-groups/:userGroupId")
+  .get(UserGroupsController.show)
+  .patch(UserGroupsController.update)
+  .delete(UserGroupsController.destroy)
 
 // if no other routes match, return a 404
 router.use("/api", (_req: Request, res: Response) => {

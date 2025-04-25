@@ -140,8 +140,8 @@ export class GroupsController extends BaseController<Group> {
   }
 
   private async buildGroup() {
-    const workflowStep = Group.build(this.request.body)
-    return workflowStep
+    const group = Group.build(this.request.body)
+    return group
   }
 
   private buildPolicy(group: Group) {

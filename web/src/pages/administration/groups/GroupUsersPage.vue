@@ -20,8 +20,10 @@
         </v-btn>
       </div>
 
-      <!-- TODO: replace with UserGroupAsUsersEditDataTableServer once it exists -->
-      <GroupsEditDataTableServer :filters="filters" />
+      <UserGroupsAsUsersEditDataTableServer
+        :where="where"
+        :filters="filters"
+      />
     </v-card-text>
   </v-card>
 </template>
@@ -31,9 +33,18 @@ import { computed, ref } from "vue"
 import { isEmpty, isNil } from "lodash"
 
 import FilterSearchDebouncedTextField from "@/components/common/tables/FilterSearchDebouncedTextField.vue"
-import GroupsEditDataTableServer from "@/components/groups/GroupsEditDataTableServer.vue"
+import UserGroupsAsUsersEditDataTableServer from "@/components/user-groups/UserGroupsAsUsersEditDataTableServer.vue"
 
 import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
+
+const props = defineProps<{
+  groupId: string
+}>()
+
+const groupIdAsNumber = computed(() => parseInt(props.groupId))
+const where = computed(() => ({
+  groupId: groupIdAsNumber.value,
+}))
 
 const search = ref("")
 
@@ -41,7 +52,7 @@ const filters = computed(() => {
   if (isNil(search.value) || isEmpty(search.value)) return {}
 
   return {
-    search: search.value,
+    searchUser: search.value,
   }
 })
 

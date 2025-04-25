@@ -3,6 +3,25 @@
     :group-id="groupIdAsNumber"
     :edit-button-props="editButtonProps"
   />
+
+  <v-card class="mt-5">
+    <v-card-text>
+      <v-tabs>
+        <v-tab
+          :to="{
+            name: 'administration/groups/GroupUsersPage',
+            params: {
+              groupId: groupIdAsNumber,
+            },
+          }"
+        >
+          Users
+        </v-tab>
+      </v-tabs>
+
+      <router-view />
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup lang="ts">

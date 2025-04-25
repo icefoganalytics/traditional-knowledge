@@ -37,6 +37,12 @@ export default createVuetify({
       flat: "true",
       color: "#E6E9E0",
     },
+    VCardActions: {
+      VBtn: {
+        variant: "elevated",
+        color: "primary",
+      },
+    },
     VTextField: {
       variant: "outlined",
       density: "comfortable",

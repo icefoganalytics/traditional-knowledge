@@ -7,7 +7,7 @@
     :items="groups"
     :items-length="totalCount"
     :loading="isLoading"
-    @click:row="(_event: unknown, { item }: GroupTableRow) => goToGroupEdit(item.id)"
+    @click:row="(_event: unknown, { item }: GroupTableRow) => goToGroupPage(item.id)"
   >
     <template #item.isHost="{ item }">
       {{ item.isHost ? "Yes" : "No" }}
@@ -15,13 +15,29 @@
     <template #item.actions="{ item }">
       <div class="d-flex justify-end align-center">
         <v-btn
+          :to="{
+            name: 'administration/groups/GroupEditPage',
+            params: {
+              groupId: item.id,
+            },
+          }"
+          :loading="isDeleting"
+          title="Edit"
+          icon="mdi-pencil"
+          size="x-small"
+          color="primary"
+          variant="outlined"
+          @click.stop
+        />
+        <v-btn
+          class="ml-2"
           :loading="isDeleting"
           title="Delete"
           icon="mdi-delete"
           size="x-small"
           color="error"
           variant="outlined"
-          @click="confirmThenDelete(item)"
+          @click.stop="confirmThenDelete(item)"
         />
       </div>
     </template>
@@ -107,9 +123,9 @@ const { groups, totalCount, isLoading, refresh } = useGroups(groupsQuery)
 
 const router = useRouter()
 
-function goToGroupEdit(groupId: number) {
+function goToGroupPage(groupId: number) {
   router.push({
-    name: "administration/groups/GroupEditPage",
+    name: "administration/groups/GroupPage",
     params: {
       groupId,
     },

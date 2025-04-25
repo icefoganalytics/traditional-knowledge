@@ -7,6 +7,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue"
+import { isNil, isEmpty, isString } from "lodash"
+import { useRoute } from "vue-router"
 
 import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
 
@@ -17,11 +19,22 @@ const props = defineProps<{
 }>()
 
 const groupIdAsNumber = computed(() => parseInt(props.groupId))
-const cancelButtonProps = computed(() => ({
-  to: {
-    name: "administration/GroupsPage",
-  },
-}))
+
+const route = useRoute()
+const cancelButtonProps = computed(() => {
+  const rawReturnTo = route.query.returnTo
+  if (isNil(rawReturnTo) || isEmpty(rawReturnTo) || !isString(rawReturnTo)) {
+    return {
+      to: {
+        name: "administration/GroupsPage",
+      },
+    }
+  }
+
+  return {
+    to: rawReturnTo,
+  }
+})
 
 useBreadcrumbs("Edit Group", [
   ADMIN_CRUMB,

@@ -9,13 +9,8 @@
   >
     <template #header-actions>
       <v-btn
-        :to="{
-          name: 'administration/groups/GroupEditPage',
-          params: {
-            groupId,
-          },
-        }"
         color="primary"
+        v-bind="editButtonProps"
       >
         Edit
       </v-btn>
@@ -76,17 +71,26 @@ import useGroup from "@/use/use-group"
 import DescriptionElement from "@/components/common/DescriptionElement.vue"
 import HeaderActionsCard from "@/components/common/HeaderActionsCard.vue"
 
-type CancelButtonOptions = VBtn["$props"]
+type VBtnProps = VBtn["$props"]
 
 const props = withDefaults(
   defineProps<{
     groupId: number
-    cancelButtonProps?: CancelButtonOptions
+    cancelButtonProps?: VBtnProps
+    editButtonProps?: VBtnProps
   }>(),
   {
     cancelButtonProps: () => ({
       to: {
         name: "administration/GroupsPage",
+      },
+    }),
+    editButtonProps: ({ groupId }) => ({
+      to: {
+        name: "administration/groups/GroupEditPage",
+        params: {
+          groupId,
+        },
       },
     }),
   }

@@ -43,7 +43,7 @@
           type="submit"
           color="primary"
         >
-          Create
+          Add
         </v-btn>
       </template>
     </v-card>

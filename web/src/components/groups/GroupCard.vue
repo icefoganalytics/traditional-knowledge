@@ -3,49 +3,20 @@
     v-if="isNil(group)"
     type="card"
   />
-  <HeaderActionsCard
-    v-else
-    title="Group Details"
-  >
-    <template #header-actions>
-      <v-btn
-        color="primary"
-        v-bind="editButtonProps"
-      >
-        Edit
-      </v-btn>
+  <v-card v-else>
+    <template #title> Group Details </template>
+    <template #text>
+      <v-row>
+        <v-col cols="12">
+          {{ group.name }}<template v-if="!isEmpty(group.acronym)"> ({{ group.acronym }})</template>
+        </v-col>
+        <v-col cols="12">
+          <p class="whitespace-pre-wrap">
+            {{ group.description }}
+          </p>
+        </v-col>
+      </v-row>
     </template>
-
-    <v-row>
-      <v-col
-        cols="12"
-        md="8"
-      >
-        <DescriptionElement
-          label="Name"
-          :model-value="group.name"
-          vertical
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <DescriptionElement
-          label="Acronym"
-          :model-value="group.acronym"
-          vertical
-        />
-      </v-col>
-      <v-col cols="12">
-        <DescriptionElement
-          label="Description"
-          :model-value="group.description"
-          vertical
-        />
-      </v-col>
-    </v-row>
-
     <template #actions>
       <v-btn
         :loading="isLoading"
@@ -56,20 +27,23 @@
         Return
       </v-btn>
       <v-spacer />
+      <v-btn
+        color="primary"
+        v-bind="editButtonProps"
+      >
+        Edit
+      </v-btn>
     </template>
-  </HeaderActionsCard>
+  </v-card>
 </template>
 
 <script setup lang="ts">
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import { toRefs } from "vue"
 
 import { type VBtn } from "vuetify/lib/components/index.mjs"
 
 import useGroup from "@/use/use-group"
-
-import DescriptionElement from "@/components/common/DescriptionElement.vue"
-import HeaderActionsCard from "@/components/common/HeaderActionsCard.vue"
 
 type VBtnProps = VBtn["$props"]
 
@@ -99,3 +73,9 @@ const props = withDefaults(
 const { groupId } = toRefs(props)
 const { group, isLoading } = useGroup(groupId)
 </script>
+
+<style scoped>
+.whitespace-pre-wrap {
+  white-space: pre-wrap; /* preserves line breaks and wraps text if it’s too long */
+}
+</style>

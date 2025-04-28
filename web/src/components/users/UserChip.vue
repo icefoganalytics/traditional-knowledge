@@ -10,15 +10,14 @@
     variant="text"
     :class="classes"
     :size="size"
-    style="
-      height: 18px;
-      background-color: #1e88e500;
-      border-radius: 4px;
-      padding-left: 4px;
-      padding-right: 8px;
-    "
+    color="primary"
+    style="height: 18px; border-radius: 4px; padding-left: 4px; padding-right: 8px"
   >
-    <strong style="color: #1e88e5; font-weight: 600; font-size: 14px">{{ userTitle }}</strong>
+    <strong
+      class="text-primary"
+      style="font-weight: 600; font-size: 14px"
+      >{{ userTitle }}</strong
+    >
     <v-icon
       right
       size="large"
@@ -182,8 +181,9 @@ async function copyToEmailClipboard() {
   snack.success("Email copied!")
 }
 </script>
-<style>
+
+<style scoped>
 .v-chip:hover {
-  background-color: #1e88e544 !important;
+  background-color: rgba(var(--v-theme-primary), 0.2) !important;
 }
 </style>

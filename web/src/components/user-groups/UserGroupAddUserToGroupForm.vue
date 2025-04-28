@@ -11,8 +11,7 @@
             cols="12"
             md="6"
           >
-            <!-- TODO: add searchable autocomplete for users -->
-            <v-autocomplete
+            <UserSearchableAutocomplete
               v-model="userGroupAttributes.userId"
               label="User *"
               :rules="[required]"
@@ -60,6 +59,8 @@ import { VForm } from "vuetify/lib/components/index.mjs"
 import { required } from "@/utils/validators"
 import userGroupsApi, { type UserGroup } from "@/api/user-groups-api"
 import useSnack from "@/use/use-snack"
+
+import UserSearchableAutocomplete from "@/components/users/UserSearchableAutocomplete.vue"
 
 const props = defineProps<{
   groupId: number

@@ -71,9 +71,7 @@ const userFilters = computed(() => ({
   notInGroup: props.groupId,
 }))
 
-const userGroupAttributes = ref<Partial<UserGroup>>({
-  groupId: props.groupId,
-})
+const userGroupAttributes = ref<Partial<UserGroup>>({})
 
 const snack = useSnack()
 const router = useRouter()
@@ -91,7 +89,10 @@ async function saveWrapper() {
 
   isLoading.value = true
   try {
-    await userGroupsApi.create(userGroupAttributes.value)
+    await userGroupsApi.create({
+      ...userGroupAttributes.value,
+      groupId: props.groupId,
+    })
     snack.success("User added to group.")
     router.push({
       name: "administration/groups/GroupUsersPage",

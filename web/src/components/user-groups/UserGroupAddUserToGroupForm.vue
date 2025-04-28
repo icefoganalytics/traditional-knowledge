@@ -14,6 +14,7 @@
             <UserSearchableAutocomplete
               v-model="userGroupAttributes.userId"
               label="User *"
+              :filters="userFilters"
               :rules="[required]"
               variant="outlined"
               required
@@ -51,7 +52,7 @@
 
 <script setup lang="ts">
 import { isNil } from "lodash"
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 
 import { VForm } from "vuetify/lib/components/index.mjs"
@@ -66,12 +67,16 @@ const props = defineProps<{
   groupId: number
 }>()
 
-const snack = useSnack()
-const router = useRouter()
+const userFilters = computed(() => ({
+  notInGroup: props.groupId,
+}))
 
 const userGroupAttributes = ref<Partial<UserGroup>>({
   groupId: props.groupId,
 })
+
+const snack = useSnack()
+const router = useRouter()
 const isLoading = ref(false)
 const form = ref<InstanceType<typeof VForm> | null>(null)
 

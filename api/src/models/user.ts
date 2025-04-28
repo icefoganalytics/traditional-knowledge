@@ -1,5 +1,6 @@
 import {
   DataTypes,
+  Op,
   sql,
   type CreationOptional,
   type InferAttributes,
@@ -177,6 +178,29 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
   // Scopes
   static establishScopes(): void {
     this.addSearchScope(["firstName", "lastName", "displayName"])
+
+    this.addScope("notInGroup", (groupId) => {
+      return {
+        where: {
+          id: {
+            [Op.notIn]: sql`
+              (
+                SELECT
+                  user_id
+                FROM
+                  user_groups
+                WHERE
+                  deleted_at IS NULL
+                  AND group_id = :groupId
+              )
+            `,
+          },
+        },
+        replacements: {
+          groupId,
+        },
+      }
+    })
   }
 }
 

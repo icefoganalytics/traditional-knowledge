@@ -4,31 +4,13 @@
     v-model:page="page"
     v-model:sort-by="sortBy"
     :headers="headers"
-    :items="groups"
+    :items="userGroups"
     :items-length="totalCount"
     :loading="isLoading"
-    @click:row="(_event: unknown, { item }: GroupTableRow) => goToGroupPage(item.id)"
+    @click:row="(_event: unknown, { item }: UserGroupTableRow) => goToGroupUserPage(item.id)"
   >
-    <template #item.isHost="{ item }">
-      {{ item.isHost ? "Yes" : "No" }}
-    </template>
     <template #item.actions="{ item }">
       <div class="d-flex justify-end align-center">
-        <v-btn
-          :to="{
-            name: 'administration/groups/GroupEditPage',
-            params: {
-              groupId: item.id,
-            },
-          }"
-          :loading="isDeleting"
-          title="Edit"
-          icon="mdi-pencil"
-          size="x-small"
-          color="primary"
-          variant="outlined"
-          @click.stop
-        />
         <v-btn
           class="ml-2"
           :loading="isDeleting"
@@ -46,27 +28,28 @@
 
 <script lang="ts" setup>
 import { computed, ref } from "vue"
-import { useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
 import { useRouteQuery } from "@vueuse/router"
+import { useRouter } from "vue-router"
 
-import groupsApi from "@/api/groups-api"
+import userGroupsApi from "@/api/user-groups-api"
 import useVuetifySortByToSafeRouteQuery from "@/use/utils/use-vuetify-sort-by-to-safe-route-query"
 import useVuetifySortByToSequelizeSafeOrder from "@/use/utils/use-vuetify-sort-by-to-sequelize-safe-order"
 import useSnack from "@/use/use-snack"
-import useGroups, {
-  type Group,
-  type GroupWhereOptions,
-  type GroupFiltersOptions,
-} from "@/use/use-groups"
+import useUserGroups, {
+  type UserGroupAsIndex,
+  type UserGroupWhereOptions,
+  type UserGroupFiltersOptions,
+} from "@/use/use-user-groups"
 
-type GroupTableRow = {
-  item: Group
+type UserGroupTableRow = {
+  item: UserGroupAsIndex
 }
 
 const props = withDefaults(
   defineProps<{
-    filters?: GroupFiltersOptions
-    where?: GroupWhereOptions
+    filters?: UserGroupFiltersOptions
+    where?: UserGroupWhereOptions
     routeQuerySuffix?: string
   }>(),
   {
@@ -76,23 +59,39 @@ const props = withDefaults(
   }
 )
 
+const { t } = useI18n()
+
 const headers = ref([
   {
-    title: "Name",
-    key: "name",
+    title: "Display Name",
+    key: "user.displayName",
   },
   {
-    title: "Acronym",
-    key: "acronym",
+    title: "Email",
+    key: "user.email",
   },
   {
-    title: "Description",
-    key: "description",
+    title: "Title",
+    key: "user.title",
+  },
+  {
+    title: "Department",
+    key: "user.department",
+    value: (item: unknown) => {
+      const { department, division, branch, unit } = (item as UserGroupAsIndex).user
+      return [department, division, branch, unit].filter(Boolean).join(" - ")
+    },
     sortable: false,
   },
   {
-    title: "Host",
-    key: "isHost",
+    title: "Role",
+    key: "user.roles",
+    value: (item: unknown) => {
+      const { roles } = (item as UserGroupAsIndex).user
+      const formatedRoleTypes = roles.map((role) => t(`user.roles.${role}`, role))
+      return formatedRoleTypes.join(", ")
+    },
+    sortable: false,
   },
   {
     title: "Actions",
@@ -105,13 +104,13 @@ const page = useRouteQuery(`page${props.routeQuerySuffix}`, "1", { transform: Nu
 const perPage = useRouteQuery(`perPage${props.routeQuerySuffix}`, "10", { transform: Number })
 const sortBy = useVuetifySortByToSafeRouteQuery(`sortBy${props.routeQuerySuffix}`, [
   {
-    key: "name",
+    key: "user.displayName",
     order: "asc",
   },
 ])
 const order = useVuetifySortByToSequelizeSafeOrder(sortBy)
 
-const groupsQuery = computed(() => ({
+const userGroupsQuery = computed(() => ({
   filters: props.filters,
   where: props.where,
   order: order.value,
@@ -119,15 +118,15 @@ const groupsQuery = computed(() => ({
   page: page.value,
 }))
 
-const { groups, totalCount, isLoading, refresh } = useGroups(groupsQuery)
+const { userGroups, totalCount, isLoading, refresh } = useUserGroups(userGroupsQuery)
 
 const router = useRouter()
 
-function goToGroupPage(groupId: number) {
+function goToGroupUserPage(userGroupId: number) {
   router.push({
-    name: "administration/groups/GroupPage",
+    name: "administration/groups/UserGroupPage",
     params: {
-      groupId,
+      userGroupId,
     },
   })
 }
@@ -135,20 +134,20 @@ function goToGroupPage(groupId: number) {
 const snack = useSnack()
 const isDeleting = ref(false)
 
-async function confirmThenDelete(group: Group) {
-  const { name, acronym } = group
-  const displayName = acronym ? `${name} (${acronym})` : name
-
-  const result = confirm(`Are you sure you want to delete ${displayName}.`)
+async function confirmThenDelete(userGroup: UserGroupAsIndex) {
+  const { displayName, email } = userGroup.user
+  const result = confirm(
+    `Are you sure you want to remove ${displayName}: ${email} from this group?`
+  )
   if (result === false) return
 
   isDeleting.value = true
   try {
-    await groupsApi.delete(group.id)
+    await userGroupsApi.delete(userGroup.id)
     await refresh()
   } catch (error) {
     console.error(error)
-    snack.error(`Failed to delete group: ${error}`)
+    snack.error(`Failed to remove user from group: ${error}`)
   } finally {
     isDeleting.value = false
   }

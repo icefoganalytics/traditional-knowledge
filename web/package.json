@@ -14,10 +14,12 @@
   "dependencies": {
     "@auth0/auth0-vue": "^2.3.3",
     "@mdi/font": "^7.4.47",
+    "@types/md5": "^2.3.5",
     "@vueuse/router": "^13.1.0",
     "axios": "^1.6.8",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",
+    "md5": "^2.3.0",
     "pdfjs-dist": "^4.10.38",
     "pinia": "^2.2.6",
     "qs": "^6.11.2",

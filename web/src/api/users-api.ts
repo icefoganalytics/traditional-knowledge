@@ -43,6 +43,7 @@ export type UserWhereOptions = {
 
 export type UserFiltersOptions = {
   search?: string | string[]
+  notInGroup?: number
   // TODO: implement isActive scope in back-end
 }
 

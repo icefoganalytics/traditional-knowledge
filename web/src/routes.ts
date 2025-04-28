@@ -92,6 +92,32 @@ const routes: RouteRecordRaw[] = [
             component: () => import("@/pages/administration/groups/GroupNewPage.vue"),
           },
           {
+            path: "groups/:groupId",
+            component: () => import("@/pages/administration/groups/GroupPage.vue"),
+            props: true,
+            children: [
+              {
+                path: "",
+                name: "administration/groups/GroupPage",
+                redirect: {
+                  name: "administration/groups/GroupUsersPage",
+                },
+              },
+              {
+                path: "users",
+                name: "administration/groups/GroupUsersPage",
+                component: () => import("@/pages/administration/groups/GroupUsersPage.vue"),
+                props: true,
+              },
+              {
+                path: "users/new",
+                name: "administration/groups/GroupUserNewPage",
+                component: () => import("@/pages/administration/groups/GroupUserNewPage.vue"),
+                props: true,
+              },
+            ],
+          },
+          {
             path: "groups/:groupId/edit",
             name: "administration/groups/GroupEditPage",
             component: () => import("@/pages/administration/groups/GroupEditPage.vue"),

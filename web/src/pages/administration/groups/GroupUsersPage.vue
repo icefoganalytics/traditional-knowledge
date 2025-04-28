@@ -1,31 +1,29 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <div class="d-flex">
-        <FilterSearchDebouncedTextField
-          v-model="search"
-          class="mb-4 mr-5"
-          label="Search"
-          density="compact"
-        />
-        <!-- TODO: replace with add user to group link -->
-        <v-btn
-          color="primary"
-          :to="{
-            name: 'administration/groups/GroupNewPage',
-          }"
-          style="height: 40px"
-        >
-          Add User
-        </v-btn>
-      </div>
+  <div class="d-flex">
+    <FilterSearchDebouncedTextField
+      v-model="search"
+      class="mb-4 mr-5"
+      label="Search"
+      density="compact"
+    />
+    <v-btn
+      color="primary"
+      :to="{
+        name: 'administration/groups/GroupUserNewPage',
+        params: {
+          groupId: props.groupId,
+        },
+      }"
+      style="height: 40px"
+    >
+      Add User
+    </v-btn>
+  </div>
 
-      <UserGroupsAsUsersEditDataTableServer
-        :where="where"
-        :filters="filters"
-      />
-    </v-card-text>
-  </v-card>
+  <UserGroupsAsUsersEditDataTableServer
+    :where="where"
+    :filters="filters"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -56,5 +54,13 @@ const filters = computed(() => {
   }
 })
 
-useBreadcrumbs("Groups", [ADMIN_CRUMB])
+useBreadcrumbs("Groups", [
+  ADMIN_CRUMB,
+  {
+    title: "Groups",
+    to: {
+      name: "administration/GroupsPage",
+    },
+  },
+])
 </script>

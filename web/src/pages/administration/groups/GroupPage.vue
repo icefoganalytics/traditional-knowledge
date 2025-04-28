@@ -5,7 +5,7 @@
   />
 
   <v-card class="mt-5">
-    <v-card-text>
+    <v-card-title>
       <v-tabs>
         <v-tab
           :to="{
@@ -18,7 +18,9 @@
           Users
         </v-tab>
       </v-tabs>
+    </v-card-title>
 
+    <v-card-text>
       <router-view />
     </v-card-text>
   </v-card>

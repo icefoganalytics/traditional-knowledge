@@ -109,6 +109,12 @@ const routes: RouteRecordRaw[] = [
                 component: () => import("@/pages/administration/groups/GroupUsersPage.vue"),
                 props: true,
               },
+              {
+                path: "users/new",
+                name: "administration/groups/GroupUserNewPage",
+                component: () => import("@/pages/administration/groups/GroupUserNewPage.vue"),
+                props: true,
+              },
             ],
           },
           {

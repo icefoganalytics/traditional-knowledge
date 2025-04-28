@@ -1,15 +1,19 @@
 <template>
-  <!-- TODO: add user to group form -->
-  <GroupCreateForm />
+  <UserGroupAddUserToGroupForm :group-id="groupIdAsNumber" />
 </template>
 
 <script setup lang="ts">
-import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
-import GroupCreateForm from "@/components/groups/GroupCreateForm.vue"
+import { computed } from "vue"
 
-defineProps<{
+import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
+
+import UserGroupAddUserToGroupForm from "@/components/user-groups/UserGroupAddUserToGroupForm.vue"
+
+const props = defineProps<{
   groupId: string
 }>()
+
+const groupIdAsNumber = computed(() => parseInt(props.groupId))
 
 useBreadcrumbs("Add User to Group", [
   ADMIN_CRUMB,

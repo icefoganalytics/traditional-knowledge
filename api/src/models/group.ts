@@ -165,6 +165,19 @@ export class Group extends BaseModel<InferAttributes<Group>, InferCreationAttrib
         },
       }
     })
+    this.addScope("isAdmin", (userId: number) => {
+      return {
+        include: [
+          {
+            association: "userGroups",
+            where: {
+              userId,
+              isAdmin: true,
+            },
+          },
+        ],
+      }
+    })
   }
 }
 

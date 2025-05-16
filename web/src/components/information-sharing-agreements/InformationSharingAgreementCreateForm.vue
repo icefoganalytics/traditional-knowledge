@@ -36,6 +36,7 @@
               label="Sharing Group *"
               :rules="[required]"
               :where="sharingGroupWhere"
+              :filters="sharingGroupFilters"
               required
               @update:model-value="resetSharingGroupContact"
             />
@@ -145,6 +146,8 @@ import { required } from "@/utils/validators"
 import informationSharingAgreementsApi, {
   type InformationSharingAgreement,
 } from "@/api/information-sharing-agreements-api"
+
+import useCurrentUser from "@/use/use-current-user"
 import useSnack from "@/use/use-snack"
 
 import GroupSearchableAutocomplete from "@/components/groups/GroupSearchableAutocomplete.vue"
@@ -163,6 +166,10 @@ const informationSharingAgreementAttributes = ref<Partial<InformationSharingAgre
 
 const sharingGroupWhere = computed(() => ({
   isHost: false,
+}))
+const { currentUser } = useCurrentUser<true>()
+const sharingGroupFilters = computed(() => ({
+  isAdmin: currentUser.value.id,
 }))
 const sharingGroupContactFilters = computed(() => ({
   inGroup: informationSharingAgreementAttributes.value.sharingGroupId,

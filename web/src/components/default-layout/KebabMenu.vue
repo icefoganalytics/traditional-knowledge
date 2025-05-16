@@ -23,7 +23,7 @@
       <v-list-item
         title="Sign out"
         prepend-icon="mdi-exit-run"
-        @click="logoutWrapper"
+        @click="signOut"
       />
     </v-list>
   </v-menu>
@@ -37,7 +37,7 @@ import useCurrentUser from "@/use/use-current-user"
 
 const { logout } = useAuth0()
 
-const { currentUser, isSystemAdmin } = useCurrentUser()
+const { currentUser, isSystemAdmin, reset: resetCurrentUser } = useCurrentUser()
 
 const username = computed(() => {
   if (currentUser.value === null) return "loading..."
@@ -46,11 +46,15 @@ const username = computed(() => {
   return displayName
 })
 
-async function logoutWrapper() {
-  await logout({
+function signOut() {
+  resetCurrentUser()
+
+  // I would prefer to redirect to /sign-in here, but that requires updating the auth0 application settings
+  // const returnTo = encodeURI(window.location.origin + "/sign-in")
+  const returnTo = window.location.origin
+  return logout({
     logoutParams: {
-      // I would prefer to redirect to /sign-in here, but that doesn't seem to work?
-      returnTo: window.location.origin,
+      returnTo,
     },
   })
 }

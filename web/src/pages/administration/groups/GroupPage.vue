@@ -11,7 +11,7 @@
           :to="{
             name: 'administration/groups/GroupUsersPage',
             params: {
-              groupId: groupIdAsNumber,
+              groupId,
             },
           }"
         >

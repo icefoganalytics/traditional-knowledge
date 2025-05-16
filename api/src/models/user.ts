@@ -22,6 +22,7 @@ import { isNil } from "lodash"
 
 import BaseModel from "@/models/base-model"
 import Group from "@/models/group"
+import InformationSharingAgreement from "@/models/information-sharing-agreement"
 import UserGroup from "@/models/user-group"
 import UserPermission from "@/models/user-permission"
 
@@ -138,6 +139,24 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
   }
 
   // Associations
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "creatorId",
+    inverse: "creator",
+  })
+  declare createdInformationSharingAgreements?: NonAttribute<InformationSharingAgreement[]>
+
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "sharingGroupContactId",
+    inverse: "sharingGroupContact",
+  })
+  declare sharedInformationAgreementAsContact?: NonAttribute<InformationSharingAgreement[]>
+
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "receivingGroupContactId",
+    inverse: "receivingGroupContact",
+  })
+  declare receivedInformationAgreementAsContact?: NonAttribute<InformationSharingAgreement[]>
+
   @HasMany(() => UserGroup, {
     foreignKey: {
       name: "userId",

@@ -22,6 +22,7 @@ import {
 import arrayWrap from "@/utils/array-wrap"
 
 import BaseModel from "@/models/base-model"
+import InformationSharingAgreement from "@/models/information-sharing-agreement"
 import User from "@/models/user"
 import UserGroup from "@/models/user-group"
 
@@ -79,6 +80,18 @@ export class Group extends BaseModel<InferAttributes<Group>, InferCreationAttrib
     },
   })
   declare creator?: NonAttribute<User>
+
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "sharingGroupId",
+    inverse: "sharingGroup",
+  })
+  declare sharedInformationAgreements?: NonAttribute<InformationSharingAgreement[]>
+
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "receivingGroupId",
+    inverse: "receivingGroup",
+  })
+  declare receivedInformationAgreements?: NonAttribute<InformationSharingAgreement[]>
 
   @HasMany(() => UserGroup, {
     foreignKey: {

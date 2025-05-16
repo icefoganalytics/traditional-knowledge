@@ -1,31 +1,164 @@
 @startuml Entity Relationship Diagram
 top to bottom direction
 
-entity "users" {
+note as Disclaimer
+PlantUML URL: https://plantuml.com/ie-diagram
+This diagram may be out of date and should be verified against the current database schema.
+end note
+
+entity "archive_items" {
   * id : int [PK]
   --
-  * email : nvarchar(100)
-  * auth_subject : nvarchar(100)
-  * first_name : nvarchar(100)
-  * last_name : nvarchar(100)
-  * display_name : nvarchar(200)
-  * roles : nvarchar(255) - comma separated pseudo array
-  [title] : nvarchar(100)
-  * department : nvarchar(100)
-  division : nvarchar(100)
-  branch : nvarchar(100)
-  unit : nvarchar(100)
-  * is_active : bit
+  source_id : int [FK]
+  user_id : int [FK]
+  --
+  * is_decision : bit
+  * retention_name : nvarchar(255)
+  * calculated_expire_date : datetime2(0)
+  * expire_action : nvarchar(255)
+  * title : nvarchar(255)
+  * status : nvarchar(100)
+  * security_level : int
+  decision_text : nvarchar(255)
+  override_expire_date : datetime2(0)
+  description : nvarchar(2000)
+  summary : nvarchar(MAX)
+  tags : nvarchar(255)
+  * submitted_at : datetime2(0)
   * created_at : datetime2(0)
   * updated_at : datetime2(0)
   deleted_at : datetime2(0)
 }
 
-' Relationships
-' add in the format xxx:id }o..|| yyy:xxx_id
+entity "archive_item_files" {
+  * id : int [PK]
+  --
+  * archive_item_id : int [FK]
+  * bucket : nvarchar(1000)
+  * original_key : nvarchar(2000)
+  * original_file_name : nvarchar(1000)
+  * original_mime_type : nvarchar(1000)
+  * original_file_size : bigint
+  * pdf_key : nvarchar(2000)
+  * pdf_file_name : nvarchar(1000)
+  * pdf_mime_type : nvarchar(1000)
+  * pdf_file_size : bigint
+  * comment : nvarchar(MAX)
+  * created_at : datetime2(0)
+  * updated_at : datetime2(0)
+  deleted_at : datetime2(0)
+}
 
-note as Disclaimer
-PlantUML URL: https://plantuml.com/ie-diagram
-This diagram may be out of date and should be verified against the current database schema.
-end note
+enum ArchiveItemAccessGrantPermission {
+  VIEW
+  EDIT
+}
+
+entity "archive_item_access_grants" {
+  * id : int [PK]
+  --
+  * archive_item_id : int [FK]
+  * group_id : int [FK]
+  user_id : int [FK]
+  * creator_id : int [FK]
+  * permission : nvarchar(20)  -- ArchiveItemAccessGrantPermission
+  * created_at : datetime2(0)
+  * updated_at : datetime2(0)
+  --
+  Grants access to an archive item to an entire group, or just a user in the group.
+}
+
+
+entity "information_sharing_agreements" {
+  * id : int [PK]
+  --
+  * creator_id : int [FK]
+  * sharing_group_id : int [FK]
+  * receiving_group_id : int [FK]  -- host group only
+  * start_date : date
+  * end_date : date
+  * created_at : datetime2(0)
+  * updated_at : datetime2(0)
+  deleted_at : datetime2(0)
+}
+
+entity "information_sharing_agreement_archive_items" {
+  * id : int [PK]
+  --
+  * information_sharing_agreement_id : int [FK]
+  * archive_item_id : int [FK]
+  * creator_id : int [FK]
+  * created_at : datetime2(0)
+  * updated_at : datetime2(0)
+  deleted_at : datetime2(0)
+}
+
+
+entity "groups" {
+  * id : int [PK]
+  --
+  * creator_id : int [FK]
+  * name : nvarchar(250)
+  [acronym] : nvarchar(250)
+  description : nvarchar(500)
+  * is_host : bit
+  * created_at : datetime2(0)
+  * updated_at : datetime2(0)
+  deleted_at : datetime2(0)
+}
+
+entity "users" {
+  * id : int [PK]
+  --
+  * email : nvarchar(100)
+  * auth0_subject : nvarchar(100)
+  * first_name : nvarchar(100)
+  * last_name : nvarchar(100)
+  * display_name : nvarchar(200)
+  * roles : nvarchar(255) -- comma separated list of UserRoles
+  [title] : nvarchar(100)
+  department : nvarchar(100)
+  division : nvarchar(100)
+  branch : nvarchar(100)
+  unit : nvarchar(100)
+  deactivated_at : datetime2(0)
+  * created_at : datetime2(0)
+  * updated_at : datetime2(0)
+  deleted_at : datetime2(0)
+}
+
+enum UserRoles {
+  SYSTEM_ADMIN
+  USER
+}
+
+entity "user_groups" {
+  * id : int [PK]
+  --
+  * user_id : int [FK]
+  * group_id : int [FK]
+  * creator_id : int [FK]
+  ' is_admin : bit -- TODO: implement, or use roles like with users.
+  * created_at : datetime2(0)
+  * updated_at : datetime2(0)
+  deleted_at : datetime2(0)
+  --
+  Grants access to a group, but not to archive items in that group?
+}
+
+' ======================
+' Relationships
+' ======================
+
+archive_items::id }o--|| archive_item_files::archive_item_id
+archive_items::id }o--|| archive_item_access_grants::archive_item_id
+archive_items::id }o--|| information_sharing_agreement_archive_items::archive_item_id
+archive_item_access_grants::group_id ||--o{ groups::id
+archive_item_access_grants::user_id |o--o{ users::id
+groups::id }o--|| information_sharing_agreements::receiving_group_id
+groups::id }o--|| information_sharing_agreements::sharing_group_id
+groups::id }o--|| user_groups::group_id
+information_sharing_agreements::id }o--|| information_sharing_agreement_archive_items::information_sharing_agreement_id
+users::id }o--|| user_groups::user_id
+users::roles ||--o{ UserRoles
 @enduml

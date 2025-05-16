@@ -25,6 +25,17 @@
         <v-col>
           <v-card
             color="info"
+            title="Information Sharing Agreements"
+            subtitle="Manage Current Information Sharing Agreements"
+            :to="{
+              name: 'administration/InformationSharingAgreementsPage',
+            }"
+          >
+          </v-card>
+        </v-col>
+        <v-col>
+          <v-card
+            color="info"
             title="Sources"
             subtitle="Manage Sources"
             :to="{ name: 'administration/SourceListPage' }"

@@ -124,7 +124,7 @@ export class InformationSharingAgreement extends BaseModel<
 
   // Scopes
   static establishScopes(): void {
-    // add as needed
+    this.addSearchScope(["title", "description"])
   }
 }
 

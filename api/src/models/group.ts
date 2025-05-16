@@ -102,6 +102,18 @@ export class Group extends BaseModel<InferAttributes<Group>, InferCreationAttrib
   })
   declare userGroups?: NonAttribute<UserGroup[]>
 
+  @HasMany(() => UserGroup, {
+    foreignKey: {
+      name: "groupId",
+      allowNull: false,
+    },
+    inverse: "group",
+    scope: {
+      isAdmin: true,
+    },
+  })
+  declare userGroupAdmins?: NonAttribute<UserGroup[]>
+
   @BelongsToMany(() => User, {
     through: () => UserGroup,
     foreignKey: "groupId",
@@ -121,6 +133,23 @@ export class Group extends BaseModel<InferAttributes<Group>, InferCreationAttrib
    * See https://sequelize.org/docs/v7/querying/select-in-depth/#eager-loading-the-belongstomany-through-model
    */
   declare userGroup?: NonAttribute<UserGroup>
+
+  @BelongsToMany(() => User, {
+    through: () => UserGroup,
+    foreignKey: "groupId",
+    otherKey: "userId",
+    inverse: "users",
+    throughAssociations: {
+      fromSource: "userGroups",
+      toSource: "group",
+      fromTarget: "userGroups",
+      toTarget: "user",
+    },
+    scope: {
+      isAdmin: true,
+    },
+  })
+  declare admins?: NonAttribute<User[]>
 
   // Scopes
   static establishScopes(): void {

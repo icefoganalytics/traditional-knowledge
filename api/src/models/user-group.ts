@@ -43,6 +43,11 @@ export class UserGroup extends BaseModel<
   @NotNull
   declare creatorId: number
 
+  @Attribute(DataTypes.BOOLEAN)
+  @NotNull
+  @Default(false)
+  declare isAdmin: CreationOptional<boolean>
+
   @Attribute(DataTypes.DATE(0))
   @NotNull
   @Default(sql.fn("getutcdate"))

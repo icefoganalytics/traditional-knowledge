@@ -1,6 +1,6 @@
 import { isNil, pick } from "lodash"
 
-import { User } from "@/models"
+import { User, UserGroup } from "@/models"
 import BaseSerializer from "@/serializers/base-serializer"
 
 export type UserShowView = Pick<
@@ -24,6 +24,8 @@ export type UserShowView = Pick<
   | "updatedAt"
 > & {
   isActive: boolean
+} & {
+  userGroups?: UserGroup[]
 }
 
 export class ShowSerializer extends BaseSerializer<User> {
@@ -49,6 +51,7 @@ export class ShowSerializer extends BaseSerializer<User> {
         "updatedAt",
       ]),
       isActive: isNil(this.record.deactivatedAt),
+      userGroups: this.record.userGroups, // TODO: add serializer
     }
   }
 }

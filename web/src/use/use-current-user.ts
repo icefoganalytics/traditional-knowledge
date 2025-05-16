@@ -35,6 +35,10 @@ export function useCurrentUser<IsLoaded extends boolean = false>() {
   const isSystemAdmin = computed(() => {
     return state.currentUser?.roles.includes(UserRoles.SYSTEM_ADMIN)
   })
+  const isGroupAdmin = computed(() =>
+    state.currentUser?.userGroups?.some((userGroup) => userGroup.isAdmin)
+  )
+  const isAdmin = computed(() => isSystemAdmin.value || isGroupAdmin.value)
 
   async function fetch(): Promise<User> {
     state.isLoading = true
@@ -95,6 +99,8 @@ export function useCurrentUser<IsLoaded extends boolean = false>() {
     save,
     // Computed properties
     isSystemAdmin,
+    isGroupAdmin,
+    isAdmin,
   }
 }
 

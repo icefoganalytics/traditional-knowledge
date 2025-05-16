@@ -29,7 +29,7 @@
       />
 
       <v-list-item
-        v-if="isSystemAdmin"
+        v-if="isAdmin"
         title="Administration"
         :to="{ name: 'administration/DashboardPage' }"
         :exact="false"
@@ -55,5 +55,5 @@ const showDrawer = defineModel<boolean>({
 
 const open = ref([])
 
-const { isSystemAdmin } = useCurrentUser()
+const { isAdmin } = useCurrentUser<true>()
 </script>

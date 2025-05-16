@@ -5,6 +5,7 @@ import {
   type QueryOptions,
   type WhereOptions,
 } from "@/api/base-api"
+import { type UserGroup } from "@/api/user-groups-api"
 
 /** Keep in sync with api/src/models/user.ts */
 export enum UserRoles {
@@ -35,6 +36,7 @@ export type User = {
   sources?: number[]
 
   // Associations
+  userGroups?: UserGroup[]
 }
 
 export type UserWhereOptions = WhereOptions<

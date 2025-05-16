@@ -236,6 +236,18 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
   static establishScopes(): void {
     this.addSearchScope(["firstName", "lastName", "displayName"])
 
+    this.addScope("inGroup", (groupId: number) => {
+      return {
+        include: [
+          {
+            association: "userGroup",
+            where: {
+              groupId,
+            },
+          },
+        ],
+      }
+    })
     this.addScope("notInGroup", (groupId) => {
       return {
         where: {

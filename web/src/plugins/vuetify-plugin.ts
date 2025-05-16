@@ -78,6 +78,15 @@ export default createVuetify({
       hideDetails: "auto",
       bgColor: "#fff",
     },
+    VDateInput: {
+      variant: "outlined",
+      density: "comfortable",
+      color: "primary",
+      hideDetails: "auto",
+      bgColor: "#fff",
+      prependIcon: "",
+      appendInnerIcon: "$calendar",
+    },
     VFileInput: {
       variant: "outlined",
       density: "comfortable",

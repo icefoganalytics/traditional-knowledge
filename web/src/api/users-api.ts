@@ -1,5 +1,10 @@
 import http from "@/api/http-client"
-import { type Policy } from "@/api/base-api"
+import {
+  type FiltersOptions,
+  type Policy,
+  type QueryOptions,
+  type WhereOptions,
+} from "@/api/base-api"
 
 /** Keep in sync with api/src/models/user.ts */
 export enum UserRoles {
@@ -32,31 +37,23 @@ export type User = {
   // Associations
 }
 
-export type UserWhereOptions = {
-  email?: string
-  title?: string
-  department?: string
-  division?: string
-  branch?: string
-  unit?: string
-}
+export type UserWhereOptions = WhereOptions<
+  User,
+  "email" | "title" | "department" | "division" | "branch" | "unit"
+>
 
-export type UserFiltersOptions = {
-  search?: string | string[]
-  notInGroup?: number
+export type UserFiltersOptions = FiltersOptions<{
+  search: string | string[]
+  inGroup: number
+  notInGroup: number
   // TODO: implement isActive scope in back-end
-}
+}>
+
+export type UserQueryOptions = QueryOptions<UserWhereOptions, UserFiltersOptions>
 
 export const usersApi = {
   UserRoles,
-  async list(
-    params: {
-      where?: UserWhereOptions
-      filters?: UserFiltersOptions
-      page?: number
-      perPage?: number
-    } = {}
-  ): Promise<{
+  async list(params: UserQueryOptions = {}): Promise<{
     users: User[]
     totalCount: number
   }> {

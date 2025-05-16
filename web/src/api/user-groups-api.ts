@@ -12,6 +12,7 @@ export type UserGroup = {
   userId: number
   groupId: number
   creatorId: number
+  isAdmin: boolean
   createdAt: string
   updatedAt: string
 }

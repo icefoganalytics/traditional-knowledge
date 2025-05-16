@@ -22,6 +22,7 @@ import { isNil } from "lodash"
 
 import BaseModel from "@/models/base-model"
 import Group from "@/models/group"
+import InformationSharingAgreement from "@/models/information-sharing-agreement"
 import UserGroup from "@/models/user-group"
 import UserPermission from "@/models/user-permission"
 
@@ -138,6 +139,24 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
   }
 
   // Associations
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "creatorId",
+    inverse: "creator",
+  })
+  declare createdInformationSharingAgreements?: NonAttribute<InformationSharingAgreement[]>
+
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "sharingGroupContactId",
+    inverse: "sharingGroupContact",
+  })
+  declare sharedInformationAgreementAsContact?: NonAttribute<InformationSharingAgreement[]>
+
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "receivingGroupContactId",
+    inverse: "receivingGroupContact",
+  })
+  declare receivedInformationAgreementAsContact?: NonAttribute<InformationSharingAgreement[]>
+
   @HasMany(() => UserGroup, {
     foreignKey: {
       name: "userId",
@@ -154,6 +173,27 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
     },
   })
   declare userPermissions?: NonAttribute<UserPermission[]>
+
+  @HasMany(() => UserGroup, {
+    foreignKey: {
+      name: "userId",
+      allowNull: false,
+    },
+    inverse: "user",
+  })
+  declare userGroups?: NonAttribute<UserGroup[]>
+
+  @HasMany(() => UserGroup, {
+    foreignKey: {
+      name: "userId",
+      allowNull: false,
+    },
+    inverse: "user",
+    scope: {
+      isAdmin: true,
+    },
+  })
+  declare userGroupAdmins?: NonAttribute<UserGroup[]>
 
   @BelongsToMany(() => Group, {
     through: () => UserGroup,
@@ -174,6 +214,23 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
    * See https://sequelize.org/docs/v7/querying/select-in-depth/#eager-loading-the-belongstomany-through-model
    */
   declare userGroup?: NonAttribute<UserGroup>
+
+  @BelongsToMany(() => Group, {
+    through: () => UserGroup,
+    foreignKey: "userId",
+    otherKey: "groupId",
+    inverse: "groups",
+    throughAssociations: {
+      fromSource: "userGroups",
+      toSource: "user",
+      fromTarget: "userGroups",
+      toTarget: "group",
+    },
+    scope: {
+      isAdmin: true,
+    },
+  })
+  declare groupsAsAdmin?: NonAttribute<User[]>
 
   // Scopes
   static establishScopes(): void {

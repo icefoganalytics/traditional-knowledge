@@ -123,15 +123,15 @@ class DevHelper
   end
 
   def knex(*args, **kwargs)
-    if RUBY_PLATFORM =~ /linux/
-      run(*%w[api npm run knex], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
-
-      file_or_directory = "api/src/db"
-      exit(0) unless take_over_needed?(file_or_directory)
-
-      ownit file_or_directory
+    case args[0]
+    when "migrate:make"
+      knex_command = compose_command(*%w[exec api npm run knex], *args, **kwargs)
+      copy_command = compose_command("cp api:/usr/src/api/src/db/migrations/. ./api/src/db/migrations")
+      command = "#{knex_command} && #{copy_command}"
+      puts "Running: #{command}"
+      exec(command)
     else
-      run(*%w[api npm run knex], *args, **kwargs)
+      compose(*%w[exec api npm run knex], *args, **kwargs)
     end
   end
 

@@ -7,6 +7,7 @@ import ArchiveItemCategory from "@/models/archive-item-category"
 import ArchiveItemFile from "@/models/archive-item-file"
 import Category from "@/models/category"
 import Group from "@/models/group"
+import InformationSharingAgreement from "@/models/information-sharing-agreement"
 import Retention from "@/models/retention"
 import Source from "@/models/source"
 import SourceCategory from "@/models/source-category"
@@ -21,6 +22,7 @@ db.addModels([
   ArchiveItemFile,
   Category,
   Group,
+  InformationSharingAgreement,
   Retention,
   Source,
   SourceCategory,
@@ -36,6 +38,7 @@ ArchiveItemCategory.establishScopes()
 ArchiveItemFile.establishScopes()
 Category.establishScopes()
 Group.establishScopes()
+InformationSharingAgreement.establishScopes()
 Retention.establishScopes()
 Source.establishScopes()
 SourceCategory.establishScopes()
@@ -50,6 +53,7 @@ export {
   ArchiveItemFile,
   Category,
   Group,
+  InformationSharingAgreement,
   Retention,
   Source,
   SourceCategory,

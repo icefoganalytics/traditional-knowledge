@@ -28,7 +28,6 @@
 
 <script lang="ts" setup>
 import { computed, ref } from "vue"
-import { useI18n } from "vue-i18n"
 import { useRouteQuery } from "@vueuse/router"
 import { useRouter } from "vue-router"
 
@@ -59,8 +58,6 @@ const props = withDefaults(
   }
 )
 
-const { t } = useI18n()
-
 const headers = ref([
   {
     title: "Display Name",
@@ -84,14 +81,14 @@ const headers = ref([
     sortable: false,
   },
   {
-    title: "Role",
-    key: "user.roles",
+    title: "Is\u00a0Admin?",
+    key: "isAdmin",
     value: (item: unknown) => {
-      const { roles } = (item as UserGroupAsIndex).user
-      const formatedRoleTypes = roles.map((role) => t(`user.roles.${role}`, role))
-      return formatedRoleTypes.join(", ")
+      const { isAdmin } = item as UserGroupAsIndex
+      return isAdmin ? "Yes" : "No"
     },
-    sortable: false,
+    sortable: true,
+    align: "center" as const,
   },
   {
     title: "Actions",

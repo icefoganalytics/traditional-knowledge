@@ -30,7 +30,7 @@ export class UserGroupPolicy extends PolicyFactory(UserGroup) {
   }
 
   permittedAttributes(): Path[] {
-    return []
+    return ["isAdmin"]
   }
 
   permittedAttributesForCreate(): Path[] {

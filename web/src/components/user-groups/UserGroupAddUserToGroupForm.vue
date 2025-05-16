@@ -20,6 +20,16 @@
               required
             />
           </v-col>
+          <v-col
+            cols="12"
+            md="6"
+          >
+            <v-switch
+              v-model="userGroupAttributes.isAdmin"
+              label="Is Admin?"
+              inset
+            />
+          </v-col>
         </v-row>
       </template>
       <template #actions>

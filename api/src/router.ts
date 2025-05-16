@@ -25,6 +25,7 @@ import {
   CurrentUserController,
   DecisionsController,
   GroupsController,
+  InformationSharingAgreementsController,
   IntegrationController,
   RetentionsController,
   SourcesController,
@@ -106,6 +107,16 @@ router
   .get(GroupsController.show)
   .patch(GroupsController.update)
   .delete(GroupsController.destroy)
+
+router
+  .route("/api/information-sharing-agreements")
+  .get(InformationSharingAgreementsController.index)
+  .post(InformationSharingAgreementsController.create)
+router
+  .route("/api/information-sharing-agreements/:informationSharingAgreementId")
+  .get(InformationSharingAgreementsController.show)
+  .patch(InformationSharingAgreementsController.update)
+  .delete(InformationSharingAgreementsController.destroy)
 
 router.route("/api/user-groups").get(UserGroupsController.index).post(UserGroupsController.create)
 router

@@ -22,6 +22,7 @@ import {
 import arrayWrap from "@/utils/array-wrap"
 
 import BaseModel from "@/models/base-model"
+import InformationSharingAgreement from "@/models/information-sharing-agreement"
 import User from "@/models/user"
 import UserGroup from "@/models/user-group"
 
@@ -80,6 +81,18 @@ export class Group extends BaseModel<InferAttributes<Group>, InferCreationAttrib
   })
   declare creator?: NonAttribute<User>
 
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "sharingGroupId",
+    inverse: "sharingGroup",
+  })
+  declare sharedInformationAgreements?: NonAttribute<InformationSharingAgreement[]>
+
+  @HasMany(() => InformationSharingAgreement, {
+    foreignKey: "receivingGroupId",
+    inverse: "receivingGroup",
+  })
+  declare receivedInformationAgreements?: NonAttribute<InformationSharingAgreement[]>
+
   @HasMany(() => UserGroup, {
     foreignKey: {
       name: "groupId",
@@ -88,6 +101,18 @@ export class Group extends BaseModel<InferAttributes<Group>, InferCreationAttrib
     inverse: "group",
   })
   declare userGroups?: NonAttribute<UserGroup[]>
+
+  @HasMany(() => UserGroup, {
+    foreignKey: {
+      name: "groupId",
+      allowNull: false,
+    },
+    inverse: "group",
+    scope: {
+      isAdmin: true,
+    },
+  })
+  declare userGroupAdmins?: NonAttribute<UserGroup[]>
 
   @BelongsToMany(() => User, {
     through: () => UserGroup,
@@ -108,6 +133,23 @@ export class Group extends BaseModel<InferAttributes<Group>, InferCreationAttrib
    * See https://sequelize.org/docs/v7/querying/select-in-depth/#eager-loading-the-belongstomany-through-model
    */
   declare userGroup?: NonAttribute<UserGroup>
+
+  @BelongsToMany(() => User, {
+    through: () => UserGroup,
+    foreignKey: "groupId",
+    otherKey: "userId",
+    inverse: "users",
+    throughAssociations: {
+      fromSource: "userGroups",
+      toSource: "group",
+      fromTarget: "userGroups",
+      toTarget: "user",
+    },
+    scope: {
+      isAdmin: true,
+    },
+  })
+  declare admins?: NonAttribute<User[]>
 
   // Scopes
   static establishScopes(): void {

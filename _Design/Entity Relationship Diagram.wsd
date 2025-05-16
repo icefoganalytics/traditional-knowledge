@@ -54,32 +54,35 @@ enum ArchiveItemAccessGrantPermission {
   EDIT
 }
 
-entity "archive_item_access_grants" {
-  * id : int [PK]
-  --
-  * archive_item_id : int [FK]
-  * group_id : int [FK]
-  user_id : int [FK]
-  * creator_id : int [FK]
-  * permission : nvarchar(20)  -- ArchiveItemAccessGrantPermission
-  * created_at : datetime2(0)
-  * updated_at : datetime2(0)
-  --
-  Grants access to an archive item to an entire group, or just a user in the group.
-}
-
-
 entity "information_sharing_agreements" {
   * id : int [PK]
   --
   * creator_id : int [FK]
   * sharing_group_id : int [FK]
+  * sharing_group_contact_id : int [FK]
   * receiving_group_id : int [FK]  -- host group only
+  * receiving_group_contact_id : int [FK]
+  * title : nvarchar(255)
+  description : nvarchar(MAX)
   * start_date : date
   * end_date : date
   * created_at : datetime2(0)
   * updated_at : datetime2(0)
   deleted_at : datetime2(0)
+}
+
+entity "information_sharing_agreement_access_grants" {
+  * id : int [PK]
+  --
+  * information_sharing_agreement_id : int [FK]
+  * group_id : int [FK]
+  user_id : int [FK] -- most access will be to individual users
+  * creator_id : int [FK]
+  * permission : nvarchar(20) -- ArchiveItemAccessGrantPermission
+  * created_at : datetime2(0)
+  * updated_at : datetime2(0)
+  --
+  Grants access to archive items attached to an information sharing agreement to an entire group, or just a user in the group.
 }
 
 entity "information_sharing_agreement_archive_items" {
@@ -92,7 +95,6 @@ entity "information_sharing_agreement_archive_items" {
   * updated_at : datetime2(0)
   deleted_at : datetime2(0)
 }
-
 
 entity "groups" {
   * id : int [PK]
@@ -146,19 +148,17 @@ entity "user_groups" {
   Grants access to a group, but not to archive items in that group?
 }
 
-' ======================
 ' Relationships
-' ======================
-
 archive_items::id }o--|| archive_item_files::archive_item_id
-archive_items::id }o--|| archive_item_access_grants::archive_item_id
 archive_items::id }o--|| information_sharing_agreement_archive_items::archive_item_id
-archive_item_access_grants::group_id ||--o{ groups::id
-archive_item_access_grants::user_id |o--o{ users::id
 groups::id }o--|| information_sharing_agreements::receiving_group_id
 groups::id }o--|| information_sharing_agreements::sharing_group_id
 groups::id }o--|| user_groups::group_id
+information_sharing_agreement_access_grants::group_id ||--o{ groups::id
+information_sharing_agreement_access_grants::user_id |o--o{ users::id
 information_sharing_agreements::id }o--|| information_sharing_agreement_archive_items::information_sharing_agreement_id
+information_sharing_agreements::receiving_group_contact_id ||--o{ users::id
+information_sharing_agreements::sharing_group_contact_id ||--o{ users::id
 users::id }o--|| user_groups::user_id
 users::roles ||--o{ UserRoles
 @enduml

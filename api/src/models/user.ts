@@ -18,7 +18,7 @@ import {
   PrimaryKey,
   ValidateAttribute,
 } from "@sequelize/core/decorators-legacy"
-import { isNil } from "lodash"
+import { isNil, isUndefined } from "lodash"
 
 import BaseModel from "@/models/base-model"
 import Group from "@/models/group"
@@ -136,6 +136,15 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
         .filter((sourceId) => !isNil(sourceId))
     }
     return []
+  }
+
+  // Helper functions
+  isGroupAdminOf(groupId: number): boolean {
+    if (isUndefined(this.userGroups)) {
+      throw new Error("Expected userGroups association to be pre-loaded.")
+    }
+
+    return this.userGroups.some((userGroup) => userGroup.groupId === groupId && userGroup.isAdmin)
   }
 
   // Associations

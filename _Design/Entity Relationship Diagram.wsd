@@ -140,7 +140,7 @@ entity "user_groups" {
   * user_id : int [FK]
   * group_id : int [FK]
   * creator_id : int [FK]
-  ' is_admin : bit -- TODO: implement, or use roles like with users.
+  * is_admin : bit [default false]
   * created_at : datetime2(0)
   * updated_at : datetime2(0)
   deleted_at : datetime2(0)

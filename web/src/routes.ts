@@ -7,7 +7,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: "",
-        redirect: "sign-in",
+        redirect: "dashboard",
       },
       {
         path: "dashboard",
@@ -203,11 +203,6 @@ const routes: RouteRecordRaw[] = [
         ],
       },
     ],
-  },
-  {
-    path: "/callback",
-    component: () => import("@/pages/CallbackPage.vue"),
-    meta: { requiresAuth: false, title: "Callback" },
   },
   {
     path: "/sign-in",

@@ -1,5 +1,9 @@
 <template>
-  <v-row v-if="item">
+  <v-skeleton-loader
+    v-if="isNil(archiveItem)"
+    type="card@2"
+  />
+  <v-row v-else>
     <v-col
       cols="12"
       md="8"
@@ -13,7 +17,7 @@
               md="8"
             >
               <v-text-field
-                v-model="item.title"
+                v-model="archiveItem.title"
                 label="Title"
                 readonly
               ></v-text-field>
@@ -23,14 +27,14 @@
               md="4"
             >
               <SecurityLevelSelect
-                v-model="item.securityLevel"
+                v-model="archiveItem.securityLevel"
                 label="Security level"
                 readonly
               />
             </v-col>
             <v-col cols="12">
               <v-textarea
-                v-model="item.description"
+                v-model="archiveItem.description"
                 label="Description"
                 readonly
                 rows="3"
@@ -46,7 +50,7 @@
             are applicable to this item.
           </p>
           <v-combobox
-            v-model="item.tags"
+            v-model="archiveItem.tags"
             label="Tags"
             multiple
             chips
@@ -55,7 +59,7 @@
         </v-card-text>
       </v-card>
 
-      <ArchiveItemAccessCard :item="item" />
+      <ArchiveItemAccessCard :archive-item-id="archiveItem.id" />
     </v-col>
 
     <v-col
@@ -68,19 +72,19 @@
       >
         <v-card-title>
           <div class="text-subtitle-2 mb-n2 text-grey">RECORDED AT</div>
-          {{ formatDateTime(item.createdAt) }}
+          {{ formatDateTime(archiveItem.createdAt) }}
         </v-card-title>
         <v-divider />
         <v-card-text>
-          <div v-if="item.userId">
+          <div v-if="archiveItem.userId">
             <div class="text-subtitle-2 mb-n1 text-grey">RECORDED BY</div>
-            {{ item.user?.displayName }}
+            {{ archiveItem.user?.displayName }}
 
             <p
-              v-if="item.user?.title"
+              v-if="archiveItem.user?.title"
               class="mb-0"
             >
-              {{ item.user?.title }}
+              {{ archiveItem.user?.title }}
             </p>
           </div>
         </v-card-text>
@@ -88,9 +92,9 @@
 
       <v-card class="mb-5">
         <v-card-title>Attachments</v-card-title>
-        <v-card-text v-if="item.files && item.files.length > 0">
+        <v-card-text v-if="archiveItem.files && archiveItem.files.length > 0">
           <div
-            v-for="file of item.files"
+            v-for="file of archiveItem.files"
             :key="file.id"
           >
             <ArchiveItemFileCard
@@ -104,31 +108,32 @@
 
       <ArchiveItemAuditCard
         ref="auditCard"
-        :item-id="item.id"
+        :item-id="archiveItemId"
       />
     </v-col>
   </v-row>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { ref, toRefs } from "vue"
+import { isNil } from "lodash"
 
-import useArchiveItemLegacy from "@/use/use-archive-item-legacy"
 import { formatDateTime } from "@/utils/formatters"
+import useArchiveItem from "@/use/use-archive-item"
 
-import SecurityLevelSelect from "@/components/archive-item/SecurityLevelSelect.vue"
+import ArchiveItemAccessCard from "@/components/archive-item/ArchiveItemAccessCard.vue"
+import ArchiveItemAuditCard from "@/components/archive-item/ArchiveItemAuditCard.vue"
 import ArchiveItemFileCard from "@/components/archive-item-files/ArchiveItemFileCard.vue"
-import ArchiveItemAccessCard from "./ArchiveItemAccessCard.vue"
-import ArchiveItemAuditCard from "./ArchiveItemAuditCard.vue"
+import SecurityLevelSelect from "@/components/archive-item/SecurityLevelSelect.vue"
 
 const props = defineProps<{
-  archiveItemId: string
+  archiveItemId: number
 }>()
 
-const auditCard = ref<typeof ArchiveItemAuditCard>()
-const archiveItemId = computed(() => (props.archiveItemId ? parseInt(props.archiveItemId) : null))
+const { archiveItemId } = toRefs(props)
+const { archiveItem } = useArchiveItem(archiveItemId)
 
-const { item } = useArchiveItemLegacy(archiveItemId)
+const auditCard = ref<InstanceType<typeof ArchiveItemAuditCard>>()
 
 function reloadAudit() {
   auditCard.value?.reload()

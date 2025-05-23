@@ -67,7 +67,7 @@ export class InformationSharingAgreementArchiveItem extends BaseModel<
   @BelongsTo(() => InformationSharingAgreement, {
     foreignKey: "informationSharingAgreementId",
     inverse: {
-      as: "archiveItems",
+      as: "informationSharingAgreementArchiveItems",
       type: "hasMany",
     },
   })
@@ -76,7 +76,7 @@ export class InformationSharingAgreementArchiveItem extends BaseModel<
   @BelongsTo(() => ArchiveItem, {
     foreignKey: "archiveItemId",
     inverse: {
-      as: "informationSharingAgreements",
+      as: "informationSharingAgreementArchiveItems",
       type: "hasMany",
     },
   })

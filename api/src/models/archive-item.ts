@@ -1,10 +1,10 @@
 import {
-  type CreationOptional,
   DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  type NonAttribute,
   sql,
+  type CreationOptional,
+  type InferAttributes,
+  type InferCreationAttributes,
+  type NonAttribute,
 } from "@sequelize/core"
 import {
   Attribute,
@@ -20,6 +20,7 @@ import { isEmpty, isNil } from "lodash"
 
 import BaseModel from "@/models/base-model"
 import ArchiveItemFile from "@/models/archive-item-file"
+import InformationSharingAgreementArchiveItem from "@/models/information-sharing-agreement-archive-item"
 import User from "@/models/user"
 
 /** Keep in sync with web/src/api/users-api.ts */
@@ -136,8 +137,22 @@ export class ArchiveItem extends BaseModel<
   })
   declare files?: NonAttribute<ArchiveItemFile[]>
 
-  @BelongsTo(() => User, { foreignKey: "userId" })
+  @BelongsTo(() => User, {
+    foreignKey: "userId",
+    inverse: {
+      as: "createdArchiveItems",
+      type: "hasMany",
+    },
+  })
   declare user?: NonAttribute<User>
+
+  @HasMany(() => InformationSharingAgreementArchiveItem, {
+    foreignKey: "archiveItemId",
+    inverse: "archiveItem",
+  })
+  declare informationSharingAgreementArchiveItems?: NonAttribute<
+    InformationSharingAgreementArchiveItem[]
+  >
 
   // Scopes
   static establishScopes(): void {

@@ -20,6 +20,7 @@ import { isUndefined } from "lodash"
 import BaseModel from "@/models/base-model"
 import Group from "@/models/group"
 import InformationSharingAgreementAccessGrant from "@/models/information-sharing-agreement-access-grant"
+import InformationSharingAgreementArchiveItem from "@/models/information-sharing-agreement-archive-item"
 import User from "@/models/user"
 
 export class InformationSharingAgreement extends BaseModel<
@@ -139,6 +140,14 @@ export class InformationSharingAgreement extends BaseModel<
     inverse: "informationSharingAgreement",
   })
   declare accessGrants?: NonAttribute<InformationSharingAgreementAccessGrant[]>
+
+  @HasMany(() => InformationSharingAgreementArchiveItem, {
+    foreignKey: "informationSharingAgreementId",
+    inverse: "informationSharingAgreement",
+  })
+  declare informationSharingAgreementArchiveItems?: NonAttribute<
+    InformationSharingAgreementArchiveItem[]
+  >
 
   // Scopes
   static establishScopes(): void {

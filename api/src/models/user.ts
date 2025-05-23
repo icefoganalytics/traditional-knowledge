@@ -23,9 +23,7 @@ import { isEmpty, isNil, isUndefined } from "lodash"
 import BaseModel from "@/models/base-model"
 import Group from "@/models/group"
 import InformationSharingAgreement from "@/models/information-sharing-agreement"
-import InformationSharingAgreementAccessGrant, {
-  InformationSharingAgreementAccessGrantAccessLevels,
-} from "@/models/information-sharing-agreement-access-grant"
+import InformationSharingAgreementAccessGrant from "@/models/information-sharing-agreement-access-grant"
 import UserGroup from "@/models/user-group"
 
 /** Keep in sync with web/src/api/users-api.ts */
@@ -182,7 +180,10 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
     foreignKey: "userId",
     inverse: "user",
     scope: {
-      accessLevel: InformationSharingAgreementAccessGrantAccessLevels.ADMIN,
+      // I would prefer to use InformationSharingAgreementAccessGrant.AccessLevels.ADMIN,
+      // but this causes a circular dependency. Sequelize does not seem to support
+      // lazy evaluation of scopes.
+      accessLevel: "admin",
     },
   })
   declare adminInformationSharingAgreementAccessGrants?: NonAttribute<

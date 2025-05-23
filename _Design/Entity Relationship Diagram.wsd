@@ -45,6 +45,13 @@ entity "archive_item_files" {
   deleted_at : datetime2(0)
 }
 
+entity "archive_item_information_sharing_agreement_access_grants" {
+  * archive_item_id : int [FK]
+  * information_sharing_agreement_access_grant_id : int [FK]
+  --
+  Database view to make it easier to check what access grants are in effect on an archive item.
+}
+
 enum ArchiveItemAccessGrantAccessLevel {
   read
   read_download
@@ -157,6 +164,7 @@ entity "user_groups" {
 ' Relationships
 archive_items::id }o--|| archive_item_files::archive_item_id
 archive_items::id }o--|| information_sharing_agreement_archive_items::archive_item_id
+archive_items::id }o--|| archive_item_information_sharing_agreement_access_grants::archive_item_id
 groups::id }o--|| information_sharing_agreements::receiving_group_id
 groups::id }o--|| information_sharing_agreements::sharing_group_id
 groups::id }o--|| user_groups::group_id
@@ -164,6 +172,7 @@ information_sharing_agreement_access_grants::group_id ||--o{ groups::id
 information_sharing_agreement_access_grants::user_id |o--o{ users::id
 information_sharing_agreement_access_grants::creator_id ||--o{ users::id
 information_sharing_agreement_access_grants::access_level ||--o| ArchiveItemAccessGrantAccessLevel
+information_sharing_agreement_access_grants::id }o--|| archive_item_information_sharing_agreement_access_grants::information_sharing_agreement_access_grant_id
 information_sharing_agreements::id }o--|| information_sharing_agreement_archive_items::information_sharing_agreement_id
 information_sharing_agreements::receiving_group_contact_id ||--o{ users::id
 information_sharing_agreements::sharing_group_contact_id ||--o{ users::id

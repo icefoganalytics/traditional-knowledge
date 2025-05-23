@@ -24,6 +24,7 @@ import {
   CurrentUserController,
   GroupsController,
   InformationSharingAgreementAccessGrantsController,
+  InformationSharingAgreementArchiveItemsController,
   InformationSharingAgreementsController,
   UserGroupsController,
   UsersController,
@@ -92,6 +93,16 @@ router
   .get(InformationSharingAgreementAccessGrantsController.show)
   .patch(InformationSharingAgreementAccessGrantsController.update)
   .delete(InformationSharingAgreementAccessGrantsController.destroy)
+
+router
+  .route("/api/information-sharing-agreement-archive-items")
+  .get(InformationSharingAgreementArchiveItemsController.index)
+  .post(InformationSharingAgreementArchiveItemsController.create)
+router
+  .route("/api/information-sharing-agreement-archive-items/:informationSharingAgreementArchiveItemId")
+  .get(InformationSharingAgreementArchiveItemsController.show)
+  .patch(InformationSharingAgreementArchiveItemsController.update)
+  .delete(InformationSharingAgreementArchiveItemsController.destroy)
 
 router.route("/api/user-groups").get(UserGroupsController.index).post(UserGroupsController.create)
 router

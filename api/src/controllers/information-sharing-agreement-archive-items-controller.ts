@@ -1,7 +1,7 @@
 import { isNil } from "lodash"
 
 import logger from "@/utils/logger"
-import { InformationSharingAgreementArchiveItem } from "@/models"
+import { InformationSharingAgreement, InformationSharingAgreementArchiveItem } from "@/models"
 import { InformationSharingAgreementArchiveItemPolicy } from "@/policies"
 import {
   CreateService,
@@ -181,7 +181,15 @@ export class InformationSharingAgreementArchiveItemsController extends BaseContr
 
   private async loadInformationSharingAgreementArchiveItem() {
     return InformationSharingAgreementArchiveItem.findByPk(
-      this.params.informationSharingAgreementArchiveItemId
+      this.params.informationSharingAgreementArchiveItemId,
+      {
+        include: [
+          {
+            association: "informationSharingAgreement",
+            include: ["accessGrants"],
+          },
+        ],
+      }
     )
   }
 
@@ -189,6 +197,15 @@ export class InformationSharingAgreementArchiveItemsController extends BaseContr
     const informationSharingAgreementArchiveItem = InformationSharingAgreementArchiveItem.build(
       this.request.body
     )
+    // TODO: consider nesting this as /information-sharing-agreements/:informationSharingAgreementId/archive-items?
+    const informationSharingAgreement = await InformationSharingAgreement.findByPk(
+      informationSharingAgreementArchiveItem.informationSharingAgreementId,
+      {
+        include: ["accessGrants"],
+        rejectOnEmpty: true,
+      }
+    )
+    informationSharingAgreementArchiveItem.informationSharingAgreement = informationSharingAgreement
     return informationSharingAgreementArchiveItem
   }
 

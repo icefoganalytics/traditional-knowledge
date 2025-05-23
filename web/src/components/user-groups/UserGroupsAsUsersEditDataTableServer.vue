@@ -11,7 +11,7 @@
   >
     <template #item.actions="{ item }">
       <div
-        v-if="isSystemAdmin || isGroupAdminFor(item.id)"
+        v-if="isSystemAdmin || isGroupAdminFor(item.groupId)"
         class="d-flex justify-end align-center"
       >
         <v-btn

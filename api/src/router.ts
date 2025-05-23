@@ -25,6 +25,7 @@ import {
   GroupsController,
   InformationSharingAgreementAccessGrantsController,
   InformationSharingAgreementsController,
+  NotificationsController,
   UserGroupsController,
   UsersController,
 } from "@/controllers"
@@ -45,6 +46,16 @@ router.use("/migrate", migrator.migrationRouter)
 router.use("/api", jwtMiddleware, ensureAndAuthorizeCurrentUser)
 
 router.route("/api/current-user").get(CurrentUserController.show)
+
+router
+  .route("/api/notifications")
+  .get(NotificationsController.index)
+  .post(NotificationsController.create)
+router
+  .route("/api/notifications/:notificationId")
+  .get(NotificationsController.show)
+  .patch(NotificationsController.update)
+  .delete(NotificationsController.destroy)
 
 router.route("/api/users").get(UsersController.index).post(UsersController.create)
 router

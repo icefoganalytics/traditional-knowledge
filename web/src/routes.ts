@@ -22,6 +22,14 @@ const routes: RouteRecordRaw[] = [
         meta: { title: "My Profile" },
       },
       {
+        name: "NotificationsPage",
+        path: "notifications",
+        component: () => import("@/pages/NotificationsPage.vue"),
+        meta: {
+          title: "Notifications",
+        },
+      },
+      {
         path: "administration",
         children: [
           {

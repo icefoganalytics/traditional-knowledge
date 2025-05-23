@@ -10,6 +10,7 @@ import {
   Attribute,
   AutoIncrement,
   BelongsTo,
+  BelongsToMany,
   Default,
   HasMany,
   NotNull,
@@ -22,6 +23,8 @@ import BaseModel from "@/models/base-model"
 import ArchiveItemFile from "@/models/archive-item-file"
 import InformationSharingAgreementArchiveItem from "@/models/information-sharing-agreement-archive-item"
 import User from "@/models/user"
+import InformationSharingAgreementAccessGrant from "@/models/information-sharing-agreement-access-grant"
+import ArchiveItemInformationSharingAgreementAccessGrant from "@/models/archive-item-information-sharing-agreement-access-grant"
 
 /** Keep in sync with web/src/api/users-api.ts */
 export enum SecurityLevel {
@@ -152,6 +155,24 @@ export class ArchiveItem extends BaseModel<
   })
   declare informationSharingAgreementArchiveItems?: NonAttribute<
     InformationSharingAgreementArchiveItem[]
+  >
+
+  @BelongsToMany(() => InformationSharingAgreementAccessGrant, {
+    through: () => ArchiveItemInformationSharingAgreementAccessGrant,
+    foreignKey: "archiveItemId",
+    otherKey: "informationSharingAgreementAccessGrantId",
+    inverse: "archiveItems",
+  })
+  declare informationSharingAgreementAccessGrants?: NonAttribute<
+    InformationSharingAgreementAccessGrant[]
+  >
+  /**
+   * Created by ArchiveItem.belongsToMany(InformationSharingAgreementAccessGrant), refers to a direct connection to a given InformationSharingAgreementAccessGrant
+   * Populated by by { include: [{ association: "informationSharingAgreementAccessGrants", through: { attributes: [xxx] } }] }
+   * See https://sequelize.org/docs/v7/querying/select-in-depth/#eager-loading-the-belongstomany-through-model
+   */
+  declare informationSharingAgreementAccessGrant?: NonAttribute<
+    InformationSharingAgreementAccessGrant[]
   >
 
   // Scopes

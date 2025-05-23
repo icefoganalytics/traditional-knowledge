@@ -9,7 +9,7 @@ import BaseModel from "@/models/base-model"
   timestamps: false,
   paranoid: false,
 })
-export default class InformationSharingAgreementAccessGrantSibling extends BaseModel<
+export class InformationSharingAgreementAccessGrantSibling extends BaseModel<
   InferAttributes<InformationSharingAgreementAccessGrantSibling>,
   InferCreationAttributes<InformationSharingAgreementAccessGrantSibling>
 > {
@@ -21,3 +21,5 @@ export default class InformationSharingAgreementAccessGrantSibling extends BaseM
   @PrimaryKey
   declare informationSharingAgreementAccessGrantSiblingId: number
 }
+
+export default InformationSharingAgreementAccessGrantSibling

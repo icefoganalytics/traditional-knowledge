@@ -5,7 +5,7 @@ import archiveItemsApi, { type ArchiveItemCreate, type ArchiveItem } from "@/api
 
 export { type ArchiveItem }
 
-export function useArchiveItem(id: Ref<number | null | undefined>) {
+export function useArchiveItemLegacy(id: Ref<number | null | undefined>) {
   const state = reactive<{
     item: ArchiveItem | null
     createItem: ArchiveItemCreate | null
@@ -35,7 +35,7 @@ export function useArchiveItem(id: Ref<number | null | undefined>) {
     } catch (error) {
       console.error("Failed to fetch arhive item:", error)
 
-      
+
 
       state.isErrored = true
       throw error
@@ -122,4 +122,4 @@ export function useArchiveItem(id: Ref<number | null | undefined>) {
   }
 }
 
-export default useArchiveItem
+export default useArchiveItemLegacy

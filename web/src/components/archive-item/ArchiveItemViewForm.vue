@@ -113,7 +113,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 
-import useArchiveItem from "@/use/use-archive-item"
+import useArchiveItemLegacy from "@/use/use-archive-item-legacy"
 import { formatDateTime } from "@/utils/formatters"
 
 import SecurityLevelSelect from "@/components/archive-item/SecurityLevelSelect.vue"
@@ -128,7 +128,7 @@ const props = defineProps<{
 const auditCard = ref<typeof ArchiveItemAuditCard>()
 const archiveItemId = computed(() => (props.archiveItemId ? parseInt(props.archiveItemId) : null))
 
-const { item } = useArchiveItem(archiveItemId)
+const { item } = useArchiveItemLegacy(archiveItemId)
 
 function reloadAudit() {
   auditCard.value?.reload()

@@ -4,17 +4,18 @@ import * as dotenv from "dotenv"
 import { stripTrailingSlash } from "@/utils/strip-trailing-slash"
 
 export const NODE_ENV = process.env.NODE_ENV || "development"
+export const APP_ROOT_PATH = path.resolve(__dirname, "..")
 
 let dotEnvPath
 switch (process.env.NODE_ENV) {
   case "test":
-    dotEnvPath = path.resolve(__dirname, "../.env.test")
+    dotEnvPath = path.resolve(APP_ROOT_PATH, ".env.test")
     break
   case "production":
-    dotEnvPath = path.resolve(__dirname, "../.env.production")
+    dotEnvPath = path.resolve(APP_ROOT_PATH, ".env.production")
     break
   default:
-    dotEnvPath = path.resolve(__dirname, "../.env.development")
+    dotEnvPath = path.resolve(APP_ROOT_PATH, ".env.development")
 }
 
 dotenv.config({ path: dotEnvPath })
@@ -81,3 +82,10 @@ export const MAIL_PASS = process.env.MAIL_PASS || ""
 
 export const BLOB_CONNECTION_STRING = process.env.BLOB_CONNECTION_STRING || ""
 export const BLOB_CONTAINER = process.env.BLOB_CONTAINER || ""
+
+// Internal Helpers
+export const SOURCE_ROOT_PATH =
+  NODE_ENV === "production" ? path.join(APP_ROOT_PATH, "dist") : path.join(APP_ROOT_PATH, "src")
+export const TEMPLATE_ROOT_PATH = path.join(SOURCE_ROOT_PATH, "templates")
+
+export const VUESQUE_TEMPLATE_DELIMINATOR_REGEX = /{{([\s\S]+?)}}/g

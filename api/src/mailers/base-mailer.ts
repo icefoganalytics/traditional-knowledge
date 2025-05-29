@@ -13,14 +13,15 @@ import {
   MAIL_PORT,
   MAIL_SERVICE,
   MAIL_USER,
+  TEMPLATE_ROOT_PATH,
+  VUESQUE_TEMPLATE_DELIMINATOR_REGEX,
 } from "@/config"
 import logger from "@/utils/logger"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type HasNoArgsConstructor<T> = T extends { new (): any } ? true : false
-type CleanConstructorParameters<T extends typeof BaseMailer> = HasNoArgsConstructor<T> extends true
-  ? []
-  : ConstructorParameters<T>
+type CleanConstructorParameters<T extends typeof BaseMailer> =
+  HasNoArgsConstructor<T> extends true ? [] : ConstructorParameters<T>
 
 export type MailerOptions = {
   mailFrom?: string
@@ -28,11 +29,18 @@ export type MailerOptions = {
   mailPort?: number
 }
 
+export enum MailPriority {
+  High = "high",
+  Normal = "normal",
+  Low = "low",
+}
+
 export type SendMailOptions = {
   to: string
   subject: string
   html: string
   text?: string
+  priority?: MailPriority
 }
 
 const authConfigOptions =
@@ -56,8 +64,6 @@ export const transporter = nodemailer.createTransport({
   tls: { rejectUnauthorized: false },
   pool: true,
 })
-
-export const VUESQUE_TEMPLATE_DELIMINATOR_REGEX = /{{([\s\S]+?)}}/g
 
 export class BaseMailer {
   protected mailOptions: {
@@ -85,15 +91,44 @@ export class BaseMailer {
     throw new Error("Not Implemented")
   }
 
+  /**
+   * Slightly simplified interface over `BaseMailer#sendMail`
+   *
+   * Data is passed to the template renderer and can be accessed as free variables in the template.
+   */
+  protected async mail(
+    {
+      to,
+      subject,
+      priority,
+    }: {
+      to: string
+      subject: string
+      priority?: MailPriority
+    },
+    data: Record<string, unknown> = {}
+  ) {
+    const html = this.renderHtml(this.templateName, data)
+    const text = this.renderText(this.templateName, data)
+    return this.sendMail({
+      to,
+      subject,
+      html,
+      text,
+      priority,
+    })
+  }
+
   // TODO: instead of catching any errors here, we should push emails to a queue
   // and handle the failure in the queue consumer
-  async sendMail({ to, subject, html, text }: SendMailOptions) {
+  async sendMail({ to, subject, html, text, priority = MailPriority.Normal }: SendMailOptions) {
     return transporter
       .sendMail({
         to,
         from: `${APPLICATION_NAME} <${this.mailOptions.from}>`,
         subject,
         html,
+        priority,
         text: text || html,
       })
       .catch((error) => {
@@ -149,7 +184,7 @@ export class BaseMailer {
   }
 
   private templatePath(path: string) {
-    return join(__dirname, `../templates`, path)
+    return join(TEMPLATE_ROOT_PATH, path)
   }
 }
 

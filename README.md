@@ -325,7 +325,7 @@ Files:
    DB_DATABASE=traditional_knowledge_production
 
    VITE_API_BASE_URL="http://localhost:8080"
-   VITE_AUTH0_CLIENT_ID="mNqPwPZ5M1VXkEH6e8OgEaxmmWfxecwo"
+   VITE_AUTH0_CLIENT_ID="fsWyrDohhHtojdOpOFnAYtFMxwAMHUEF"
    VITE_AUTH0_AUDIENCE="testing"
    VITE_AUTH0_DOMAIN="https://dev-0tc6bn14.eu.auth0.com"
 

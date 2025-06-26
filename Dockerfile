@@ -18,6 +18,9 @@ COPY api ./
 
 RUN npm run build
 
+# Create production seeds directory if empty
+RUN mkdir -p dist/db/seeds/production
+
 # Copy html files, remove once we are using Vite for build process
 COPY api/src/templates ./dist/templates
 

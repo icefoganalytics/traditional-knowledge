@@ -7,7 +7,7 @@
       <v-row>
         <v-col
           cols="12"
-          md="4"
+          md="3"
         >
           <v-card
             class="toggle fill-height"
@@ -29,7 +29,7 @@
         </v-col>
         <v-col
           cols="12"
-          md="4"
+          md="3"
         >
           <v-card
             class="toggle fill-height"
@@ -49,9 +49,56 @@
             </v-card-text>
           </v-card>
         </v-col>
+
         <v-col
           cols="12"
-          md="4"
+          md="3"
+        >
+          <v-card
+            class="toggle fill-height"
+            :to="{
+              name: 'administration/RetentionsPage',
+            }"
+          >
+            <v-card-text class="d-flex">
+              <span class="d-sm-flex align-center me-3 d-none">
+                <v-icon size="50px">mdi-file-minus</v-icon>
+              </span>
+
+              <div>
+                <div class="text-h6">Retentions</div>
+                <span class="text-subtitle-2">Manage Current Retentions</span>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col
+          cols="12"
+          md="3"
+        >
+          <v-card
+            class="toggle fill-height"
+            :to="{
+              name: 'administration/CategoriesPage',
+            }"
+          >
+            <v-card-text class="d-flex">
+              <span class="d-sm-flex align-center me-3 d-none">
+                <v-icon size="50px">mdi-view-list</v-icon>
+              </span>
+
+              <div>
+                <div class="text-h6">Categories</div>
+                <span class="text-subtitle-2">Manage Current Categories</span>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col
+          cols="12"
+          md="3"
         >
           <v-card
             class="toggle fill-height"

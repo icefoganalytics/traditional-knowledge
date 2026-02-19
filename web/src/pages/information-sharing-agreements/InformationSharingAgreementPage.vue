@@ -51,38 +51,11 @@
         />
 
         <div class="mt-4 d-flex flex-column flex-md-row justify-space-between ga-3 px-6 py-4">
-          <div class="d-flex flex-column flex-md-row ga-3">
-            <InformationSharingAgreementActionsMenu
-              :information-sharing-agreement-id="informationSharingAgreementIdAsNumber"
-              :information-sharing-agreement-status="informationSharingAgreement.status"
-            />
-
-            <template
-              v-if="
-                informationSharingAgreement.status === InformationSharingAgreementStatuses.SIGNED
-              "
-            >
-              <v-btn
-                color="warning"
-                size="large"
-                variant="outlined"
-              >
-                Revert to Draft
-                <InformationSharingAgreementRevertToDraftDialog
-                  :information-sharing-agreement-id="informationSharingAgreementIdAsNumber"
-                  activator="parent"
-                  @success="refresh"
-                />
-              </v-btn>
-              <InformationSharingAgreementDownloadSignedAcknowledgementButton
-                :information-sharing-agreement-id="informationSharingAgreementIdAsNumber"
-                :activator-props="{
-                  color: 'primary',
-                  size: 'large',
-                }"
-              />
-            </template>
-          </div>
+          <InformationSharingAgreementActionsMenu
+            :information-sharing-agreement-id="informationSharingAgreementIdAsNumber"
+            :information-sharing-agreement-status="informationSharingAgreement.status"
+            @updated="refresh"
+          />
 
           <v-btn
             size="large"
@@ -105,17 +78,13 @@ import { computed } from "vue"
 import { isNil } from "lodash"
 
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
-import useInformationSharingAgreement, {
-  InformationSharingAgreementStatuses,
-} from "@/use/use-information-sharing-agreement"
+import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
 
 import InformationSharingAgreementAccessCard from "@/components/information-sharing-agreements/InformationSharingAgreementAccessCard.vue"
 import InformationSharingAgreementActionsMenu from "@/components/information-sharing-agreements/InformationSharingAgreementActionsMenu.vue"
 import InformationSharingAgreementBasicInformationCard from "@/components/information-sharing-agreements/InformationSharingAgreementBasicInformationCard.vue"
 import InformationSharingAgreementConfidentialityCard from "@/components/information-sharing-agreements/InformationSharingAgreementConfidentialityCard.vue"
-import InformationSharingAgreementDownloadSignedAcknowledgementButton from "@/components/information-sharing-agreements/InformationSharingAgreementDownloadSignedAcknowledgementButton.vue"
 import InformationSharingAgreementDurationCard from "@/components/information-sharing-agreements/InformationSharingAgreementDurationCard.vue"
-import InformationSharingAgreementRevertToDraftDialog from "@/components/information-sharing-agreements/InformationSharingAgreementRevertToDraftDialog.vue"
 
 const props = defineProps<{
   informationSharingAgreementId: string

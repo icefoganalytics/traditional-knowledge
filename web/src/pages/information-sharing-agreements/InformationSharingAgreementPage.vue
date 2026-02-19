@@ -52,34 +52,13 @@
 
         <div class="mt-4 d-flex flex-column flex-md-row justify-space-between ga-3 px-6 py-4">
           <div class="d-flex flex-column flex-md-row ga-3">
+            <InformationSharingAgreementActionsMenu
+              :information-sharing-agreement-id="informationSharingAgreementIdAsNumber"
+              :information-sharing-agreement-status="informationSharingAgreement.status"
+            />
+
             <template
               v-if="
-                informationSharingAgreement.status === InformationSharingAgreementStatuses.DRAFT
-              "
-            >
-              <InformationSharingAgreementDownloadDraftButton
-                :information-sharing-agreement-id="informationSharingAgreementIdAsNumber"
-                :activator-props="{
-                  variant: 'outlined',
-                  color: 'secondary',
-                  size: 'large',
-                }"
-              />
-              <v-btn
-                color="secondary"
-                size="large"
-                :to="{
-                  name: 'information-sharing-agreements/InformationSharingAgreementSignPage',
-                  params: {
-                    informationSharingAgreementId,
-                  },
-                }"
-              >
-                Mark as Signed
-              </v-btn>
-            </template>
-            <template
-              v-else-if="
                 informationSharingAgreement.status === InformationSharingAgreementStatuses.SIGNED
               "
             >
@@ -105,34 +84,16 @@
             </template>
           </div>
 
-          <div class="d-flex flex-column flex-md-row justify-end ga-3">
-            <v-btn
-              v-if="
-                policy?.update &&
-                informationSharingAgreement.status === InformationSharingAgreementStatuses.DRAFT
-              "
-              color="primary"
-              size="large"
-              :to="{
-                name: 'information-sharing-agreements/InformationSharingAgreementEditBasicInformationPage',
-                params: {
-                  informationSharingAgreementId,
-                },
-              }"
-            >
-              Edit Agreement
-            </v-btn>
-            <v-btn
-              size="large"
-              variant="outlined"
-              color="secondary"
-              :to="{
-                name: 'InformationSharingAgreementsPage',
-              }"
-            >
-              Back to List
-            </v-btn>
-          </div>
+          <v-btn
+            size="large"
+            variant="outlined"
+            color="secondary"
+            :to="{
+              name: 'InformationSharingAgreementsPage',
+            }"
+          >
+            Back to List
+          </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -149,9 +110,9 @@ import useInformationSharingAgreement, {
 } from "@/use/use-information-sharing-agreement"
 
 import InformationSharingAgreementAccessCard from "@/components/information-sharing-agreements/InformationSharingAgreementAccessCard.vue"
+import InformationSharingAgreementActionsMenu from "@/components/information-sharing-agreements/InformationSharingAgreementActionsMenu.vue"
 import InformationSharingAgreementBasicInformationCard from "@/components/information-sharing-agreements/InformationSharingAgreementBasicInformationCard.vue"
 import InformationSharingAgreementConfidentialityCard from "@/components/information-sharing-agreements/InformationSharingAgreementConfidentialityCard.vue"
-import InformationSharingAgreementDownloadDraftButton from "@/components/information-sharing-agreements/InformationSharingAgreementDownloadDraftButton.vue"
 import InformationSharingAgreementDownloadSignedAcknowledgementButton from "@/components/information-sharing-agreements/InformationSharingAgreementDownloadSignedAcknowledgementButton.vue"
 import InformationSharingAgreementDurationCard from "@/components/information-sharing-agreements/InformationSharingAgreementDurationCard.vue"
 import InformationSharingAgreementRevertToDraftDialog from "@/components/information-sharing-agreements/InformationSharingAgreementRevertToDraftDialog.vue"
@@ -163,7 +124,7 @@ const props = defineProps<{
 const informationSharingAgreementIdAsNumber = computed(() =>
   parseInt(props.informationSharingAgreementId)
 )
-const { informationSharingAgreement, policy, refresh } = useInformationSharingAgreement(
+const { informationSharingAgreement, refresh } = useInformationSharingAgreement(
   informationSharingAgreementIdAsNumber
 )
 

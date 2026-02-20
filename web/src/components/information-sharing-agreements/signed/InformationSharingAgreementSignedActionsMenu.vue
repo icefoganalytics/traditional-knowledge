@@ -50,7 +50,14 @@
     </v-list-item>
 
     <!-- Create Archive Item -->
-    <v-list-item @click="createArchiveItem">
+    <v-list-item
+      :to="{
+        name: 'information-sharing-agreements/archive-items/InformationSharingAgreementArchiveItemNewPage',
+        params: {
+          informationSharingAgreementId: props.informationSharingAgreementId,
+        },
+      }"
+    >
       <v-list-item-title>Create Knowledge Item</v-list-item-title>
       <template #prepend>
         <v-icon
@@ -96,10 +103,6 @@ const generateSignedAcknowledgementUrl = computed(() =>
 )
 const { submit: downloadSignedAcknowledgement, isLoading: isDownloadingSignedAcknowledgement } =
   useAuthenticatedDownload(generateSignedAcknowledgementUrl)
-
-async function createArchiveItem() {
-  alert("TODO: redirect to ISA -> Archive Item creation page (once it exists)")
-}
 </script>
 
 <style scoped></style>

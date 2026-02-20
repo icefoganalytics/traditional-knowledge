@@ -95,7 +95,7 @@ export const archiveItemsApi = {
     const { data } = await http.get(`/api/archive-items/${archiveItemId}`)
     return data
   },
-  async create(attributes: FormData | GenericFormData | ArchiveItemCreate): Promise<{
+  async create(attributes: FormData | GenericFormData | Partial<ArchiveItemCreate>): Promise<{
     archiveItem: ArchiveItemShowView
   }> {
     const { data } = await http.post("/api/archive-items", attributes, {

@@ -5,7 +5,7 @@ import cache from "@/db/cache-client"
 
 import db, { ArchiveItem, ArchiveItemCategory, ArchiveItemFile, User } from "@/models"
 import BaseService from "@/services/base-service"
-import { ArchiveItemStatus } from "@/models/archive-item"
+import { ArchiveItemStatuses } from "@/models/archive-item"
 import { FileStorageService } from "@/services/file-storage-service"
 
 export type ArchiveItemCreationAttributes = Partial<CreationAttributes<ArchiveItem>> & {
@@ -24,7 +24,7 @@ export class CreateService extends BaseService {
   async perform(): Promise<ArchiveItem> {
     const { title, securityLevel, confidentialityReceipt, ...optionalAttributes } = this.attributes
 
-    const status = ArchiveItemStatus.ACCEPTED
+    const status = ArchiveItemStatuses.ACCEPTED
 
     if (isNil(title)) {
       throw new Error("Title is required")
@@ -98,7 +98,7 @@ export class CreateService extends BaseService {
           "user",
           { association: "categories", through: { attributes: [] } },
           {
-            association: "informationSharingAgreementAccessGrants",
+            association: "accessGrants",
             through: {
               // NOTE: suppressing through model attributes as their names are too long
               attributes: [],

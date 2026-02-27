@@ -9,7 +9,7 @@ import { type InformationSharingAgreementAccessGrantShowView } from "@/serialize
 import BaseSerializer from "@/serializers/base-serializer"
 import { type UserAsReference } from "@/serializers/users/reference-serializer"
 
-export type ArchiveItemShowView = Pick<
+export type ArchiveItemAsShow = Pick<
   ArchiveItem,
   | "id"
   | "isDecision"
@@ -29,21 +29,19 @@ export type ArchiveItemShowView = Pick<
   | "updatedAt"
 > & {
   user?: UserAsReference
-  informationSharingAgreementAccessGrants?: InformationSharingAgreementAccessGrantShowView[]
+  accessGrants?: InformationSharingAgreementAccessGrantShowView[]
   categories?: CategoryIndexView[]
 }
 
 export class ShowSerializer extends BaseSerializer<ArchiveItem> {
-  perform(): ArchiveItemShowView {
-    const { user, informationSharingAgreementAccessGrants, categories } = this.record
+  perform(): ArchiveItemAsShow {
+    const { user, accessGrants, categories } = this.record
     if (isUndefined(user)) {
       throw new Error("Expected user association to be preloaded")
     }
 
-    if (isUndefined(informationSharingAgreementAccessGrants)) {
-      throw new Error(
-        "Expected informationSharingAgreementAccessGrants association to be preloaded"
-      )
+    if (isUndefined(accessGrants)) {
+      throw new Error("Expected accessGrants association to be preloaded")
     }
 
     if (isUndefined(categories)) {
@@ -52,9 +50,7 @@ export class ShowSerializer extends BaseSerializer<ArchiveItem> {
 
     const serializedUser = Users.ReferenceSerializer.perform(user)
     const serializedInformationSharingAgreementAccessGrants =
-      InformationSharingAgreementAccessGrants.ShowSerializer.perform(
-        informationSharingAgreementAccessGrants
-      )
+      InformationSharingAgreementAccessGrants.ShowSerializer.perform(accessGrants)
     const serializedCategories = categories.map((category) =>
       CategoryIndexSerializer.perform(category)
     )
@@ -78,7 +74,7 @@ export class ShowSerializer extends BaseSerializer<ArchiveItem> {
         "updatedAt",
       ]),
       user: serializedUser,
-      informationSharingAgreementAccessGrants: serializedInformationSharingAgreementAccessGrants,
+      accessGrants: serializedInformationSharingAgreementAccessGrants,
       categories: serializedCategories,
     }
   }

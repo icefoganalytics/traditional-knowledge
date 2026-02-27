@@ -109,6 +109,13 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        path: "information-sharing-agreements/:informationSharingAgreementId/archive-items/new",
+        name: "information-sharing-agreements/archive-items/InformationSharingAgreementArchiveItemNewPage",
+        component: () =>
+          import("@/pages/information-sharing-agreements/archive-items/InformationSharingAgreementArchiveItemNewPage.vue"),
+        props: true,
+      },
+      {
         path: "administration",
         children: [
           {

@@ -10,4 +10,5 @@ export { CreateGroupsService } from "./create-groups-service"
 export { DestroyGroupsService } from "./destroy-groups-service"
 
 // Bundled exports
+export * as ArchiveItems from "./archive-items"
 export * as GenerateAcknowledgement from "./generate-acknowledgement"

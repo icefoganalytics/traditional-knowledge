@@ -7,7 +7,21 @@
     v-else
     class="border"
   >
-    <template #title>Knowledge Item Description</template>
+    <template #title>
+      <div class="d-flex align-center">
+        Knowledge Item Description
+        <v-spacer />
+        <v-btn
+          size="small"
+          color="error"
+          variant="text"
+          :loading="isDeleting"
+          @click="deleteArchiveItem"
+        >
+          Delete
+        </v-btn>
+      </div>
+    </template>
     <template #text>
       <v-row>
         <v-col
@@ -69,10 +83,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
+import { toRefs, ref } from "vue"
 import { isNil } from "lodash"
+import { useRouter } from "vue-router"
+
+import blockedToTrueConfirm from "@/utils/blocked-to-true-confirm"
+
+import archiveItemsApi from "@/api/archive-items-api"
 
 import useArchiveItem from "@/use/use-archive-item"
+import useSnack from "@/use/use-snack"
 
 import SecurityLevelSelect from "@/components/archive-items/SecurityLevelSelect.vue"
 
@@ -80,5 +100,29 @@ const props = defineProps<{
   archiveItemId: number
 }>()
 
-const { archiveItem } = useArchiveItem(computed(() => props.archiveItemId))
+const { archiveItemId } = toRefs(props)
+const { archiveItem } = useArchiveItem(archiveItemId)
+
+const isDeleting = ref(false)
+const snack = useSnack()
+const router = useRouter()
+
+async function deleteArchiveItem() {
+  const result = blockedToTrueConfirm("Are you sure you want to delete this knowledge item?")
+  if (result !== true) return
+
+  isDeleting.value = true
+  try {
+    await archiveItemsApi.delete(archiveItemId.value)
+    snack.success("Knowledge item deleted")
+    router.push({
+      name: "archive-items/ArchiveItemListPage",
+    })
+  } catch (error) {
+    console.error("Failed to delete knowledge item:", error)
+    snack.error("Failed to delete knowledge item")
+  } finally {
+    isDeleting.value = false
+  }
+}
 </script>

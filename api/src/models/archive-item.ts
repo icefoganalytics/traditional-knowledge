@@ -29,13 +29,13 @@ import Category from "@/models/category"
 import ArchiveItemCategory from "@/models/archive-item-category"
 
 /** Keep in sync with web/src/api/users-api.ts */
-export enum SecurityLevel {
+export enum SecurityLevels {
   LOW = 1,
   MEDIUM = 2,
   HIGH = 3,
 }
 
-export enum ArchiveItemStatus {
+export enum ArchiveItemStatuses {
   ACCEPTED = "Accepted",
   REVIEWED = "Reviewed",
   LOCKED = "Locked",
@@ -46,8 +46,8 @@ export class ArchiveItem extends BaseModel<
   InferAttributes<ArchiveItem>,
   InferCreationAttributes<ArchiveItem>
 > {
-  static readonly SecurityLevel = SecurityLevel
-  static readonly ArchiveItemStatus = ArchiveItemStatus
+  static readonly Levels = SecurityLevels
+  static readonly Statuses = ArchiveItemStatuses
 
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey
@@ -61,6 +61,7 @@ export class ArchiveItem extends BaseModel<
   @Attribute(DataTypes.STRING(255))
   declare decisionText: string | null
 
+  // TODO: rename this to "creatorId" and make it required
   @Attribute(DataTypes.INTEGER)
   declare userId: number | null
 
@@ -85,21 +86,21 @@ export class ArchiveItem extends BaseModel<
   @NotNull
   @ValidateAttribute({
     isIn: {
-      args: [Object.values(ArchiveItemStatus)],
-      msg: `Status must be one of ${Object.values(ArchiveItemStatus).join(", ")}`,
+      args: [Object.values(ArchiveItemStatuses)],
+      msg: `Status must be one of ${Object.values(ArchiveItemStatuses).join(", ")}`,
     },
   })
-  declare status: ArchiveItemStatus
+  declare status: ArchiveItemStatuses
 
   @Attribute(DataTypes.INTEGER)
   @NotNull
   @ValidateAttribute({
     isIn: {
-      args: [Object.values(SecurityLevel)],
-      msg: `Security Level must be one of ${Object.values(SecurityLevel).join(", ")}`,
+      args: [Object.values(SecurityLevels)],
+      msg: `Security Level must be one of ${Object.values(SecurityLevels).join(", ")}`,
     },
   })
-  declare securityLevel: SecurityLevel
+  declare securityLevel: SecurityLevels
 
   @Attribute({
     type: DataTypes.STRING(255),
@@ -163,26 +164,20 @@ export class ArchiveItem extends BaseModel<
   declare archiveItemFileCount?: number
 
   // Helper functions
-  hasInformationSharingAgreementAccessGrantFor(userId: number): boolean {
-    if (isUndefined(this.informationSharingAgreementAccessGrants)) {
-      throw new Error(
-        "Expected informationSharingAgreementAccessGrants association to be pre-loaded."
-      )
+  hasAccessGrantFor(userId: number): boolean {
+    if (isUndefined(this.accessGrants)) {
+      throw new Error("Expected accessGrants association to be pre-loaded.")
     }
 
-    return this.informationSharingAgreementAccessGrants.some(
-      (accessGrant) => accessGrant.userId === userId
-    )
+    return this.accessGrants.some((accessGrant) => accessGrant.userId === userId)
   }
 
-  hasAdminInformationSharingAgreementAccessGrantFor(userId: number): boolean {
-    if (isUndefined(this.informationSharingAgreementAccessGrants)) {
-      throw new Error(
-        "Expected informationSharingAgreementAccessGrants association to be pre-loaded."
-      )
+  hasAdminAccessGrantFor(userId: number): boolean {
+    if (isUndefined(this.accessGrants)) {
+      throw new Error("Expected accessGrants association to be pre-loaded.")
     }
 
-    return this.informationSharingAgreementAccessGrants.some(
+    return this.accessGrants.some(
       (accessGrant) =>
         accessGrant.userId === userId &&
         accessGrant.accessLevel === InformationSharingAgreementAccessGrant.AccessLevels.ADMIN
@@ -229,20 +224,22 @@ export class ArchiveItem extends BaseModel<
   @BelongsToMany(() => InformationSharingAgreementAccessGrant, {
     through: () => ArchiveItemInformationSharingAgreementAccessGrant,
     foreignKey: "archiveItemId",
-    otherKey: "informationSharingAgreementAccessGrantId",
+    otherKey: "accessGrantId",
     inverse: "archiveItems",
+    throughAssociations: {
+      fromSource: "archiveItemAccessGrants",
+      toSource: "archiveItem",
+      fromTarget: "archiveItemAccessGrants",
+      toTarget: "informationSharingAgreementAccessGrant",
+    },
   })
-  declare informationSharingAgreementAccessGrants?: NonAttribute<
-    InformationSharingAgreementAccessGrant[]
-  >
+  declare accessGrants?: NonAttribute<InformationSharingAgreementAccessGrant[]>
   /**
    * Created by ArchiveItem.belongsToMany(InformationSharingAgreementAccessGrant), refers to a direct connection to a given InformationSharingAgreementAccessGrant
    * Populated by by { include: [{ association: "informationSharingAgreementAccessGrants", through: { attributes: [xxx] } }] }
    * See https://sequelize.org/docs/v7/querying/select-in-depth/#eager-loading-the-belongstomany-through-model
    */
-  declare informationSharingAgreementAccessGrant?: NonAttribute<
-    InformationSharingAgreementAccessGrant[]
-  >
+  declare accessGrant?: NonAttribute<InformationSharingAgreementAccessGrant[]>
 
   // Scopes
   static establishScopes(): void {

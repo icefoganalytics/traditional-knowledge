@@ -9,7 +9,7 @@ import { PolicyFactory } from "@/policies/base-policy"
 export class ArchiveItemsPolicy extends PolicyFactory(ArchiveItem) {
   show(): boolean {
     if (this.user.id === this.record.userId) return true
-    if (this.record.hasInformationSharingAgreementAccessGrantFor(this.user.id)) return true
+    if (this.record.hasAccessGrantFor(this.user.id)) return true
 
     return false
   }
@@ -20,14 +20,14 @@ export class ArchiveItemsPolicy extends PolicyFactory(ArchiveItem) {
 
   update(): boolean {
     if (this.user.id === this.record.userId) return true
-    if (this.record.hasAdminInformationSharingAgreementAccessGrantFor(this.user.id)) return true
+    if (this.record.hasAdminAccessGrantFor(this.user.id)) return true
 
     return false
   }
 
   destroy(): boolean {
     if (this.user.id === this.record.userId) return true
-    if (this.record.hasAdminInformationSharingAgreementAccessGrantFor(this.user.id)) return true
+    if (this.record.hasAdminAccessGrantFor(this.user.id)) return true
 
     return false
   }
@@ -36,25 +36,27 @@ export class ArchiveItemsPolicy extends PolicyFactory(ArchiveItem) {
     const attributes: (keyof Attributes<ArchiveItem>)[] = [
       "title",
       "description",
-      "summary",
       "sharingPurpose",
       "confidentialityReceipt",
       "yukonFirstNations",
       "status",
       "securityLevel",
       "tags",
-      "submittedAt",
     ]
-
-    /* if (this.user.isSystemAdmin) {
-      attributes.push("email", "roles", "deactivatedAt")
-    } */
 
     return attributes
   }
 
   permittedAttributesForCreate(): Path[] {
-    return [...this.permittedAttributes()]
+    return [
+      ...this.permittedAttributes(),
+      {
+        archiveItemCategoriesAttributes: ["categoryId"],
+      },
+      {
+        archiveItemFilesAttributes: ["name", "path"],
+      },
+    ]
   }
 
   static policyScope(user: User): FindOptions<Attributes<ArchiveItem>> {
@@ -64,7 +66,7 @@ export class ArchiveItemsPolicy extends PolicyFactory(ArchiveItem) {
           archive_item_information_sharing_agreement_access_grants.archive_item_id
         FROM
           archive_item_information_sharing_agreement_access_grants
-          INNER JOIN information_sharing_agreement_access_grants ON archive_item_information_sharing_agreement_access_grants.information_sharing_agreement_access_grant_id = information_sharing_agreement_access_grants.id
+          INNER JOIN information_sharing_agreement_access_grants ON archive_item_information_sharing_agreement_access_grants.access_grant_id = information_sharing_agreement_access_grants.id
         WHERE
           information_sharing_agreement_access_grants.user_id = :userId
       )

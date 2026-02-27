@@ -47,15 +47,7 @@ export class InformationSharingAgreementArchiveItemPolicy extends PolicyFactory(
         {
           association: "informationSharingAgreement",
           attributes: ["id"],
-          include: [
-            {
-              association: "accessGrants",
-              attributes: [],
-              where: {
-                userId: user.id,
-              },
-            },
-          ],
+          ...InformationSharingAgreementPolicy.policyScope(user),
           required: true,
         },
       ],

@@ -180,7 +180,7 @@ export class BaseController<TModel extends Model = never> {
   }
 
   get files() {
-    return this.request.files
+    return this.request.files || {}
   }
 
   buildWhere<TModelOverride extends Model = TModel>(

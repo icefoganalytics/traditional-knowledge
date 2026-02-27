@@ -118,7 +118,7 @@ router
   .get(ArchiveItemsController.index)
   .post(ArchiveItemsController.create)
 router
-  .route("/api/archive-items/:id")
+  .route("/api/archive-items/:archiveItemId")
   .get(ArchiveItemsController.show)
   .patch(ArchiveItemsController.update)
   .delete(ArchiveItemsController.destroy)
@@ -163,6 +163,9 @@ router
     "/api/information-sharing-agreements/:informationSharingAgreementId/generate-acknowledgement"
   )
   .post(InformationSharingAgreements.GenerateAcknowledgementController.create)
+router
+  .route("/api/information-sharing-agreements/:informationSharingAgreementId/archive-items")
+  .post(InformationSharingAgreements.ArchiveItemsController.create)
 
 router
   .route("/api/information-sharing-agreement-access-grants")

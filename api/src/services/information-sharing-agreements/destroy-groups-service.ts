@@ -1,8 +1,13 @@
 import { isNil } from "lodash"
 
-import db, { Group, InformationSharingAgreement, User } from "@/models"
+import db, {
+  Group,
+  InformationSharingAgreement,
+  InformationSharingAgreementAccessGrant,
+  UserGroup,
+  User,
+} from "@/models"
 import BaseService from "@/services/base-service"
-import { Groups } from "@/services"
 
 export class DestroyGroupsService extends BaseService {
   constructor(
@@ -13,7 +18,12 @@ export class DestroyGroupsService extends BaseService {
   }
 
   async perform(): Promise<void> {
-    const { externalGroupId, internalGroupId } = this.informationSharingAgreement
+    const {
+      id: informationSharingAgreementId,
+      externalGroupId,
+      internalGroupId,
+    } = this.informationSharingAgreement
+
     if (isNil(externalGroupId)) {
       throw new Error("External group ID is required")
     }
@@ -23,16 +33,52 @@ export class DestroyGroupsService extends BaseService {
     }
 
     return db.transaction(async () => {
-      await Group.findEach(
-        {
-          where: {
-            id: [externalGroupId, internalGroupId],
-          },
-        },
-        async (group) => {
-          await Groups.DestroyService.perform(group, this.currentUser)
-        }
+      await this.removeChildEntities(
+        informationSharingAgreementId,
+        externalGroupId,
+        internalGroupId
       )
+      await this.informationSharingAgreement.update({
+        externalGroupId: null,
+        internalGroupId: null,
+      })
+    })
+  }
+
+  private async removeChildEntities(
+    informationSharingAgreementId: number,
+    externalGroupId: number,
+    internalGroupId: number
+  ): Promise<void> {
+    await this.removeChildAccessGrants(informationSharingAgreementId)
+    await this.removeChildUserGroups(externalGroupId, internalGroupId)
+    await this.removeChildGroup(externalGroupId, internalGroupId)
+  }
+
+  private async removeChildAccessGrants(informationSharingAgreementId: number): Promise<void> {
+    await InformationSharingAgreementAccessGrant.destroy({
+      where: {
+        informationSharingAgreementId,
+      },
+    })
+  }
+
+  private async removeChildUserGroups(
+    externalGroupId: number,
+    internalGroupId: number
+  ): Promise<void> {
+    await UserGroup.destroy({
+      where: {
+        groupId: [externalGroupId, internalGroupId],
+      },
+    })
+  }
+
+  private async removeChildGroup(externalGroupId: number, internalGroupId: number): Promise<void> {
+    await Group.destroy({
+      where: {
+        id: [externalGroupId, internalGroupId],
+      },
     })
   }
 }

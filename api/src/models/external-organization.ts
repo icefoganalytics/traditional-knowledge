@@ -70,6 +70,18 @@ export class ExternalOrganization extends BaseModel<
         },
       }
     })
+
+    this.addScope("withUserId", (userId: number) => ({
+      include: [
+        {
+          association: "users",
+          attributes: [],
+          where: {
+            id: userId,
+          },
+        },
+      ],
+    }))
   }
 }
 

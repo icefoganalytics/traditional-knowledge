@@ -1,5 +1,6 @@
 import { type NextFunction, type Request, type Response } from "express"
-import enhancedQsDecoder from "@/utils/enhanced-qs-decoder"
+
+import objectValueDecoder from "@/utils/object-value-decoder"
 
 export function betterFormDataBodyParserMiddleware(
   req: Request,
@@ -11,7 +12,7 @@ export function betterFormDataBodyParserMiddleware(
     req.body &&
     typeof req.body === "object"
   ) {
-    req.body = enhancedQsDecoder(req.body)
+    req.body = objectValueDecoder(req.body)
   }
   next()
 }

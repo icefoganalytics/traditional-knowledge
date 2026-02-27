@@ -40,6 +40,7 @@ export type ExternalOrganizationWhereOptions = WhereOptions<ExternalOrganization
 export type ExternalOrganizationFiltersOptions = FiltersOptions<{
   search: string | string[]
   excludeById: number | number[]
+  withUserId: number
 }>
 
 export type ExternalOrganizationQueryOptions = QueryOptions<

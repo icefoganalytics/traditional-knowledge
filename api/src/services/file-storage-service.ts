@@ -2,6 +2,7 @@ import { v4 as uuidV4 } from "uuid"
 import { BlobServiceClient } from "@azure/storage-blob"
 import { BLOB_CONNECTION_STRING, BLOB_CONTAINER } from "@/config"
 
+/** @deprecated Prefer using BlobStorageIntegration from "@/integrations/blob-storage-integration" */
 export class FileStorageService {
   private serviceClient
   private containerClient

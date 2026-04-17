@@ -81,7 +81,7 @@ class OpenInEditorBridge
 
     return unless pid
 
-    Process.kill("TERM", pid)
+    Process.kill("TERM", -pid)
     delete_pid_file
 
     puts "Stopped editor bridge."

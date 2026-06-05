@@ -62,6 +62,15 @@ class DevHelper
     compose(%w[build], *args, **kwargs)
   end
 
+  def compile(*args, **kwargs)
+    run(*%w[api npm run build], execution_mode: WAIT_FOR_PROCESS)
+    exit($?.exitstatus) unless $?.success?
+    run(*%w[archiver npm run build], execution_mode: WAIT_FOR_PROCESS)
+    exit($?.exitstatus) unless $?.success?
+    run(*%w[web npm run build], execution_mode: WAIT_FOR_PROCESS)
+    exit($?.exitstatus) unless $?.success?
+  end
+
   def up(*args, **kwargs)
     OpenInEditorBridge.with_running do
       compose(*%w[up --remove-orphans --force-recreate], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)

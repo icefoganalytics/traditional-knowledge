@@ -50,7 +50,7 @@
 
 4. [Set up the `dev`](#set-up-dev-command) command, or use `docker compose -f docker-compose.development.yml` instead of `dev` in all instructions.
 
-5. Boot the api, web, and db services via `dev up --watch` or `dev watch` or `docker compose -f docker-compose.development.yml up --watch`. This will run the boot pipeline and create the database, run migrations, and run seeds.
+5. Boot the api, web, and db services via `dev up --watch`. This runs the boot pipeline, writes free host ports to `./.dev-ports.env`, and creates the database, runs migrations, and runs seeds. If you use `docker compose -f docker-compose.development.yml up --watch` directly, you must choose the host ports yourself.
 
 6. Stop the api, web, and db services via `ctrl+c` or `dev down` or if you want to wipe the database `dev down -v`.
 
@@ -75,7 +75,7 @@
    npm run start
    ```
 
-2. Access the api by logging in to the front-end, then going to http://localhost:3000
+2. When using `dev up`, access the api by logging in to the front-end, then going to the API host port from `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Web Service (a.k.a. front-end)
 
@@ -94,7 +94,7 @@
    npm run start
    ```
 
-2. Log in to the front-end service at http://localhost:8080
+2. When using `dev up`, log in to the front-end service at the web host port from `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### DB Service (a.k.a database service)
 
@@ -129,18 +129,18 @@
    '
    ```
 
-You can also run migrations and seeding manually after login in to the web UI by going to
+You can also use the API host port from `.dev-ports.env` for the migration routes when using `dev up`:
 
-- http://localhost:3000/migrate/latest
-- http://localhost:3000/migrate/up
-- http://localhost:3000/migrate/down
-- http://localhost:3000/migrate/seed
+- `/migrate/latest`
+- `/migrate/up`
+- `/migrate/down`
+- `/migrate/seed`
 
 You can also skip seeding if database is not empty by setting the `SKIP_SEEDING_UNLESS_EMPTY=true` environment variable.
 
 ### Mail Service (a.k.a mail server)
 
-1. Access the web interface at http://localhost:1080
+1. When using `dev up`, access the web interface at the Mail host port from `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Troubleshooting
 

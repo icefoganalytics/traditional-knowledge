@@ -2,6 +2,8 @@ import { stripTrailingSlash } from "@/utils/strip-trailing-slash"
 
 export const ENVIRONMENT = import.meta.env.MODE
 
+const developmentApiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
+
 const prodConfig = {
   domain: "https://yukon.eu.auth0.com",
   clientId: "cGFfr4ZNoqn88sJGBS8VgnbG6oCV2ACc",
@@ -22,7 +24,7 @@ const devConfig = {
   domain: "https://dev-0tc6bn14.eu.auth0.com",
   clientId: "fsWyrDohhHtojdOpOFnAYtFMxwAMHUEF",
   audience: "testing",
-  apiBaseUrl: "http://localhost:3000",
+  apiBaseUrl: developmentApiBaseUrl,
   applicationName: "Traditional Knowledge",
 }
 
@@ -36,11 +38,13 @@ const localProductionConfig = {
 
 let config = prodConfig
 
+const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+
 if (ENVIRONMENT === "production" && window.location.host === "localhost:8080") {
   config = localProductionConfig
-} else if (window.location.host === "localhost:8080") {
+} else if (ENVIRONMENT !== "production" && isLocalhost) {
   config = devConfig
-} else if (window.location.host == "yg-wrap-uat.azurewebsites.net") {
+} else if (window.location.host === "yg-wrap-uat.azurewebsites.net") {
   config = uatConfig
 }
 

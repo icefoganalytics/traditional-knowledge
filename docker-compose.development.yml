@@ -11,9 +11,9 @@ x-default-environment: &default-environment
   DB_HEALTH_CHECK_TIMEOUT_SECONDS: 10
   DB_HEALTH_CHECK_RETRIES: 3
   DB_HEALTH_CHECK_START_PERIOD_SECONDS: 5
-  FRONTEND_URL: "http://localhost:8080"
+  FRONTEND_URL: "http://localhost:${TK_WEB_PORT:-8080}"
   VITE_APPLICATION_NAME: "Traditional Knowledge"
-  VITE_API_BASE_URL: "http://localhost:3000"
+  VITE_API_BASE_URL: "http://localhost:${TK_API_PORT:-3000}"
   VITE_AUTH0_CLIENT_ID: "fsWyrDohhHtojdOpOFnAYtFMxwAMHUEF"
   VITE_AUTH0_AUDIENCE: "testing"
   VITE_AUTH0_DOMAIN: "https://dev-0tc6bn14.eu.auth0.com"
@@ -45,8 +45,8 @@ services:
     # stdin_open: true # equivalent of docker exec -i
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     ports:
-      - "3000:3000"
-      - "9229:9229" # Debug port
+      - "${TK_API_PORT:-3000}:3000"
+      - "${TK_API_DEBUG_PORT:-9229}:9229" # Debug port
     volumes:
       - ./api:/usr/src/api
       - ./.gitignore:/usr/src/.gitignore
@@ -64,7 +64,7 @@ services:
       <<: *default-environment
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     ports:
-      - "8080:8080"
+      - "${TK_WEB_PORT:-8080}:8080"
     volumes:
       - ./web:/usr/src/web
       - ./.gitignore:/usr/src/.gitignore
@@ -131,7 +131,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - "6379:6379"
+      - "${TK_REDIS_PORT:-6379}:6379"
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04
@@ -143,15 +143,15 @@ services:
       TZ: "America/Whitehorse"
       ACCEPT_EULA: "Y"
     ports:
-      - "1433:1433"
+      - "${TK_DB_PORT:-1433}:1433"
     volumes:
       - db_data:/var/opt/mssql/data
 
   mail:
     image: maildev/maildev:2.2.1
     ports:
-      - "1080:1080" # Web UI
-      - "1025:1025" # SMTP
+      - "${TK_MAIL_UI_PORT:-1080}:1080" # Web UI
+      - "${TK_MAIL_SMTP_PORT:-1025}:1025" # SMTP
 
   # For easily generating large PlantUML diagrams
   # Not relevant to production environment.
@@ -178,7 +178,7 @@ services:
     # stdin_open: true # equivalent of docker exec -i
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     ports:
-      - "5000:5000"
+      - "${TK_ARCHIVER_PORT:-5000}:3001"
     volumes:
       - ./archiver/certs/icefog.pem:/etc/ssl/private/icefog.pem:ro
       - ./archiver/certs/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro

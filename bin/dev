@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "shellwords"
+require "socket"
 require "rdoc"
 
 require_relative "./github_api"
@@ -20,7 +21,20 @@ class DevHelper
     "bash-completions" => :bash_completions,
     "plantuml-to-png" => :plantuml_to_png,
     "sqlcmd-query" => :sqlcmd_query,
-  }
+  }.freeze
+
+  PORT_ENV_FILE = ".dev-ports.env"
+  PORT_ENV_KEYS = %w[
+    TK_API_PORT
+    TK_API_DEBUG_PORT
+    TK_WEB_PORT
+    TK_ARCHIVER_PORT
+    TK_DB_PORT
+    TK_MAIL_UI_PORT
+    TK_MAIL_SMTP_PORT
+    TK_REDIS_PORT
+  ].freeze
+
   METHOD_TO_COMMAND = COMMAND_TO_METHOD.invert
 
   REPLACE_PROCESS = "replace_process"
@@ -63,6 +77,8 @@ class DevHelper
   end
 
   def up(*args, **kwargs)
+    ensure_development_ports!
+
     OpenInEditorBridge.with_running do
       compose(*%w[up --remove-orphans --force-recreate], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
     end
@@ -361,6 +377,49 @@ class DevHelper
     id_of_container
   end
 
+  def ensure_development_ports!
+    return if File.exist?(port_env_file_path) && (compose_project_running? || persisted_development_ports_available?)
+
+    servers = PORT_ENV_KEYS.map { TCPServer.new("127.0.0.1", 0) }
+    assignments = PORT_ENV_KEYS.zip(servers.map { |server| server.addr[1] })
+
+    File.write(
+      port_env_file_path,
+      assignments.map { |key, port| "#{key}=#{port}" }.join("\n") + "\n",
+    )
+    puts "Wrote random development ports to #{port_env_file_path}"
+  ensure
+    servers&.each(&:close)
+  end
+
+  def compose_project_running?
+    command = "cd #{project_root} && docker compose --env-file #{port_env_file_path} -f docker-compose.development.yml ps -q --status=running"
+
+    !`#{command}`.strip.empty?
+  end
+
+  def persisted_development_ports_available?
+    ports = File.readlines(port_env_file_path).filter_map do |line|
+      key, value = line.strip.split("=", 2)
+      value.to_i if PORT_ENV_KEYS.include?(key)
+    end
+
+    ports.length == PORT_ENV_KEYS.length && ports.uniq.length == ports.length && ports.all? { |port| port_available?(port) }
+  end
+
+  def port_available?(port)
+    server = TCPServer.new("127.0.0.1", port)
+    true
+  rescue Errno::EADDRINUSE
+    false
+  ensure
+    server&.close
+  end
+
+  def port_env_file_path
+    "#{project_root}/#{PORT_ENV_FILE}"
+  end
+
   def compose_command(*args, **kwargs)
     environment = kwargs.delete(:environment) { "development" }
     pipe_input = kwargs.delete(:pipe_input)
@@ -374,7 +433,8 @@ class DevHelper
       compose_file_args << "-f #{linux_override}" if File.exist?(linux_override_path)
     end
 
-    bootstrap_docker = "docker compose #{compose_file_args.join(' ')} #{args.join(' ')}"
+    env_file = environment == "development" && File.exist?(port_env_file_path) ? "--env-file #{port_env_file_path}" : nil
+    bootstrap_docker = "docker compose #{[env_file, compose_file_args.join(' ')].compact.join(' ')} #{args.join(' ')}"
 
     if pipe_input
       shell_safe_pipe_input = Shellwords.escape(pipe_input)

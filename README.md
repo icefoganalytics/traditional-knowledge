@@ -148,6 +148,7 @@ If you are getting a bunch of "Login required" errors in the console, make sure 
 
 Auth0 use third-party cookies for authentication, and they get blocked by all major browsers
 by default.
+If the web host port changes, update the Auth0 application's Allowed Callback URLs to `http://localhost:<web-port>/callback`, and its Allowed Logout URLs and Allowed Web Origins to `http://localhost:<web-port>`. The repo cannot make that tenant change for you.
 
 ## Testing
 

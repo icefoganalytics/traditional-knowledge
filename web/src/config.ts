@@ -38,11 +38,14 @@ const localProductionConfig = {
 
 let config = prodConfig
 
-const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+const isDevelopmentHost =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname.endsWith(".tk.localhost")
 
 if (ENVIRONMENT === "production" && window.location.host === "localhost:8080") {
   config = localProductionConfig
-} else if (ENVIRONMENT !== "production" && isLocalhost) {
+} else if (ENVIRONMENT !== "production" && isDevelopmentHost) {
   config = devConfig
 } else if (window.location.host === "yg-wrap-uat.azurewebsites.net") {
   config = uatConfig

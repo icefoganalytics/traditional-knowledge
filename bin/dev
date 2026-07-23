@@ -25,12 +25,12 @@ class DevHelper
 
   PORT_ENVIRONMENT_FILE = ".dev-ports.env"
   GENERATED_PORT_ENVIRONMENT_KEYS = %w[
-    TRADITIONAL_KNOWLEDGE_API_PORT
-    TRADITIONAL_KNOWLEDGE_API_DEBUG_PORT
+    TRADITIONAL_KNOWLEDGE_BACKEND_PORT
+    TRADITIONAL_KNOWLEDGE_BACKEND_DEBUG_PORT
     TRADITIONAL_KNOWLEDGE_ARCHIVER_PORT
     TRADITIONAL_KNOWLEDGE_DATABASE_PORT
     TRADITIONAL_KNOWLEDGE_MAIL_WEB_PORT
-    TRADITIONAL_KNOWLEDGE_MAIL_SMTP_PORT
+    TRADITIONAL_KNOWLEDGE_MAIL_DELIVERY_PORT
     TRADITIONAL_KNOWLEDGE_REDIS_PORT
     TRADITIONAL_KNOWLEDGE_WEB_PORT
   ].freeze
@@ -385,9 +385,9 @@ class DevHelper
     return if persisted_development_configuration_present? && (gateway_routed_stack_running? || persisted_development_configuration_available?)
 
     servers = GENERATED_PORT_ENVIRONMENT_KEYS.to_h { |key| [key, TCPServer.new("127.0.0.1", 0)] }
-    api_port = servers.fetch("TRADITIONAL_KNOWLEDGE_API_PORT").addr[1]
-    web_hostname = development_web_hostname(api_port)
-    stack_identifier = development_stack_identifier(api_port)
+    backend_port = servers.fetch("TRADITIONAL_KNOWLEDGE_BACKEND_PORT").addr[1]
+    web_hostname = development_web_hostname(backend_port)
+    stack_identifier = development_stack_identifier(backend_port)
 
     File.write(
       port_environment_file_path,
@@ -414,11 +414,11 @@ class DevHelper
 
   def persisted_development_configuration_present?
     ports = persisted_development_ports
-    api_port = ports["TRADITIONAL_KNOWLEDGE_API_PORT"]
+    backend_port = ports["TRADITIONAL_KNOWLEDGE_BACKEND_PORT"]
 
-    api_port &&
-      persisted_web_hostname == development_web_hostname(api_port) &&
-      persisted_stack_identifier == development_stack_identifier(api_port) &&
+    backend_port &&
+      persisted_web_hostname == development_web_hostname(backend_port) &&
+      persisted_stack_identifier == development_stack_identifier(backend_port) &&
       ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).all? &&
       ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).uniq.length == GENERATED_PORT_ENVIRONMENT_KEYS.length
   end

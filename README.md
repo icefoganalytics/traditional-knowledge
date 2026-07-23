@@ -50,9 +50,9 @@
 
 4. Start [Local Development Gateway](https://github.com/icefoganalytics/local-development-gateway) once per day if you want randomized development ports and Auth0 wildcard callbacks. Its proxy binds only to `127.0.0.1:80`, uses the external Docker network named `local-gateway`, and has the Docker label `local-gateway=true`.
 
-5. Boot the api, web, and db services via `dev up --watch`. When the shared gateway is running, this writes free supporting-service ports and `TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME` to `./.dev-ports.env`; open `http://$(grep '^TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME=' .dev-ports.env | cut -d= -f2)`. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS. When the gateway is unavailable, `dev up` uses the original localhost ports, including the web application at `http://localhost:8080`.
+5. Boot the backend, web, and database services via `dev up --watch`. When the shared gateway is running, this writes free supporting-service ports and `TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME` to `./.dev-ports.env`; open `http://$(grep '^TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME=' .dev-ports.env | cut -d= -f2)`. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS. When the gateway is unavailable, `dev up` uses the original localhost ports, including the web application at `http://localhost:8080`.
 
-6. Stop the api, web, and db services via `ctrl+c` or `dev down` or if you want to wipe the database `dev down -v`.
+6. Stop the backend, web, and database services via `ctrl+c` or `dev down`; use `dev down -v` to wipe the database.
 
 7. Install local dependencies by installing `asdf` and node via `asdf` and then running `npm install` at the top level of the project.
 

@@ -48,9 +48,9 @@
 
 3. Go back to the top level directory, and do the same in the `archive` folder.
 
-4. [Set up the `dev`](#set-up-dev-command) command, or use `docker compose -f docker-compose.development.yml` instead of `dev` in all instructions.
+4. [Set up the `dev`](#set-up-dev-command). For direct Compose, start `docker compose -p local-gateway -f docker-compose.local-gateway.yml up -d` before using `docker compose -f docker-compose.development.yml`; you must also choose host ports yourself.
 
-5. Boot the api, web, and db services via `dev up --watch`. This runs the boot pipeline, writes free host ports to `./.dev-ports.env`, and creates the database, runs migrations, and runs seeds. If you use `docker compose -f docker-compose.development.yml up --watch` directly, you must choose the host ports yourself.
+5. Boot the api, web, and db services via `dev up --watch`. This starts a shared Traefik gateway bound only to `127.0.0.1:80`, writes free supporting-service ports and `TK_WEB_HOST` to `./.dev-ports.env`, and creates the database, runs migrations, and runs seeds. Open `http://$(grep '^TK_WEB_HOST=' .dev-ports.env | cut -d= -f2)`; `*.localhost` resolves only to this machine and never uses public DNS.
 
 6. Stop the api, web, and db services via `ctrl+c` or `dev down` or if you want to wipe the database `dev down -v`.
 
@@ -75,7 +75,7 @@
    npm run start
    ```
 
-2. When using `dev up`, access the api by logging in to the front-end, then going to the API host port from `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
+2. When using `dev up`, access the api through the local web origin in `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Web Service (a.k.a. front-end)
 
@@ -94,7 +94,7 @@
    npm run start
    ```
 
-2. When using `dev up`, log in to the front-end service at the web host port from `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
+2. When using `dev up`, log in at the `TK_WEB_HOST` origin in `.dev-ports.env`. Direct Compose requires `docker compose -f docker-compose.local-gateway.yml up -d` first, then uses `http://traditional-knowledge.localhost`.
 
 ### DB Service (a.k.a database service)
 
@@ -129,7 +129,7 @@
    '
    ```
 
-You can also use the API host port from `.dev-ports.env` for the migration routes when using `dev up`:
+You can also use the generated API host port from `.dev-ports.env` for the migration routes when using `dev up`:
 
 - `/migrate/latest`
 - `/migrate/up`
@@ -140,7 +140,7 @@ You can also skip seeding if database is not empty by setting the `SKIP_SEEDING_
 
 ### Mail Service (a.k.a mail server)
 
-1. When using `dev up`, access the web interface at the Mail host port from `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
+1. When using `dev up`, access the web interface at the generated Mail host port from `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Troubleshooting
 
@@ -148,7 +148,7 @@ If you are getting a bunch of "Login required" errors in the console, make sure 
 
 Auth0 use third-party cookies for authentication, and they get blocked by all major browsers
 by default.
-If the web host port changes, update the Auth0 application's Allowed Callback URLs to `http://localhost:<web-port>/callback`, and its Allowed Logout URLs and Allowed Web Origins to `http://localhost:<web-port>`. The repo cannot make that tenant change for you.
+Configure Auth0 once with `http://*.tk.localhost/callback` in Allowed Callback URLs, and `http://*.tk.localhost` in Allowed Logout URLs and Allowed Web Origins. This hostname suffix resolves only to the local machine; no public domain or DNS service is used.
 
 ## Testing
 

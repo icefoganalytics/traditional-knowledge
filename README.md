@@ -58,7 +58,7 @@
 
 8. To get the local per-service node_modules, so your code editor gets linting and types, do `cd api && npm i` and `cd web && npm i`.
 
-### API Service (a.k.a back-end)
+### Backend Service
 
 1. Boot only the api service using:
 
@@ -75,7 +75,7 @@
    npm run start
    ```
 
-2. When using `dev up`, access the api through the local web origin in `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
+2. When using `dev up`, access the backend through the local web origin in `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Web Service (a.k.a. front-end)
 
@@ -129,7 +129,7 @@
    '
    ```
 
-You can also use the generated API host port from `.dev-ports.env` for the migration routes when using `dev up`:
+You can also use the generated backend host port from `.dev-ports.env` for the migration routes when using `dev up`:
 
 - `/migrate/latest`
 - `/migrate/up`

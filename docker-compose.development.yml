@@ -11,7 +11,7 @@ x-default-environment: &default-environment
   DB_HEALTH_CHECK_TIMEOUT_SECONDS: 10
   DB_HEALTH_CHECK_RETRIES: 3
   DB_HEALTH_CHECK_START_PERIOD_SECONDS: 5
-  FRONTEND_URL: "http://localhost:${TK_WEB_PORT:-8080}"
+  FRONTEND_URL: "http://${TK_WEB_HOST:-traditional-knowledge.localhost}"
   VITE_APPLICATION_NAME: "Traditional Knowledge"
   VITE_API_BASE_URL: "http://localhost:${TK_API_PORT:-3000}"
   VITE_AUTH0_CLIENT_ID: "fsWyrDohhHtojdOpOFnAYtFMxwAMHUEF"
@@ -63,8 +63,16 @@ services:
     environment:
       <<: *default-environment
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
-    ports:
-      - "${TK_WEB_PORT:-8080}:8080"
+    networks:
+      - default
+      - local-gateway
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=local-gateway"
+      - "traefik.http.routers.${TK_STACK_ID:-traditional-knowledge}.rule=Host(`${TK_WEB_HOST:-traditional-knowledge.localhost}`)"
+      - "traefik.http.routers.${TK_STACK_ID:-traditional-knowledge}.entrypoints=web"
+      - "traefik.http.routers.${TK_STACK_ID:-traditional-knowledge}.service=${TK_STACK_ID:-traditional-knowledge}"
+      - "traefik.http.services.${TK_STACK_ID:-traditional-knowledge}.loadbalancer.server.port=8080"
     volumes:
       - ./web:/usr/src/web
       - ./.gitignore:/usr/src/.gitignore
@@ -191,3 +199,8 @@ services:
 
 volumes:
   db_data:
+
+networks:
+  local-gateway:
+    external: true
+    name: local-gateway

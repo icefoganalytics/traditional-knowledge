@@ -34,6 +34,14 @@ const localProductionConfig = {
   apiBaseUrl: "http://localhost:8080",
   applicationName: "Traditional Knowledge",
 }
+const qaConfig = {
+  hostSuffix: import.meta.env.VITE_QA_HOST_SUFFIX || "",
+  domain: import.meta.env.VITE_QA_AUTH0_DOMAIN || "",
+  clientId: import.meta.env.VITE_QA_AUTH0_CLIENT_ID || "",
+  audience: import.meta.env.VITE_QA_AUTH0_AUDIENCE || "",
+  apiBaseUrl: "",
+  applicationName: "Traditional Knowledge - QA",
+}
 
 let config = prodConfig
 
@@ -49,6 +57,8 @@ if (ENVIRONMENT === "production" && window.location.host === "localhost:8080") {
   config = devConfig
 } else if (window.location.host === "yg-wrap-uat.azurewebsites.net") {
   config = uatConfig
+} else if (qaConfig.hostSuffix && window.location.hostname.endsWith(qaConfig.hostSuffix)) {
+  config = qaConfig
 }
 
 export const APPLICATION_NAME = config.applicationName

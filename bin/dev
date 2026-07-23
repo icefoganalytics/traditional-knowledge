@@ -132,9 +132,17 @@ class DevHelper
       test_api(*args.drop(1), **kwargs)
     elsif service == "web"
       test_web(*args.drop(1), **kwargs)
+    elsif service == "qa"
+      test_qa(*args.drop(1), **kwargs)
     else
       test_api(*args, **kwargs)
     end
+  end
+
+  def test_qa(*args, **kwargs)
+    raise ArgumentError, "Unexpected argument(s) for qa tests: #{args.join(" ")}" unless args.empty?
+
+    exit 1 unless system("ruby", File.join(project_root, "bin/qa_test.rb"))
   end
 
   def test_api(*args, **kwargs)

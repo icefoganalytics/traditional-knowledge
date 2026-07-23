@@ -48,9 +48,9 @@
 
 3. Go back to the top level directory, and do the same in the `archive` folder.
 
-4. [Set up the `dev`](#set-up-dev-command). For direct Compose, start `docker compose -p local-gateway -f docker-compose.local-gateway.yml up -d` before using `docker compose -f docker-compose.development.yml`; you must also choose host ports yourself.
+4. Start [Local Development Gateway](https://github.com/icefoganalytics/local-development-gateway) once per day if you want randomized development ports and Auth0 wildcard callbacks. Its proxy binds only to `127.0.0.1:80`, uses the external Docker network named `local-gateway`, and has the Docker label `local-gateway=true`.
 
-5. Boot the api, web, and db services via `dev up --watch`. This starts a shared Traefik gateway bound only to `127.0.0.1:80`, writes free supporting-service ports and `TK_WEB_HOST` to `./.dev-ports.env`, and creates the database, runs migrations, and runs seeds. Open `http://$(grep '^TK_WEB_HOST=' .dev-ports.env | cut -d= -f2)`; `*.localhost` resolves only to this machine and never uses public DNS.
+5. Boot the api, web, and db services via `dev up --watch`. When the shared gateway is running, this writes free supporting-service ports and `TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME` to `./.dev-ports.env`; open `http://$(grep '^TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME=' .dev-ports.env | cut -d= -f2)`. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS. When the gateway is unavailable, `dev up` uses the original localhost ports, including the web application at `http://localhost:8080`.
 
 6. Stop the api, web, and db services via `ctrl+c` or `dev down` or if you want to wipe the database `dev down -v`.
 
@@ -94,7 +94,7 @@
    npm run start
    ```
 
-2. When using `dev up`, log in at the `TK_WEB_HOST` origin in `.dev-ports.env`. Direct Compose requires `docker compose -p local-gateway -f docker-compose.local-gateway.yml up -d` first, then uses `http://traditional-knowledge.localhost`.
+2. When the shared gateway is running, log in at the `TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME` origin in `.dev-ports.env`; otherwise use `http://localhost:8080`.
 
 ### DB Service (a.k.a database service)
 
@@ -148,7 +148,7 @@ If you are getting a bunch of "Login required" errors in the console, make sure 
 
 Auth0 use third-party cookies for authentication, and they get blocked by all major browsers
 by default.
-Configure Auth0 once with `http://*.tk.localhost/callback` in Allowed Callback URLs, and `http://*.tk.localhost` in Allowed Logout URLs and Allowed Web Origins. This hostname suffix resolves only to the local machine; no public domain or DNS service is used.
+Configure Auth0 once with `http://*.traditional-knowledge.localhost/callback` in Allowed Callback URLs, and `http://*.traditional-knowledge.localhost` in Allowed Logout URLs and Allowed Web Origins. This hostname suffix resolves only to the local machine; no public domain or DNS service is used.
 
 ## Testing
 

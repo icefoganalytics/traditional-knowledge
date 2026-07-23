@@ -41,7 +41,7 @@ let config = prodConfig
 const isDevelopmentHost =
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1" ||
-  window.location.hostname.endsWith(".tk.localhost")
+  window.location.hostname.endsWith(".traditional-knowledge.localhost")
 
 if (ENVIRONMENT === "production" && window.location.host === "localhost:8080") {
   config = localProductionConfig

@@ -1,0 +1,17 @@
+services:
+  web:
+    networks:
+      - default
+      - local-gateway
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=local-gateway"
+      - "traefik.http.routers.${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}.rule=Host(`${TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME}`)"
+      - "traefik.http.routers.${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}.entrypoints=web"
+      - "traefik.http.routers.${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}.service=${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}"
+      - "traefik.http.services.${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}.loadbalancer.server.port=8080"
+
+networks:
+  local-gateway:
+    external: true
+    name: local-gateway

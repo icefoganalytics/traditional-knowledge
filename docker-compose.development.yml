@@ -11,9 +11,9 @@ x-default-environment: &default-environment
   DB_HEALTH_CHECK_TIMEOUT_SECONDS: 10
   DB_HEALTH_CHECK_RETRIES: 3
   DB_HEALTH_CHECK_START_PERIOD_SECONDS: 5
-  FRONTEND_URL: "http://${TK_WEB_HOST:-traditional-knowledge.localhost}"
+  FRONTEND_URL: "http://${TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME:-localhost:8080}"
   VITE_APPLICATION_NAME: "Traditional Knowledge"
-  VITE_API_BASE_URL: "http://localhost:${TK_API_PORT:-3000}"
+  VITE_API_BASE_URL: "http://localhost:${TRADITIONAL_KNOWLEDGE_API_PORT:-3000}"
   VITE_AUTH0_CLIENT_ID: "fsWyrDohhHtojdOpOFnAYtFMxwAMHUEF"
   VITE_AUTH0_AUDIENCE: "testing"
   VITE_AUTH0_DOMAIN: "https://dev-0tc6bn14.eu.auth0.com"
@@ -45,8 +45,8 @@ services:
     # stdin_open: true # equivalent of docker exec -i
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     ports:
-      - "${TK_API_PORT:-3000}:3000"
-      - "${TK_API_DEBUG_PORT:-9229}:9229" # Debug port
+      - "${TRADITIONAL_KNOWLEDGE_API_PORT:-3000}:3000"
+      - "${TRADITIONAL_KNOWLEDGE_API_DEBUG_PORT:-9229}:9229" # Debug port
     volumes:
       - ./api:/usr/src/api
       - ./.gitignore:/usr/src/.gitignore
@@ -63,16 +63,8 @@ services:
     environment:
       <<: *default-environment
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
-    networks:
-      - default
-      - local-gateway
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=local-gateway"
-      - "traefik.http.routers.${TK_STACK_ID:-traditional-knowledge}.rule=Host(`${TK_WEB_HOST:-traditional-knowledge.localhost}`)"
-      - "traefik.http.routers.${TK_STACK_ID:-traditional-knowledge}.entrypoints=web"
-      - "traefik.http.routers.${TK_STACK_ID:-traditional-knowledge}.service=${TK_STACK_ID:-traditional-knowledge}"
-      - "traefik.http.services.${TK_STACK_ID:-traditional-knowledge}.loadbalancer.server.port=8080"
+    ports:
+      - "${TRADITIONAL_KNOWLEDGE_WEB_PORT:-8080}:8080"
     volumes:
       - ./web:/usr/src/web
       - ./.gitignore:/usr/src/.gitignore
@@ -139,7 +131,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - "${TK_REDIS_PORT:-6379}:6379"
+      - "${TRADITIONAL_KNOWLEDGE_REDIS_PORT:-6379}:6379"
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04
@@ -151,15 +143,15 @@ services:
       TZ: "America/Whitehorse"
       ACCEPT_EULA: "Y"
     ports:
-      - "${TK_DB_PORT:-1433}:1433"
+      - "${TRADITIONAL_KNOWLEDGE_DATABASE_PORT:-1433}:1433"
     volumes:
       - db_data:/var/opt/mssql/data
 
   mail:
     image: maildev/maildev:2.2.1
     ports:
-      - "${TK_MAIL_UI_PORT:-1080}:1080" # Web UI
-      - "${TK_MAIL_SMTP_PORT:-1025}:1025" # SMTP
+      - "${TRADITIONAL_KNOWLEDGE_MAIL_WEB_PORT:-1080}:1080" # Web UI
+      - "${TRADITIONAL_KNOWLEDGE_MAIL_SMTP_PORT:-1025}:1025" # SMTP
 
   # For easily generating large PlantUML diagrams
   # Not relevant to production environment.
@@ -186,7 +178,7 @@ services:
     # stdin_open: true # equivalent of docker exec -i
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     ports:
-      - "${TK_ARCHIVER_PORT:-5000}:3001"
+      - "${TRADITIONAL_KNOWLEDGE_ARCHIVER_PORT:-5000}:3001"
     volumes:
       - ./archiver/certs/icefog.pem:/etc/ssl/private/icefog.pem:ro
       - ./archiver/certs/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
@@ -199,8 +191,3 @@ services:
 
 volumes:
   db_data:
-
-networks:
-  local-gateway:
-    external: true
-    name: local-gateway

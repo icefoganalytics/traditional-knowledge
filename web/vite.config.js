@@ -33,9 +33,6 @@ export default defineConfig({
   server: {
     port: 8080,
     allowedHosts: [".tk.localhost"],
-    hmr: {
-      clientPort: 80,
-    },
     proxy: {
       // Forward editor-open requests to a host-side bridge so Windsurf launches on the host.
       "/__open-in-editor": {

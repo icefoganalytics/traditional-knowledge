@@ -94,7 +94,7 @@
    npm run start
    ```
 
-2. When using `dev up`, log in at the `TK_WEB_HOST` origin in `.dev-ports.env`. Direct Compose requires `docker compose -f docker-compose.local-gateway.yml up -d` first, then uses `http://traditional-knowledge.localhost`.
+2. When using `dev up`, log in at the `TK_WEB_HOST` origin in `.dev-ports.env`. Direct Compose requires `docker compose -p local-gateway -f docker-compose.local-gateway.yml up -d` first, then uses `http://traditional-knowledge.localhost`.
 
 ### DB Service (a.k.a database service)
 

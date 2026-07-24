@@ -23,7 +23,7 @@ class DevHelper
     "sqlcmd-query" => :sqlcmd_query,
   }.freeze
 
-  PORT_ENVIRONMENT_FILE = ".dev-ports.env"
+  PORT_ENVIRONMENT_FILE = ".env.development.local"
   GENERATED_PORT_ENVIRONMENT_KEYS = %w[
     BACKEND_PORT
     BACKEND_DEBUGGER_PORT

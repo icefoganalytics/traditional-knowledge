@@ -50,7 +50,7 @@
 
 4. Start [Local Development Gateway](https://github.com/icefoganalytics/local-development-gateway) once per day when you want a shared browser-facing origin and Auth0 wildcard callbacks. Its proxy binds only to `127.0.0.1:80`, uses the external Docker network named `local-gateway`, and has the Docker label `local-gateway=true`.
 
-5. Boot the backend, web, and database services via `dev up --watch`. This writes free host ports for the application services (backend, web, archiver, database, MailDev, and Redis) plus `WEB_HOSTNAME` to `./.dev-ports.env`, and reuses them until that file is removed. Without the shared gateway, open the web application at `http://localhost:<WEB_PORT>`; with the gateway, open `http://<WEB_HOSTNAME>`. The `WEB_PORT` value seeds the browser hostname; the gateway uses the published `BACKEND_PORT` only for its internal router/service identifier, receives browser traffic on `127.0.0.1:80`, and routes it to the web container. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS.
+5. Boot the backend, web, and database services via `dev up --watch`. This writes free host ports for the application services (backend, web, archiver, database, MailDev, and Redis) plus `WEB_HOSTNAME` to `.env.development.local`, and reuses them until that file is removed. Without the shared gateway, open the web application at `http://localhost:<WEB_PORT>`; with the gateway, open `http://<WEB_HOSTNAME>`. The `WEB_PORT` value seeds the browser hostname; the gateway uses the published `BACKEND_PORT` only for its internal router/service identifier, receives browser traffic on `127.0.0.1:80`, and routes it to the web container. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS.
 
 6. Stop the backend, web, and database services via `ctrl+c` or `dev down`; use `dev down -v` to wipe the database.
 
@@ -75,7 +75,7 @@
    npm run start
    ```
 
-2. When using `dev up`, access the backend at `http://localhost:<BACKEND_PORT>` using the generated value in `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
+2. When using `dev up`, access the backend at `http://localhost:<BACKEND_PORT>` using the generated value in `.env.development.local`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Web Service (a.k.a. front-end)
 
@@ -94,7 +94,7 @@
    npm run start
    ```
 
-2. When using `dev up`, log in at `http://<WEB_HOSTNAME>` when the shared gateway is running, or at `http://localhost:<WEB_PORT>` otherwise. The generated values are in `.dev-ports.env`.
+2. When using `dev up`, log in at `http://<WEB_HOSTNAME>` when the shared gateway is running, or at `http://localhost:<WEB_PORT>` otherwise. The generated values are in `.env.development.local`.
 
 ### DB Service (a.k.a database service)
 
@@ -129,7 +129,7 @@
    '
    ```
 
-You can also use the generated backend host port (`BACKEND_PORT`) from `.dev-ports.env` for the migration routes when using `dev up`:
+You can also use the generated backend host port (`BACKEND_PORT`) from `.env.development.local` for the migration routes when using `dev up`:
 
 - `/migrate/latest`
 - `/migrate/up`
@@ -140,7 +140,7 @@ You can also skip seeding if database is not empty by setting the `SKIP_SEEDING_
 
 ### Mail Service (a.k.a mail server)
 
-1. When using `dev up`, access the web interface at `http://localhost:<MAIL_WEB_PORT>` using the generated value in `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
+1. When using `dev up`, access the web interface at `http://localhost:<MAIL_WEB_PORT>` using the generated value in `.env.development.local`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Troubleshooting
 

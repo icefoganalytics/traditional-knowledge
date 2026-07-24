@@ -11,9 +11,9 @@ x-default-environment: &default-environment
   DB_HEALTH_CHECK_TIMEOUT_SECONDS: 10
   DB_HEALTH_CHECK_RETRIES: 3
   DB_HEALTH_CHECK_START_PERIOD_SECONDS: 5
-  FRONTEND_URL: "http://${TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME:-localhost:8080}"
+  FRONTEND_URL: "http://localhost:${WEB_PORT:-8080}"
   VITE_APPLICATION_NAME: "Traditional Knowledge"
-  VITE_API_BASE_URL: "http://localhost:${TRADITIONAL_KNOWLEDGE_BACKEND_PORT:-3000}"
+  VITE_API_BASE_URL: "http://localhost:${BACKEND_PORT:-3000}"
   VITE_AUTH0_CLIENT_ID: "fsWyrDohhHtojdOpOFnAYtFMxwAMHUEF"
   VITE_AUTH0_AUDIENCE: "testing"
   VITE_AUTH0_DOMAIN: "https://dev-0tc6bn14.eu.auth0.com"
@@ -45,8 +45,8 @@ services:
     # stdin_open: true # equivalent of docker exec -i
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     ports:
-      - "${TRADITIONAL_KNOWLEDGE_BACKEND_PORT:-3000}:3000"
-      - "${TRADITIONAL_KNOWLEDGE_BACKEND_DEBUG_PORT:-9229}:9229" # Debug port
+      - "${BACKEND_PORT:-3000}:3000"
+      - "${BACKEND_DEBUGGER_PORT:-9229}:9229" # Debug port
     volumes:
       - ./api:/usr/src/api
       - ./.gitignore:/usr/src/.gitignore
@@ -64,7 +64,7 @@ services:
       <<: *default-environment
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     ports:
-      - "${TRADITIONAL_KNOWLEDGE_WEB_PORT:-8080}:8080"
+      - "${WEB_PORT:-8080}:8080"
     volumes:
       - ./web:/usr/src/web
       - ./.gitignore:/usr/src/.gitignore
@@ -131,7 +131,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - "${TRADITIONAL_KNOWLEDGE_REDIS_PORT:-6379}:6379"
+      - "${REDIS_PORT:-6379}:6379"
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04
@@ -143,15 +143,15 @@ services:
       TZ: "America/Whitehorse"
       ACCEPT_EULA: "Y"
     ports:
-      - "${TRADITIONAL_KNOWLEDGE_DATABASE_PORT:-1433}:1433"
+      - "${DATABASE_PORT:-1433}:1433"
     volumes:
       - db_data:/var/opt/mssql/data
 
   mail:
     image: maildev/maildev:2.2.1
     ports:
-      - "${TRADITIONAL_KNOWLEDGE_MAIL_WEB_PORT:-1080}:1080" # Web UI
-      - "${TRADITIONAL_KNOWLEDGE_MAIL_DELIVERY_PORT:-1025}:1025" # Mail delivery port
+      - "${MAIL_WEB_PORT:-1080}:1080" # Web UI
+      - "${MAIL_DELIVERY_PORT:-1025}:1025" # Mail delivery port
 
   # For easily generating large PlantUML diagrams
   # Not relevant to production environment.
@@ -178,7 +178,7 @@ services:
     # stdin_open: true # equivalent of docker exec -i
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     ports:
-      - "${TRADITIONAL_KNOWLEDGE_ARCHIVER_PORT:-5000}:3001"
+      - "${ARCHIVER_PORT:-5000}:3001"
     volumes:
       - ./archiver/certs/icefog.pem:/etc/ssl/private/icefog.pem:ro
       - ./archiver/certs/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro

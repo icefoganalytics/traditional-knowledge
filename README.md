@@ -48,9 +48,9 @@
 
 3. Go back to the top level directory, and do the same in the `archive` folder.
 
-4. Start [Local Development Gateway](https://github.com/icefoganalytics/local-development-gateway) once per day if you want randomized development ports and Auth0 wildcard callbacks. Its proxy binds only to `127.0.0.1:80`, uses the external Docker network named `local-gateway`, and has the Docker label `local-gateway=true`.
+4. Start [Local Development Gateway](https://github.com/icefoganalytics/local-development-gateway) once per day when you want a shared browser-facing origin and Auth0 wildcard callbacks. Its proxy binds only to `127.0.0.1:80`, uses the external Docker network named `local-gateway`, and has the Docker label `local-gateway=true`.
 
-5. Boot the backend, web, and database services via `dev up --watch`. When the shared gateway is running, this writes free supporting-service ports and `TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME` to `./.dev-ports.env`; open `http://$(grep '^TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME=' .dev-ports.env | cut -d= -f2)`. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS. When the gateway is unavailable, `dev up` uses the original localhost ports, including the web application at `http://localhost:8080`.
+5. Boot the backend, web, and database services via `dev up --watch`. This writes free host ports for every published development service plus `WEB_HOSTNAME` and `STACK_IDENTIFIER` to `./.dev-ports.env`, and reuses them until that file is removed. Without the shared gateway, open the web application at `http://localhost:<WEB_PORT>`; with the gateway, open `http://<WEB_HOSTNAME>`. The `WEB_PORT` value seeds the hostname identity but is not the browser-facing port when the gateway is active: the shared proxy receives traffic on `127.0.0.1:80` and routes it to the web container. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS.
 
 6. Stop the backend, web, and database services via `ctrl+c` or `dev down`; use `dev down -v` to wipe the database.
 
@@ -75,7 +75,7 @@
    npm run start
    ```
 
-2. When using `dev up`, access the backend through the local web origin in `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
+2. When using `dev up`, access the backend at `http://localhost:<BACKEND_PORT>` using the generated value in `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Web Service (a.k.a. front-end)
 
@@ -94,7 +94,7 @@
    npm run start
    ```
 
-2. When the shared gateway is running, log in at the `TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME` origin in `.dev-ports.env`; otherwise use `http://localhost:8080`.
+2. When using `dev up`, log in at `http://<WEB_HOSTNAME>` when the shared gateway is running, or at `http://localhost:<WEB_PORT>` otherwise. The generated values are in `.dev-ports.env`.
 
 ### DB Service (a.k.a database service)
 
@@ -129,7 +129,7 @@
    '
    ```
 
-You can also use the generated backend host port from `.dev-ports.env` for the migration routes when using `dev up`:
+You can also use the generated backend host port (`BACKEND_PORT`) from `.dev-ports.env` for the migration routes when using `dev up`:
 
 - `/migrate/latest`
 - `/migrate/up`
@@ -140,7 +140,7 @@ You can also skip seeding if database is not empty by setting the `SKIP_SEEDING_
 
 ### Mail Service (a.k.a mail server)
 
-1. When using `dev up`, access the web interface at the generated Mail host port from `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
+1. When using `dev up`, access the web interface at `http://localhost:<MAIL_WEB_PORT>` using the generated value in `.dev-ports.env`. Direct Compose uses the configured/default port from `docker-compose.development.yml`.
 
 ### Troubleshooting
 
@@ -148,7 +148,7 @@ If you are getting a bunch of "Login required" errors in the console, make sure 
 
 Auth0 use third-party cookies for authentication, and they get blocked by all major browsers
 by default.
-Configure Auth0 once with `http://*.traditional-knowledge.localhost/callback` in Allowed Callback URLs, and `http://*.traditional-knowledge.localhost` in Allowed Logout URLs and Allowed Web Origins. This hostname suffix resolves only to the local machine; no public domain or DNS service is used.
+Configure Auth0 once with `http://*.traditional-knowledge.localhost/callback` in Allowed Callback URLs, and `http://*.traditional-knowledge.localhost` in Allowed Logout URLs and Allowed Web Origins. The wildcard applies to the gateway's browser-facing hostname; the generated `WEB_PORT` is only its identity seed and is not a directly published browser port while the gateway is active. This hostname suffix resolves only to the local machine; no public domain or DNS service is used.
 
 ## Testing
 

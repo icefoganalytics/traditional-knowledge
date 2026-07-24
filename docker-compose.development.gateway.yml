@@ -1,15 +1,19 @@
 services:
+  api:
+    environment:
+      FRONTEND_URL: "http://${WEB_HOSTNAME}"
   web:
+    ports: !reset []
     networks:
       - default
       - local-gateway
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=local-gateway"
-      - "traefik.http.routers.${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}.rule=Host(`${TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME}`)"
-      - "traefik.http.routers.${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}.entrypoints=web"
-      - "traefik.http.routers.${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}.service=${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}"
-      - "traefik.http.services.${TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER}.loadbalancer.server.port=8080"
+      - "traefik.http.routers.${STACK_IDENTIFIER}.rule=Host(`${WEB_HOSTNAME}`)"
+      - "traefik.http.routers.${STACK_IDENTIFIER}.entrypoints=web"
+      - "traefik.http.routers.${STACK_IDENTIFIER}.service=${STACK_IDENTIFIER}"
+      - "traefik.http.services.${STACK_IDENTIFIER}.loadbalancer.server.port=8080"
 
 networks:
   local-gateway:

@@ -25,18 +25,17 @@ class DevHelper
 
   PORT_ENVIRONMENT_FILE = ".dev-ports.env"
   GENERATED_PORT_ENVIRONMENT_KEYS = %w[
-    TRADITIONAL_KNOWLEDGE_BACKEND_PORT
-    TRADITIONAL_KNOWLEDGE_BACKEND_DEBUG_PORT
-    TRADITIONAL_KNOWLEDGE_ARCHIVER_PORT
-    TRADITIONAL_KNOWLEDGE_DATABASE_PORT
-    TRADITIONAL_KNOWLEDGE_MAIL_WEB_PORT
-    TRADITIONAL_KNOWLEDGE_MAIL_DELIVERY_PORT
-    TRADITIONAL_KNOWLEDGE_REDIS_PORT
-    TRADITIONAL_KNOWLEDGE_WEB_PORT
+    BACKEND_PORT
+    BACKEND_DEBUGGER_PORT
+    ARCHIVER_PORT
+    DATABASE_PORT
+    MAIL_WEB_PORT
+    MAIL_DELIVERY_PORT
+    REDIS_PORT
+    WEB_PORT
   ].freeze
 
-  WEB_HOSTNAME_ENVIRONMENT_KEY = "TRADITIONAL_KNOWLEDGE_WEB_HOSTNAME"
-  STACK_IDENTIFIER_ENVIRONMENT_KEY = "TRADITIONAL_KNOWLEDGE_STACK_IDENTIFIER"
+  WEB_HOSTNAME_ENVIRONMENT_KEY = "WEB_HOSTNAME"
   WEB_HOSTNAME_SUFFIX = ".traditional-knowledge.localhost"
 
   METHOD_TO_COMMAND = COMMAND_TO_METHOD.invert
@@ -81,8 +80,7 @@ class DevHelper
   end
 
   def up(*args, **kwargs)
-    ensure_development_ports! if local_gateway_running?
-
+    ensure_development_ports!
     OpenInEditorBridge.with_running do
       compose(*%w[up --remove-orphans --force-recreate], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
     end
@@ -382,28 +380,24 @@ class DevHelper
   end
 
   def ensure_development_ports!
-    return if persisted_development_configuration_present? && (gateway_routed_stack_running? || persisted_development_configuration_available?)
+    return if persisted_development_configuration_present? && (compose_project_running? || persisted_development_configuration_available?)
 
     servers = GENERATED_PORT_ENVIRONMENT_KEYS.to_h { |key| [key, TCPServer.new("127.0.0.1", 0)] }
-    backend_port = servers.fetch("TRADITIONAL_KNOWLEDGE_BACKEND_PORT").addr[1]
-    web_hostname = development_web_hostname(backend_port)
-    stack_identifier = development_stack_identifier(backend_port)
+    web_port = servers.fetch("WEB_PORT").addr[1]
+    web_hostname = development_web_hostname(web_port)
 
     File.write(
       port_environment_file_path,
-      (GENERATED_PORT_ENVIRONMENT_KEYS.map { |key| "#{key}=#{servers.fetch(key).addr[1]}" } + ["#{WEB_HOSTNAME_ENVIRONMENT_KEY}=#{web_hostname}", "#{STACK_IDENTIFIER_ENVIRONMENT_KEY}=#{stack_identifier}"]).join("\n") + "\n",
+      (GENERATED_PORT_ENVIRONMENT_KEYS.map { |key| "#{key}=#{servers.fetch(key).addr[1]}" } + ["#{WEB_HOSTNAME_ENVIRONMENT_KEY}=#{web_hostname}", "STACK_IDENTIFIER=#{development_stack_identifier(web_port)}"]).join("\n") + "\n",
     )
     puts "Wrote development ports to #{port_environment_file_path}"
   ensure
     servers&.each_value(&:close)
   end
 
-  def gateway_routed_stack_running?
-    command = "cd #{project_root} && #{without_generated_development_environment} docker compose --env-file #{port_environment_file_path} -f docker-compose.development.yml -f docker-compose.development.gateway.yml ps -q web"
-    web_container_id = `#{command}`.strip
-    return false if web_container_id.empty?
-
-    `docker inspect --format '{{ index .Config.Labels "traefik.enable" }}' #{web_container_id}`.strip == "true"
+  def compose_project_running?
+    command = "cd #{project_root} && #{without_generated_development_environment} docker compose --env-file #{port_environment_file_path} -f docker-compose.development.yml ps -q --status running"
+    !`#{command}`.strip.empty?
   end
 
   def persisted_development_configuration_available?
@@ -414,11 +408,11 @@ class DevHelper
 
   def persisted_development_configuration_present?
     ports = persisted_development_ports
-    backend_port = ports["TRADITIONAL_KNOWLEDGE_BACKEND_PORT"]
+    web_port = ports["WEB_PORT"]
 
-    backend_port &&
-      persisted_web_hostname == development_web_hostname(backend_port) &&
-      persisted_stack_identifier == development_stack_identifier(backend_port) &&
+    web_port &&
+      persisted_web_hostname == development_web_hostname(web_port) &&
+      persisted_stack_identifier == development_stack_identifier(web_port) &&
       ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).all? &&
       ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).uniq.length == GENERATED_PORT_ENVIRONMENT_KEYS.length
   end
@@ -436,7 +430,7 @@ class DevHelper
   end
 
   def persisted_stack_identifier
-    development_environment[STACK_IDENTIFIER_ENVIRONMENT_KEY]
+    development_environment["STACK_IDENTIFIER"]
   end
 
   def development_environment
@@ -448,12 +442,12 @@ class DevHelper
     end
   end
 
-  def development_web_hostname(api_port)
-    "stack-#{api_port}#{WEB_HOSTNAME_SUFFIX}"
+  def development_web_hostname(web_port)
+    "port-#{web_port}#{WEB_HOSTNAME_SUFFIX}"
   end
 
-  def development_stack_identifier(api_port)
-    "traditional-knowledge-#{api_port}"
+  def development_stack_identifier(web_port)
+    "traditional-knowledge-#{web_port}"
   end
 
 
@@ -471,9 +465,8 @@ class DevHelper
   end
 
   def without_generated_development_environment
-    "env #{(GENERATED_PORT_ENVIRONMENT_KEYS + [WEB_HOSTNAME_ENVIRONMENT_KEY, STACK_IDENTIFIER_ENVIRONMENT_KEY]).map { |key| "-u #{key}" }.join(" ")}"
+    "env #{(GENERATED_PORT_ENVIRONMENT_KEYS + [WEB_HOSTNAME_ENVIRONMENT_KEY, "STACK_IDENTIFIER"]).map { |key| "-u #{key}" }.join(" ")}"
   end
-
   def local_gateway_running?
     !`docker ps --filter label=local-gateway=true --filter status=running --quiet`.strip.empty?
   end
@@ -497,8 +490,8 @@ class DevHelper
       compose_file_args << "-f #{linux_override}" if File.exist?(linux_override_path)
     end
 
-    use_generated_environment = environment == "development" && local_gateway_running?
-    env_file = use_generated_environment && File.exist?(port_environment_file_path) ? "--env-file #{port_environment_file_path}" : nil
+    use_generated_environment = environment == "development" && persisted_development_configuration_present?
+    env_file = use_generated_environment ? "--env-file #{port_environment_file_path}" : nil
     environment_prefix = environment == "development" ? "#{without_generated_development_environment} " : ""
     bootstrap_docker = "#{environment_prefix}docker compose #{[env_file, compose_file_args.join(' ')].compact.join(' ')} #{args.join(' ')}"
 

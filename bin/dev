@@ -383,12 +383,12 @@ class DevHelper
     return if persisted_development_configuration_present? && (compose_project_running? || persisted_development_configuration_available?)
 
     servers = GENERATED_PORT_ENVIRONMENT_KEYS.to_h { |key| [key, TCPServer.new("127.0.0.1", 0)] }
-    web_port = servers.fetch("WEB_PORT").addr[1]
-    web_hostname = development_web_hostname(web_port)
+    backend_port = servers.fetch("BACKEND_PORT").addr[1]
+    web_hostname = development_web_hostname(backend_port)
 
     File.write(
       port_environment_file_path,
-      (GENERATED_PORT_ENVIRONMENT_KEYS.map { |key| "#{key}=#{servers.fetch(key).addr[1]}" } + ["#{WEB_HOSTNAME_ENVIRONMENT_KEY}=#{web_hostname}", "STACK_IDENTIFIER=#{development_stack_identifier(web_port)}"]).join("\n") + "\n",
+      (GENERATED_PORT_ENVIRONMENT_KEYS.map { |key| "#{key}=#{servers.fetch(key).addr[1]}" } + ["#{WEB_HOSTNAME_ENVIRONMENT_KEY}=#{web_hostname}"]).join("\n") + "\n",
     )
     puts "Wrote development ports to #{port_environment_file_path}"
   ensure
@@ -408,11 +408,10 @@ class DevHelper
 
   def persisted_development_configuration_present?
     ports = persisted_development_ports
-    web_port = ports["WEB_PORT"]
+    backend_port = ports["BACKEND_PORT"]
 
-    web_port &&
-      persisted_web_hostname == development_web_hostname(web_port) &&
-      persisted_stack_identifier == development_stack_identifier(web_port) &&
+    backend_port &&
+      persisted_web_hostname == development_web_hostname(backend_port) &&
       ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).all? &&
       ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).uniq.length == GENERATED_PORT_ENVIRONMENT_KEYS.length
   end
@@ -429,10 +428,6 @@ class DevHelper
     development_environment[WEB_HOSTNAME_ENVIRONMENT_KEY]
   end
 
-  def persisted_stack_identifier
-    development_environment["STACK_IDENTIFIER"]
-  end
-
   def development_environment
     return {} unless File.exist?(port_environment_file_path)
 
@@ -442,14 +437,9 @@ class DevHelper
     end
   end
 
-  def development_web_hostname(web_port)
-    "port-#{web_port}#{WEB_HOSTNAME_SUFFIX}"
+  def development_web_hostname(backend_port)
+    "port-#{backend_port}#{WEB_HOSTNAME_SUFFIX}"
   end
-
-  def development_stack_identifier(web_port)
-    "traditional-knowledge-#{web_port}"
-  end
-
 
   def port_available?(port)
     server = TCPServer.new("127.0.0.1", port)
@@ -465,8 +455,9 @@ class DevHelper
   end
 
   def without_generated_development_environment
-    "env #{(GENERATED_PORT_ENVIRONMENT_KEYS + [WEB_HOSTNAME_ENVIRONMENT_KEY, "STACK_IDENTIFIER"]).map { |key| "-u #{key}" }.join(" ")}"
+    "env #{(GENERATED_PORT_ENVIRONMENT_KEYS + [WEB_HOSTNAME_ENVIRONMENT_KEY]).map { |key| "-u #{key}" }.join(" ")}"
   end
+
   def local_gateway_running?
     !`docker ps --filter label=local-gateway=true --filter status=running --quiet`.strip.empty?
   end

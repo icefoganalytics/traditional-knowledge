@@ -10,10 +10,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=local-gateway"
-      - "traefik.http.routers.${STACK_IDENTIFIER}.rule=Host(`${WEB_HOSTNAME}`)"
-      - "traefik.http.routers.${STACK_IDENTIFIER}.entrypoints=web"
-      - "traefik.http.routers.${STACK_IDENTIFIER}.service=${STACK_IDENTIFIER}"
-      - "traefik.http.services.${STACK_IDENTIFIER}.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traditional-knowledge-${BACKEND_PORT}.rule=Host(`${WEB_HOSTNAME}`)"
+      - "traefik.http.routers.traditional-knowledge-${BACKEND_PORT}.entrypoints=web"
+      - "traefik.http.routers.traditional-knowledge-${BACKEND_PORT}.service=traditional-knowledge-${BACKEND_PORT}"
+      - "traefik.http.services.traditional-knowledge-${BACKEND_PORT}.loadbalancer.server.port=8080"
 
 networks:
   local-gateway:

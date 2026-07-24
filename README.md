@@ -50,7 +50,7 @@
 
 4. Start [Local Development Gateway](https://github.com/icefoganalytics/local-development-gateway) once per day when you want a shared browser-facing origin and Auth0 wildcard callbacks. Its proxy binds only to `127.0.0.1:80`, uses the external Docker network named `local-gateway`, and has the Docker label `local-gateway=true`.
 
-5. Boot the backend, web, and database services via `dev up --watch`. This writes free host ports for every published development service plus `WEB_HOSTNAME` and `STACK_IDENTIFIER` to `./.dev-ports.env`, and reuses them until that file is removed. Without the shared gateway, open the web application at `http://localhost:<WEB_PORT>`; with the gateway, open `http://<WEB_HOSTNAME>`. The `WEB_PORT` value seeds the hostname identity but is not the browser-facing port when the gateway is active: the shared proxy receives traffic on `127.0.0.1:80` and routes it to the web container. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS.
+5. Boot the backend, web, and database services via `dev up --watch`. This writes free host ports for the application services (backend, web, archiver, database, MailDev, and Redis) plus `WEB_HOSTNAME` to `./.dev-ports.env`, and reuses them until that file is removed. Without the shared gateway, open the web application at `http://localhost:<WEB_PORT>`; with the gateway, open `http://<WEB_HOSTNAME>`. The `BACKEND_PORT` value seeds the hostname identity because it remains a published port in gateway mode; the shared proxy receives browser traffic on `127.0.0.1:80` and routes it to the web container. The `.traditional-knowledge.localhost` suffix resolves only to this machine and never uses public DNS.
 
 6. Stop the backend, web, and database services via `ctrl+c` or `dev down`; use `dev down -v` to wipe the database.
 
@@ -148,7 +148,7 @@ If you are getting a bunch of "Login required" errors in the console, make sure 
 
 Auth0 use third-party cookies for authentication, and they get blocked by all major browsers
 by default.
-Configure Auth0 once with `http://*.traditional-knowledge.localhost/callback` in Allowed Callback URLs, and `http://*.traditional-knowledge.localhost` in Allowed Logout URLs and Allowed Web Origins. The wildcard applies to the gateway's browser-facing hostname; the generated `WEB_PORT` is only its identity seed and is not a directly published browser port while the gateway is active. This hostname suffix resolves only to the local machine; no public domain or DNS service is used.
+Configure Auth0 once with `http://*.traditional-knowledge.localhost/callback` in Allowed Callback URLs, and `http://*.traditional-knowledge.localhost` in Allowed Logout URLs and Allowed Web Origins. The wildcard applies to the gateway's browser-facing hostname; the generated `BACKEND_PORT` seeds that hostname while remaining a published backend port, but browser traffic still enters through the shared gateway. This hostname suffix resolves only to the local machine; no public domain or DNS service is used.
 
 ## Testing
 

@@ -32,7 +32,6 @@ export default defineConfig({
   },
   server: {
     port: 8080,
-    allowedHosts: [".traditional-knowledge.localhost"],
     proxy: {
       // Forward editor-open requests to a host-side bridge so Windsurf launches on the host.
       "/__open-in-editor": {

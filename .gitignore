@@ -73,7 +73,7 @@ typings/
 .envrc
 .env.test
 .env.production
-.env.development.local
+.dev-ports.env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

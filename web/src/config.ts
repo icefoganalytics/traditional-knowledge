@@ -1,8 +1,7 @@
 import { stripTrailingSlash } from "@/utils/strip-trailing-slash"
 
 export const ENVIRONMENT = import.meta.env.MODE
-
-const developmentBackendBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
+const DEVELOPMENT_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
 
 const prodConfig = {
   domain: "https://yukon.eu.auth0.com",
@@ -24,7 +23,7 @@ const devConfig = {
   domain: "https://dev-0tc6bn14.eu.auth0.com",
   clientId: "fsWyrDohhHtojdOpOFnAYtFMxwAMHUEF",
   audience: "testing",
-  apiBaseUrl: developmentBackendBaseUrl,
+  apiBaseUrl: DEVELOPMENT_API_BASE_URL,
   applicationName: "Traditional Knowledge",
 }
 
@@ -41,6 +40,7 @@ let config = prodConfig
 const isDevelopmentHost =
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1" ||
+  window.location.hostname === "traditional-knowledge.localhost" ||
   window.location.hostname.endsWith(".traditional-knowledge.localhost")
 
 if (ENVIRONMENT === "production" && window.location.host === "localhost:8080") {

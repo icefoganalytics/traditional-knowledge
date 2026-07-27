@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
-require "shellwords"
-require "socket"
+require "bundler/setup"
+require "local_development_gateway"
 require "rdoc"
+require "shellwords"
 
 require_relative "./github_api"
 require_relative "./jira_api"
@@ -22,19 +23,6 @@ class DevHelper
     "plantuml-to-png" => :plantuml_to_png,
     "sqlcmd-query" => :sqlcmd_query,
   }
-
-  GENERATED_PORT_ENVIRONMENT_KEYS = %w[
-    BACKEND_PORT
-    BACKEND_DEBUGGER_PORT
-    ARCHIVER_PORT
-    DATABASE_PORT
-    MAIL_WEB_PORT
-    MAIL_DELIVERY_PORT
-    REDIS_PORT
-    WEB_PORT
-  ].freeze
-
-  WEB_HOSTNAME_SUFFIX = ".traditional-knowledge.localhost"
 
   METHOD_TO_COMMAND = COMMAND_TO_METHOD.invert
 
@@ -78,15 +66,17 @@ class DevHelper
   end
 
   def up(*args, **kwargs)
-    ensure_development_ports!
+    LocalDevelopmentGateway.ensure_running
     OpenInEditorBridge.with_running do
-      compose(*%w[up --remove-orphans --force-recreate], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
+      compose(*%w[up --remove-orphans --force-recreate], *args, execution_mode: WAIT_FOR_PROCESS, gateway: true, **kwargs)
     end
   end
 
   def down(*args, **kwargs)
     OpenInEditorBridge.with_running(ensure_running: false) do
-      compose(*%w[down --remove-orphans], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
+      if compose(*%w[down --remove-orphans], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
+        LocalDevelopmentGateway.stop_if_unused
+      end
     end
   end
 
@@ -377,137 +367,23 @@ class DevHelper
     id_of_container
   end
 
-  def ensure_development_ports!
-    if persisted_development_configuration_present?
-      if gateway_routed_stack_present?
-        if gateway_routed_stack_running?
-          return if port_available?(persisted_development_ports.fetch("WEB_PORT"))
-        elsif compose_project_running? || persisted_development_configuration_available?
-          return
-        end
-      elsif compose_project_running? || persisted_development_configuration_available?
-        return
-      end
-    end
-    servers = GENERATED_PORT_ENVIRONMENT_KEYS.to_h { |key| [key, TCPServer.new("127.0.0.1", 0)] }
-    web_port = servers.fetch("WEB_PORT").addr[1]
-    web_hostname = development_web_hostname(web_port)
-
-    File.write(
-      development_ports_file_path,
-      (GENERATED_PORT_ENVIRONMENT_KEYS.map { |key| "#{key}=#{servers.fetch(key).addr[1]}" } + ["WEB_HOSTNAME=#{web_hostname}"]).join("\n") + "\n",
-    )
-    puts "Wrote development ports to #{development_ports_file_path}"
-  ensure
-    servers&.each_value(&:close)
-  end
-
-  def compose_project_running?
-    command = "cd #{project_root} && #{without_generated_development_environment} docker compose --env-file #{development_ports_file_path} -f docker-compose.development.yml ps -q --status running"
-    !`#{command}`.strip.empty?
-  end
-
-  def gateway_routed_stack_present?
-    gateway_routed_stack?(status: "--all")
-  end
-
-  def gateway_routed_stack_running?
-    gateway_routed_stack?(status: "--status running")
-  end
-
-  def gateway_routed_stack?(status:)
-    command = "cd #{project_root} && #{without_generated_development_environment} docker compose --env-file #{development_ports_file_path} -f docker-compose.development.yml -f docker-compose.development.gateway.yml ps -q #{status} web"
-    web_container_id = `#{command}`.strip
-    return false if web_container_id.empty?
-
-    `docker inspect --format '{{ index .Config.Labels "traefik.enable" }}' #{web_container_id}`.strip == "true"
-  end
-
-  def persisted_development_configuration_available?
-    return false unless persisted_development_configuration_present?
-
-    persisted_development_ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).all? { |port| port_available?(port) }
-  end
-
-  def persisted_development_configuration_present?
-    ports = persisted_development_ports
-    web_port = ports["WEB_PORT"]
-
-    web_port &&
-      persisted_web_hostname == development_web_hostname(web_port) &&
-      ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).all? &&
-      ports.values_at(*GENERATED_PORT_ENVIRONMENT_KEYS).uniq.length == GENERATED_PORT_ENVIRONMENT_KEYS.length
-  end
-
-  def persisted_development_ports
-    development_environment.slice(*GENERATED_PORT_ENVIRONMENT_KEYS).to_h do |key, value|
-      [key, Integer(value, 10)]
-    rescue ArgumentError, TypeError
-      [key, nil]
-    end
-  end
-
-  def persisted_web_hostname
-    development_environment["WEB_HOSTNAME"]
-  end
-
-  def development_environment
-    return {} unless File.exist?(development_ports_file_path)
-
-    File.readlines(development_ports_file_path).each_with_object({}) do |line, environment|
-      key, value = line.strip.split("=", 2)
-      environment[key] = value if key && value
-    end
-  end
-
-  def development_web_hostname(web_port)
-    "port-#{web_port}#{WEB_HOSTNAME_SUFFIX}"
-  end
-
-  def port_available?(port)
-    server = TCPServer.new("127.0.0.1", port)
-    true
-  rescue Errno::EADDRINUSE
-    false
-  ensure
-    server&.close
-  end
-
-  def development_ports_file_path
-    File.join(project_root, ".dev-ports.env")
-  end
-
-  def without_generated_development_environment
-    "env #{(GENERATED_PORT_ENVIRONMENT_KEYS + ["WEB_HOSTNAME"]).map { |key| "-u #{key}" }.join(" ")}"
-  end
-
-  def local_gateway_running?
-    !`docker ps --filter label=local-gateway=true --filter status=running --quiet`.strip.empty?
-  end
-
-  def development_compose_file_args
-    file_args = ["-f docker-compose.development.yml"]
-    file_args << "-f docker-compose.development.gateway.yml" if local_gateway_running?
-    file_args
-  end
-
   def compose_command(*args, **kwargs)
     environment = kwargs.delete(:environment) { "development" }
+    gateway = kwargs.delete(:gateway)
     pipe_input = kwargs.delete(:pipe_input)
 
     go_to_project_root = "cd #{project_root}"
-    compose_file_args = environment == "development" ? development_compose_file_args : ["-f docker-compose.#{environment}.yml"]
+    compose_file_arguments = ["-f", "docker-compose.#{environment}.yml"]
 
     if RUBY_PLATFORM =~ /linux/
       linux_override = "docker-compose.#{environment}.linux.yml"
       linux_override_path = File.join(project_root, linux_override)
-      compose_file_args << "-f #{linux_override}" if File.exist?(linux_override_path)
+      compose_file_arguments.concat(["-f", linux_override]) if File.exist?(linux_override_path)
     end
+    compose_file_arguments.concat(["-f", "docker-compose.development.gateway.yml"]) if gateway && environment == "development"
 
-    use_generated_environment = environment == "development" && persisted_development_configuration_present?
-    env_file = use_generated_environment ? "--env-file #{development_ports_file_path}" : nil
-    environment_prefix = environment == "development" ? "#{without_generated_development_environment} " : ""
-    bootstrap_docker = "#{environment_prefix}docker compose #{[env_file, compose_file_args.join(' ')].compact.join(' ')} #{args.join(' ')}"
+    compose_arguments = ["docker", "compose", *compose_file_arguments, *args]
+    docker_command = compose_arguments.join(" ")
 
     if pipe_input
       shell_safe_pipe_input = Shellwords.escape(pipe_input)
@@ -515,12 +391,12 @@ class DevHelper
 
       <<~BASH
         #{go_to_project_root} && \
-        #{pipe_input_to_compose} #{dynamic_environment_variables} #{bootstrap_docker}
+        #{pipe_input_to_compose} #{dynamic_environment_variables} #{docker_command}
       BASH
     else
       <<~BASH
         #{go_to_project_root} && \
-        #{dynamic_environment_variables} #{bootstrap_docker}
+        #{dynamic_environment_variables} #{docker_command}
       BASH
     end
   end
@@ -530,12 +406,24 @@ class DevHelper
   end
 
   def dynamic_environment_variables
+    variables = []
     if RUBY_PLATFORM =~ /linux/ && user_id == '1000' && group_id == '1000'
-      %(HOST_USER_ID="#{user_id}" HOST_GROUP_ID="#{group_id}")
-    else
-      ""
+      variables << "HOST_USER_ID=#{Shellwords.escape(user_id)}"
+      variables << "HOST_GROUP_ID=#{Shellwords.escape(group_id)}"
     end
+
+    escaped_gateway_hostname = Shellwords.escape(gateway_hostname)
+    variables << "GATEWAY_HOSTNAME=#{escaped_gateway_hostname}"
+    variables.join(" ")
   end
+
+  def gateway_hostname
+    checkout_name = File.basename(project_root).downcase.gsub(/[^a-z0-9]+/, "-")
+    return "traditional-knowledge.localhost" if checkout_name == "traditional-knowledge"
+
+    "#{checkout_name}.traditional-knowledge.localhost"
+  end
+
 
   def take_over_needed?(file_or_directory)
     files_owned_by_others =

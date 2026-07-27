@@ -8,6 +8,17 @@ import vuetify from "vite-plugin-vuetify"
 // Utilities
 import { defineConfig } from "vite"
 
+const gatewayUrlLogger = {
+  name: "gateway-url-logger",
+  apply: "serve",
+  configureServer(server) {
+    server.httpServer?.once("listening", () => {
+      const hostname = process.env.GATEWAY_HOSTNAME || "traditional-knowledge.localhost"
+      console.log(`\n  Open Traditional Knowledge: http://${hostname}/`)
+    })
+  },
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -18,6 +29,7 @@ export default defineConfig({
         labs: true,
       },
     }),
+    gatewayUrlLogger,
   ],
   build: {
     outDir: "./dist",

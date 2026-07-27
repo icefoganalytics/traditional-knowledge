@@ -37,11 +37,11 @@ Templates are located in `agents/templates/` for reuse across workflows.
 
 | Template | Location | Description |
 |----------|----------|-------------|
-| [Model](../../templates/backend/model.md) | `api/src/models/` | Sequelize model with scopes |
-| [Controller](../../templates/backend/controller.md) | `api/src/controllers/` | CRUD endpoints |
-| [Policy](../../templates/backend/policy.md) | `api/src/policies/` | Authorization rules |
-| [Services](../../templates/backend/services.md) | `api/src/services/{resources}/` | Create, Update, Destroy |
-| [Serializers](../../templates/backend/serializers.md) | `api/src/serializers/{resources}/` | Index, Show, Reference |
+| [Model](../templates/backend/model.md) | `api/src/models/` | Sequelize model with scopes |
+| [Controller](../templates/backend/controller.md) | `api/src/controllers/` | CRUD endpoints |
+| [Policy](../templates/backend/policy.md) | `api/src/policies/` | Authorization rules |
+| [Services](../templates/backend/services.md) | `api/src/services/{resources}/` | Create, Update, Destroy |
+| [Serializers](../templates/backend/serializers.md) | `api/src/serializers/{resources}/` | Index, Show, Reference |
 
 **Integration Points:**
 - `api/src/controllers/index.ts` - Export controller
@@ -52,10 +52,10 @@ Templates are located in `agents/templates/` for reuse across workflows.
 
 | Template | Location | Description |
 |----------|----------|-------------|
-| [API Client](../../templates/frontend/api-client.md) | `web/src/api/` | Type-safe HTTP client |
-| [Composables](../../templates/frontend/composables.md) | `web/src/use/` | Reactive data fetching |
-| [Components](../../templates/frontend/components.md) | `web/src/components/{resources}/` | DataTable, Forms, UniqueTextField |
-| [Pages](../../templates/frontend/pages.md) | `web/src/pages/admin/{resources}/` | List, New, Edit pages |
+| [API Client](../templates/frontend/api-client.md) | `web/src/api/` | Type-safe HTTP client |
+| [Composables](../templates/frontend/composables.md) | `web/src/use/` | Reactive data fetching |
+| [Components](../templates/frontend/components.md) | `web/src/components/{resources}/` | DataTable, Forms, UniqueTextField |
+| [Pages](../templates/frontend/pages.md) | `web/src/pages/admin/{resources}/` | List, New, Edit pages |
 
 **Integration Points:**
 - `web/src/routes.ts` - Add routes

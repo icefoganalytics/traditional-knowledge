@@ -162,7 +162,7 @@ This project is using [knex](https://knexjs.org/guide/migrations.html#migration-
 
 NOTE: Migrations should use snake_case. While database table and column names use snake_case, we are using Sequelize for our models so that we get camelCase to match the JS standard, in the JS section of the codebase.
 
-1. To create a new migration from the template [sample-migration](./api/src/db/template/sample-migration.ts) do:
+1. To create a new migration from the template [sample-migration](./api/src/db/templates/sample-migration.ts) do:
 
    ```bash
    dev migrate make create-users-table

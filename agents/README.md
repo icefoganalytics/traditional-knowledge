@@ -182,7 +182,7 @@ ls -li .cursor/workflows/
 
 If you need agent-specific versions, you can:
 
-1. **Keep in `agents/[agent-name]/`** instead of hardlinking:
+1. **Keep in a dedicated `agents/` subdirectory for that agent** instead of hardlinking:
    ```bash
    mkdir -p agents/claude/workflows
    cp agents/workflows/create-admin-ui.md agents/claude/workflows/

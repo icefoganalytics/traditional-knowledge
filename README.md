@@ -152,7 +152,8 @@ Configure Auth0 once with `http://*.traditional-knowledge.localhost/callback` in
 
 ## Testing
 
-1. Run the api test suite via `dev test_api`.
+1. Run the api test suite via `dev test api`.
+2. Run the development wrapper port lifecycle check via `ruby bin/dev_test.rb`.
 
 See [api/tests/README.md](./api/tests/README.md) for more detailed info.
 

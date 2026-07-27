@@ -23,7 +23,6 @@ class DevHelper
     "sqlcmd-query" => :sqlcmd_query,
   }
 
-  PORT_ENVIRONMENT_FILE = ".dev-ports.env"
   GENERATED_PORT_ENVIRONMENT_KEYS = %w[
     BACKEND_PORT
     BACKEND_DEBUGGER_PORT
@@ -35,7 +34,6 @@ class DevHelper
     WEB_PORT
   ].freeze
 
-  WEB_HOSTNAME_ENVIRONMENT_KEY = "WEB_HOSTNAME"
   WEB_HOSTNAME_SUFFIX = ".traditional-knowledge.localhost"
 
   METHOD_TO_COMMAND = COMMAND_TO_METHOD.invert
@@ -396,16 +394,16 @@ class DevHelper
     web_hostname = development_web_hostname(web_port)
 
     File.write(
-      port_environment_file_path,
-      (GENERATED_PORT_ENVIRONMENT_KEYS.map { |key| "#{key}=#{servers.fetch(key).addr[1]}" } + ["#{WEB_HOSTNAME_ENVIRONMENT_KEY}=#{web_hostname}"]).join("\n") + "\n",
+      development_ports_file_path,
+      (GENERATED_PORT_ENVIRONMENT_KEYS.map { |key| "#{key}=#{servers.fetch(key).addr[1]}" } + ["WEB_HOSTNAME=#{web_hostname}"]).join("\n") + "\n",
     )
-    puts "Wrote development ports to #{port_environment_file_path}"
+    puts "Wrote development ports to #{development_ports_file_path}"
   ensure
     servers&.each_value(&:close)
   end
 
   def compose_project_running?
-    command = "cd #{project_root} && #{without_generated_development_environment} docker compose --env-file #{port_environment_file_path} -f docker-compose.development.yml ps -q --status running"
+    command = "cd #{project_root} && #{without_generated_development_environment} docker compose --env-file #{development_ports_file_path} -f docker-compose.development.yml ps -q --status running"
     !`#{command}`.strip.empty?
   end
 
@@ -418,7 +416,7 @@ class DevHelper
   end
 
   def gateway_routed_stack?(status:)
-    command = "cd #{project_root} && #{without_generated_development_environment} docker compose --env-file #{port_environment_file_path} -f docker-compose.development.yml -f docker-compose.development.gateway.yml ps -q #{status} web"
+    command = "cd #{project_root} && #{without_generated_development_environment} docker compose --env-file #{development_ports_file_path} -f docker-compose.development.yml -f docker-compose.development.gateway.yml ps -q #{status} web"
     web_container_id = `#{command}`.strip
     return false if web_container_id.empty?
 
@@ -450,13 +448,13 @@ class DevHelper
   end
 
   def persisted_web_hostname
-    development_environment[WEB_HOSTNAME_ENVIRONMENT_KEY]
+    development_environment["WEB_HOSTNAME"]
   end
 
   def development_environment
-    return {} unless File.exist?(port_environment_file_path)
+    return {} unless File.exist?(development_ports_file_path)
 
-    File.readlines(port_environment_file_path).each_with_object({}) do |line, environment|
+    File.readlines(development_ports_file_path).each_with_object({}) do |line, environment|
       key, value = line.strip.split("=", 2)
       environment[key] = value if key && value
     end
@@ -475,12 +473,12 @@ class DevHelper
     server&.close
   end
 
-  def port_environment_file_path
-    "#{project_root}/#{PORT_ENVIRONMENT_FILE}"
+  def development_ports_file_path
+    File.join(project_root, ".dev-ports.env")
   end
 
   def without_generated_development_environment
-    "env #{(GENERATED_PORT_ENVIRONMENT_KEYS + [WEB_HOSTNAME_ENVIRONMENT_KEY]).map { |key| "-u #{key}" }.join(" ")}"
+    "env #{(GENERATED_PORT_ENVIRONMENT_KEYS + ["WEB_HOSTNAME"]).map { |key| "-u #{key}" }.join(" ")}"
   end
 
   def local_gateway_running?
@@ -507,7 +505,7 @@ class DevHelper
     end
 
     use_generated_environment = environment == "development" && persisted_development_configuration_present?
-    env_file = use_generated_environment ? "--env-file #{port_environment_file_path}" : nil
+    env_file = use_generated_environment ? "--env-file #{development_ports_file_path}" : nil
     environment_prefix = environment == "development" ? "#{without_generated_development_environment} " : ""
     bootstrap_docker = "#{environment_prefix}docker compose #{[env_file, compose_file_args.join(' ')].compact.join(' ')} #{args.join(' ')}"
 

@@ -46,7 +46,7 @@ class DevHelperPortTest < Minitest::Test
   def test_dev_up_generates_reuses_and_replaces_ports_and_passes_generated_file
     Dir.mktmpdir do |project_root|
       helper = TestHelper.new(project_root)
-      port_file = File.join(project_root, DevHelper::PORT_ENVIRONMENT_FILE)
+      port_file = File.join(project_root, ".dev-ports.env")
 
       OpenInEditorBridge.stub(:with_running, ->(**, &block) { block.call }) do
         helper.up("--dry-run")

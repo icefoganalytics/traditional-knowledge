@@ -412,8 +412,7 @@ class DevHelper
       variables << "HOST_GROUP_ID=#{Shellwords.escape(group_id)}"
     end
 
-    escaped_gateway_hostname = Shellwords.escape(gateway_hostname)
-    variables << "GATEWAY_HOSTNAME=#{escaped_gateway_hostname}"
+    variables << "GATEWAY_HOSTNAME=#{Shellwords.escape(gateway_hostname)}"
     variables.join(" ")
   end
 

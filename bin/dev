@@ -100,9 +100,6 @@ class DevHelper
     run(*%w[api sh], *args, **kwargs)
   end
 
-  def debug(*args, **kwargs)
-    compose("exec api node inspect localhost:9229", *args, **kwargs)
-  end
 
   def web(*args, **kwargs)
     run(*%w[web], *args, **kwargs)

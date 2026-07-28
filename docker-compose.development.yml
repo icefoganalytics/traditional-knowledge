@@ -43,12 +43,6 @@ services:
       TS_NODE_HISTORY: /usr/src/api/.ts_node_repl_history
     tty: true # allows attaching debugger, equivalent of docker exec -t
     init: true
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=local-gateway"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-api.rule=Host(`api.${GATEWAY_HOSTNAME:-traditional-knowledge.localhost}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-api.entrypoints=web"
-      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-api.loadbalancer.server.port=3000"
     # stdin_open: true # equivalent of docker exec -i
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
     volumes:
@@ -67,12 +61,6 @@ services:
     environment:
       <<: *default-environment
     user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=local-gateway"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.rule=Host(`${GATEWAY_HOSTNAME:-traditional-knowledge.localhost}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-web.entrypoints=web"
-      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-web.loadbalancer.server.port=8080"
     volumes:
       - ./web:/usr/src/web
       - ./.gitignore:/usr/src/.gitignore
@@ -153,12 +141,6 @@ services:
 
   mail:
     image: maildev/maildev:2.2.1
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=local-gateway"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-mail.rule=Host(`mail.${GATEWAY_HOSTNAME:-traditional-knowledge.localhost}`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-mail.entrypoints=web"
-      - "traefik.http.services.${COMPOSE_PROJECT_NAME}-mail.loadbalancer.server.port=1080"
 
   # For easily generating large PlantUML diagrams
   # Not relevant to production environment.

@@ -69,6 +69,9 @@ module TraditionalKnowledgeTemporaryDeployment
       raise Error, "Choose exactly one source selector"
     end
     source = options[:sources].first && Source.parse(*options[:sources].first)
+    if options[:all] && source
+      raise Error, "--all cannot be combined with a source selector"
+    end
     case action
     when "up"
       unless source

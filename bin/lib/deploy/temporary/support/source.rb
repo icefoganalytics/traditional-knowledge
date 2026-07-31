@@ -57,8 +57,8 @@ module TraditionalKnowledgeTemporaryDeployment
     def validate!
       case kind
       when :pr
-        unless value.match?(/\A[1-9]\d*\z/)
-          raise Error, "PR number must be positive"
+        unless value.match?(/\A[1-9]\d{0,15}\z/)
+          raise Error, "PR number must be positive and at most 16 digits"
         end
       when :branch
         raise Error, "Branch must not be empty" if value.empty?

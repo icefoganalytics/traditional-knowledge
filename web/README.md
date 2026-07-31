@@ -51,6 +51,17 @@ Vue 3 + Vuetify 3 + TypeScript + Vite + Pinia.
 
 ---
 
+## Knowledge Item and ISA Navigation
+
+An information sharing agreement (ISA) and a knowledge item are separate domain records linked through the `InformationSharingAgreementArchiveItem` association. The relationship is many-to-many; neither `informationSharingAgreementId` nor `archiveItemId` identifies the association by itself.
+
+Use the ISA-scoped routes for navigation from an ISA:
+
+- `/information-sharing-agreements/:informationSharingAgreementId/knowledge-items` lists every linked knowledge item.
+- `/information-sharing-agreements/:informationSharingAgreementId/knowledge-items/:informationSharingAgreementArchiveItemId` opens one linked item.
+
+The detail route validates that the association belongs to the ISA in the URL before rendering the underlying knowledge item. Do not select the first association or expose an archive-item ID as the canonical ISA link.
+
 ## Open In Editor
 
 When the frontend runs in Docker, Vue Devtools cannot launch your host editor directly from inside the container. This project handles that by:

@@ -66,27 +66,28 @@ class DevHelper
   end
 
   def up(*args, **kwargs)
-    LocalDevelopmentGateway.ensure_running
-    OpenInEditorBridge.with_running do
-      compose(
-        *%w[up --remove-orphans --force-recreate],
-        *args,
-        execution_mode: WAIT_FOR_PROCESS,
-        gateway: true,
-        **kwargs
-      )
+    LocalDevelopmentGateway.with_running do
+      OpenInEditorBridge.with_running do
+        compose(
+          *%w[up --remove-orphans --force-recreate],
+          *args,
+          execution_mode: WAIT_FOR_PROCESS,
+          gateway: true,
+          **kwargs
+        )
+      end
     end
   end
 
   def down(*args, **kwargs)
-    OpenInEditorBridge.with_running(ensure_running: false) do
-      if compose(
-           *%w[down --remove-orphans],
-           *args,
-           execution_mode: WAIT_FOR_PROCESS,
-           **kwargs
-         )
-        LocalDevelopmentGateway.stop_if_unused
+    LocalDevelopmentGateway.with_running(ensure_running: false) do
+      OpenInEditorBridge.with_running(ensure_running: false) do
+        compose(
+          *%w[down --remove-orphans],
+          *args,
+          execution_mode: WAIT_FOR_PROCESS,
+          **kwargs
+        )
       end
     end
   end
@@ -118,13 +119,13 @@ class DevHelper
   def api(*args, **kwargs)
     run(*%w[api], *args, **kwargs)
   end
-  def qa(*args, **kwargs)
+  def deploy(*args, **kwargs)
     unless kwargs.empty?
       raise ArgumentError,
-            "Unexpected options for qa: #{kwargs.keys.join(", ")}"
+            "Unexpected options for deploy: #{kwargs.keys.join(", ")}"
     end
 
-    exec("ruby", File.join(project_root, "bin/qa"), *args)
+    exec("ruby", File.join(project_root, "bin/deploy"), *args)
   end
 
   def archiver(*args, **kwargs)
@@ -154,24 +155,9 @@ class DevHelper
       test_api(*args.drop(1), **kwargs)
     elsif service == "web"
       test_web(*args.drop(1), **kwargs)
-    elsif service == "qa"
-      test_qa(*args.drop(1), **kwargs)
     else
       test_api(*args, **kwargs)
     end
-  end
-
-  def test_qa(*args, **kwargs)
-    unless args.empty?
-      raise ArgumentError,
-            "Unexpected argument(s) for qa tests: #{args.join(" ")}"
-    end
-    unless kwargs.empty?
-      raise ArgumentError,
-            "Unexpected options for qa tests: #{kwargs.keys.join(", ")}"
-    end
-
-    exec("ruby", File.join(project_root, "bin/qa_test.rb"))
   end
 
   def test_api(*args, **kwargs)

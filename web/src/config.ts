@@ -34,13 +34,13 @@ const localProductionConfig = {
   apiBaseUrl: "http://localhost:8080",
   applicationName: "Traditional Knowledge",
 }
-const qaConfig = {
-  hostSuffix: import.meta.env.VITE_QA_HOST_SUFFIX || "",
-  domain: import.meta.env.VITE_QA_AUTH0_DOMAIN || uatConfig.domain,
-  clientId: import.meta.env.VITE_QA_AUTH0_CLIENT_ID || uatConfig.clientId,
-  audience: import.meta.env.VITE_QA_AUTH0_AUDIENCE || uatConfig.audience,
+const temporaryConfig = {
+  hostSuffix: import.meta.env.VITE_TEMPORARY_HOST_SUFFIX || "",
+  domain: import.meta.env.VITE_TEMPORARY_AUTH0_DOMAIN || uatConfig.domain,
+  clientId: import.meta.env.VITE_TEMPORARY_AUTH0_CLIENT_ID || uatConfig.clientId,
+  audience: import.meta.env.VITE_TEMPORARY_AUTH0_AUDIENCE || uatConfig.audience,
   apiBaseUrl: "",
-  applicationName: "Traditional Knowledge - QA",
+  applicationName: "Traditional Knowledge - Temporary",
 }
 
 let config = prodConfig
@@ -57,8 +57,8 @@ if (ENVIRONMENT === "production" && window.location.host === "localhost:8080") {
   config = devConfig
 } else if (window.location.host === "yg-wrap-uat.azurewebsites.net") {
   config = uatConfig
-} else if (qaConfig.hostSuffix && window.location.hostname.endsWith(qaConfig.hostSuffix)) {
-  config = qaConfig
+} else if (temporaryConfig.hostSuffix && window.location.hostname.endsWith(temporaryConfig.hostSuffix)) {
+  config = temporaryConfig
 }
 
 export const APPLICATION_NAME = config.applicationName

@@ -57,10 +57,14 @@ An information sharing agreement (ISA) and a knowledge item are separate domain 
 
 Use the ISA-scoped routes for navigation from an ISA:
 
-- `/information-sharing-agreements/:informationSharingAgreementId/knowledge-items` lists every linked knowledge item.
-- `/information-sharing-agreements/:informationSharingAgreementId/knowledge-items/:informationSharingAgreementArchiveItemId` opens one linked item.
+- `/sharing-agreements/:informationSharingAgreementId/knowledge-items` lists every linked knowledge item.
+- `/sharing-agreements/:informationSharingAgreementId/knowledge-items/:informationSharingAgreementArchiveItemId` opens one linked item.
 
 The detail route validates that the association belongs to the ISA in the URL before rendering the underlying knowledge item. Do not select the first association or expose an archive-item ID as the canonical ISA link.
+
+### Model Naming Transition
+
+The domain model is still named `InformationSharingAgreement`. This PR shortens only the user-facing route prefix to `sharing-agreements`; model, API, and route-name identifiers remain unchanged. A later model rename must migrate those identifiers deliberately rather than mixing it into this URL change.
 
 ## Open In Editor
 

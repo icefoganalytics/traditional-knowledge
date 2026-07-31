@@ -20,7 +20,9 @@ module TraditionalKnowledgeTemporaryDeployment
     def run_with_environment(environment, *command)
       stdout, stderr, status =
         Open3.capture3(
-          { "TK_TEMPORARY_AUTH0_MANAGEMENT_TOKEN" => nil }.merge(environment),
+          { "TEMPORARY_DEPLOYMENT_AUTH0_MANAGEMENT_TOKEN" => nil }.merge(
+            environment
+          ),
           *command
         )
       output = [stdout, stderr].reject(&:empty?).join
@@ -29,7 +31,10 @@ module TraditionalKnowledgeTemporaryDeployment
       stdout
     end
     def stream(*command)
-      unless system({ "TK_TEMPORARY_AUTH0_MANAGEMENT_TOKEN" => nil }, *command)
+      unless system(
+               { "TEMPORARY_DEPLOYMENT_AUTH0_MANAGEMENT_TOKEN" => nil },
+               *command
+             )
         raise Error, "Command failed (#{command.join(" ")})"
       end
     end

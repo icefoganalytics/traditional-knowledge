@@ -1,16 +1,16 @@
 module TraditionalKnowledgeTemporaryDeployment
   class Config
     REQUIRED = %w[
-      TK_TEMPORARY_RESOURCE_GROUP
-      TK_TEMPORARY_ACA_ENVIRONMENT
-      TK_TEMPORARY_ACR_SERVER
-      TK_TEMPORARY_SUBSCRIPTION_ID
-      TK_TEMPORARY_DNS_SUFFIX
-      TK_TEMPORARY_STORAGE_ACCOUNT
-      TK_TEMPORARY_AUTH0_ALLOWED_HOST_SUFFIX
-      TK_TEMPORARY_AUTH0_MANAGEMENT_TOKEN
-      TK_TEMPORARY_BLOB_CONNECTION_STRING
-      TK_TEMPORARY_BLOB_CONTAINER
+      TEMPORARY_DEPLOYMENT_RESOURCE_GROUP
+      TEMPORARY_DEPLOYMENT_CONTAINER_APPS_ENVIRONMENT
+      TEMPORARY_DEPLOYMENT_CONTAINER_REGISTRY_SERVER
+      TEMPORARY_DEPLOYMENT_AZURE_SUBSCRIPTION_ID
+      TEMPORARY_DEPLOYMENT_DOMAIN_SUFFIX
+      TEMPORARY_DEPLOYMENT_STORAGE_ACCOUNT
+      TEMPORARY_DEPLOYMENT_AUTH0_ALLOWED_HOST_SUFFIX
+      TEMPORARY_DEPLOYMENT_AUTH0_MANAGEMENT_TOKEN
+      TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING
+      TEMPORARY_DEPLOYMENT_BLOB_CONTAINER
     ].freeze
 
     attr_reader :environment
@@ -31,26 +31,26 @@ module TraditionalKnowledgeTemporaryDeployment
       validate_scope!
       unless blob_connection_account == storage_account
         raise Error,
-              "TK_TEMPORARY_BLOB_CONNECTION_STRING must belong to TK_TEMPORARY_STORAGE_ACCOUNT"
+              "TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING must belong to TEMPORARY_DEPLOYMENT_STORAGE_ACCOUNT"
       end
       expected_suffix = ".#{dns_suffix}"
       unless auth0_allowed_host_suffix == expected_suffix
         raise Error,
-              "TK_TEMPORARY_AUTH0_ALLOWED_HOST_SUFFIX must be #{expected_suffix.inspect}"
+              "TEMPORARY_DEPLOYMENT_AUTH0_ALLOWED_HOST_SUFFIX must be #{expected_suffix.inspect}"
       end
       self
     end
 
     def validate_cleanup!
       required = %w[
-        TK_TEMPORARY_RESOURCE_GROUP
-        TK_TEMPORARY_ACA_ENVIRONMENT
-        TK_TEMPORARY_ACR_SERVER
-        TK_TEMPORARY_SUBSCRIPTION_ID
-        TK_TEMPORARY_DNS_SUFFIX
-        TK_TEMPORARY_STORAGE_ACCOUNT
-        TK_TEMPORARY_BLOB_CONNECTION_STRING
-        TK_TEMPORARY_BLOB_CONTAINER
+        TEMPORARY_DEPLOYMENT_RESOURCE_GROUP
+        TEMPORARY_DEPLOYMENT_CONTAINER_APPS_ENVIRONMENT
+        TEMPORARY_DEPLOYMENT_CONTAINER_REGISTRY_SERVER
+        TEMPORARY_DEPLOYMENT_AZURE_SUBSCRIPTION_ID
+        TEMPORARY_DEPLOYMENT_DOMAIN_SUFFIX
+        TEMPORARY_DEPLOYMENT_STORAGE_ACCOUNT
+        TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING
+        TEMPORARY_DEPLOYMENT_BLOB_CONTAINER
       ]
       missing = required.reject { |key| environment[key].to_s.strip != "" }
       unless missing.empty?
@@ -61,7 +61,7 @@ module TraditionalKnowledgeTemporaryDeployment
       validate_scope!
       unless blob_connection_account == storage_account
         raise Error,
-              "TK_TEMPORARY_BLOB_CONNECTION_STRING must belong to TK_TEMPORARY_STORAGE_ACCOUNT"
+              "TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING must belong to TEMPORARY_DEPLOYMENT_STORAGE_ACCOUNT"
       end
     end
 
@@ -84,31 +84,40 @@ module TraditionalKnowledgeTemporaryDeployment
             "Refusing production-looking temporary configuration in #{labels}"
     end
 
-    def resource_group = fetch("TK_TEMPORARY_RESOURCE_GROUP")
-    def aca_environment = fetch("TK_TEMPORARY_ACA_ENVIRONMENT")
-    def acr_server = fetch("TK_TEMPORARY_ACR_SERVER")
+    def resource_group = fetch("TEMPORARY_DEPLOYMENT_RESOURCE_GROUP")
+    def aca_environment =
+      fetch("TEMPORARY_DEPLOYMENT_CONTAINER_APPS_ENVIRONMENT")
+    def acr_server = fetch("TEMPORARY_DEPLOYMENT_CONTAINER_REGISTRY_SERVER")
     def acr_name = acr_server.split(".").first
     def dns_suffix =
-      fetch("TK_TEMPORARY_DNS_SUFFIX").sub(%r{\Ahttps?://}, "").sub(
+      fetch("TEMPORARY_DEPLOYMENT_DOMAIN_SUFFIX").sub(%r{\Ahttps?://}, "").sub(
         %r{/.*\z},
         ""
       )
     def scope_tag = SCOPE_TAG
-    def storage_account = fetch("TK_TEMPORARY_STORAGE_ACCOUNT")
+    def storage_account = fetch("TEMPORARY_DEPLOYMENT_STORAGE_ACCOUNT")
     def auth0_allowed_host_suffix =
-      fetch("TK_TEMPORARY_AUTH0_ALLOWED_HOST_SUFFIX")
+      fetch("TEMPORARY_DEPLOYMENT_AUTH0_ALLOWED_HOST_SUFFIX")
     def auth0_domain =
-      environment.fetch("TK_TEMPORARY_AUTH0_DOMAIN", UAT_AUTH0_DOMAIN)
+      environment.fetch("TEMPORARY_DEPLOYMENT_AUTH0_DOMAIN", UAT_AUTH0_DOMAIN)
     def auth0_audience =
-      environment.fetch("TK_TEMPORARY_AUTH0_AUDIENCE", UAT_AUTH0_AUDIENCE)
+      environment.fetch(
+        "TEMPORARY_DEPLOYMENT_AUTH0_AUDIENCE",
+        UAT_AUTH0_AUDIENCE
+      )
     def auth0_client_id =
-      environment.fetch("TK_TEMPORARY_AUTH0_CLIENT_ID", UAT_AUTH0_CLIENT_ID)
-    def auth0_management_token = fetch("TK_TEMPORARY_AUTH0_MANAGEMENT_TOKEN")
-    def blob_connection_string = fetch("TK_TEMPORARY_BLOB_CONNECTION_STRING")
+      environment.fetch(
+        "TEMPORARY_DEPLOYMENT_AUTH0_CLIENT_ID",
+        UAT_AUTH0_CLIENT_ID
+      )
+    def auth0_management_token =
+      fetch("TEMPORARY_DEPLOYMENT_AUTH0_MANAGEMENT_TOKEN")
+    def blob_connection_string =
+      fetch("TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING")
     def blob_connection_account =
       blob_connection_string[/AccountName=([^;]+)/i, 1]
     def blob_endpoint = blob_connection_string[/BlobEndpoint=([^;]+)/i, 1]
-    def blob_container_prefix = fetch("TK_TEMPORARY_BLOB_CONTAINER")
+    def blob_container_prefix = fetch("TEMPORARY_DEPLOYMENT_BLOB_CONTAINER")
     def blob_container(source)
       name = "#{blob_container_prefix}-#{source.identifier}"
       unless name.length.between?(3, 63) &&
@@ -120,14 +129,24 @@ module TraditionalKnowledgeTemporaryDeployment
 
       name
     end
-    def repository = environment.fetch("TK_TEMPORARY_REPOSITORY", REPOSITORY)
+    def repository =
+      environment.fetch("TEMPORARY_DEPLOYMENT_SOURCE_REPOSITORY", REPOSITORY)
     def state_directory =
-      environment.fetch("TK_TEMPORARY_STATE_DIR", DEFAULT_STATE_DIR)
-    def subscription_id = fetch("TK_TEMPORARY_SUBSCRIPTION_ID")
+      environment.fetch(
+        "TEMPORARY_DEPLOYMENT_STATE_DIRECTORY",
+        DEFAULT_STATE_DIR
+      )
+    def subscription_id = fetch("TEMPORARY_DEPLOYMENT_AZURE_SUBSCRIPTION_ID")
     def timeout_seconds =
-      Integer(environment.fetch("TK_TEMPORARY_TIMEOUT_SECONDS", "300"), 10)
+      Integer(
+        environment.fetch("TEMPORARY_DEPLOYMENT_TIMEOUT_SECONDS", "300"),
+        10
+      )
     def http_timeout_seconds =
-      Integer(environment.fetch("TK_TEMPORARY_HTTP_TIMEOUT_SECONDS", "10"), 10)
+      Integer(
+        environment.fetch("TEMPORARY_DEPLOYMENT_REQUEST_TIMEOUT_SECONDS", "10"),
+        10
+      )
 
     def environment_id(source) = source.identifier
     def app_name(source) = "#{APP_PREFIX}#{source.app_identifier}"
@@ -142,7 +161,7 @@ module TraditionalKnowledgeTemporaryDeployment
 
     def validate_auth0_domain!
       unless auth0_domain.start_with?("https://")
-        raise Error, "TK_TEMPORARY_AUTH0_DOMAIN must use https://"
+        raise Error, "TEMPORARY_DEPLOYMENT_AUTH0_DOMAIN must use https://"
       end
     end
 

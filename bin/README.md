@@ -30,26 +30,26 @@ bin/deploy temporary down --all --expired --yes
 ```
 
 `bin/deploy ephemeral` is an alias for `bin/deploy temporary`. The environment
-URL is `https://tk-temporary-<source>.<TK_TEMPORARY_DNS_SUFFIX>`. Each
+URL is `https://tk-temporary-<source>.<TEMPORARY_DEPLOYMENT_DOMAIN_SUFFIX>`. Each
 deployment has isolated SQL Server, Redis, MailDev, and blob storage.
 
-State is stored in `TK_TEMPORARY_STATE_DIR` (default:
+State is stored in `TEMPORARY_DEPLOYMENT_STATE_DIRECTORY` (default:
 `~/.traditional-knowledge-temporary`) so failed cleanup can be retried. TTL is
 recorded; there is no background scheduler.
 
-Before use, configure these local-only `TK_TEMPORARY_*` variables:
+Before use, configure these local-only `TEMPORARY_DEPLOYMENT_*` variables:
 
-- `TK_TEMPORARY_RESOURCE_GROUP`, `TK_TEMPORARY_ACA_ENVIRONMENT`,
-  `TK_TEMPORARY_ACR_SERVER`, `TK_TEMPORARY_SUBSCRIPTION_ID`
-- `TK_TEMPORARY_DNS_SUFFIX`, with an ACA custom-domain suffix and wildcard
+- `TEMPORARY_DEPLOYMENT_RESOURCE_GROUP`, `TEMPORARY_DEPLOYMENT_CONTAINER_APPS_ENVIRONMENT`,
+  `TEMPORARY_DEPLOYMENT_CONTAINER_REGISTRY_SERVER`, `TEMPORARY_DEPLOYMENT_AZURE_SUBSCRIPTION_ID`
+- `TEMPORARY_DEPLOYMENT_DOMAIN_SUFFIX`, with an ACA custom-domain suffix and wildcard
   certificate
-- `TK_TEMPORARY_STORAGE_ACCOUNT`, `TK_TEMPORARY_BLOB_CONNECTION_STRING`,
-  `TK_TEMPORARY_BLOB_CONTAINER`
-- `TK_TEMPORARY_AUTH0_MANAGEMENT_TOKEN`,
-  `TK_TEMPORARY_AUTH0_ALLOWED_HOST_SUFFIX`
+- `TEMPORARY_DEPLOYMENT_STORAGE_ACCOUNT`, `TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING`,
+  `TEMPORARY_DEPLOYMENT_BLOB_CONTAINER`
+- `TEMPORARY_DEPLOYMENT_AUTH0_MANAGEMENT_TOKEN`,
+  `TEMPORARY_DEPLOYMENT_AUTH0_ALLOWED_HOST_SUFFIX`
 
 The command defaults to the shared UAT Auth0 domain, audience, and client ID.
-Set the `TK_TEMPORARY_AUTH0_*` overrides only when using another compatible
+Set the `TEMPORARY_DEPLOYMENT_AUTH0_*` overrides only when using another compatible
 Auth0 application.
 
 Use the `artzzpr-sub` subscription (or its ID), not `wrpzzpr-sub`. The command
@@ -58,7 +58,7 @@ an eligible Azure role can use PIM self-activation; CI should use an
 OIDC/service-principal identity with scoped write access.
 
 Configure the Auth0 application with these wildcard values, replacing
-`<suffix>` with `TK_TEMPORARY_DNS_SUFFIX`:
+`<suffix>` with `TEMPORARY_DEPLOYMENT_DOMAIN_SUFFIX`:
 
 ```text
 Allowed Callback URLs: https://*.<suffix>/callback
@@ -82,29 +82,26 @@ permissions:
   id-token: write
 
 env:
-  TK_TEMPORARY_RESOURCE_GROUP: ${{ vars.TK_TEMPORARY_RESOURCE_GROUP }}
-  TK_TEMPORARY_ACA_ENVIRONMENT: ${{ vars.TK_TEMPORARY_ACA_ENVIRONMENT }}
-  TK_TEMPORARY_ACR_SERVER: ${{ vars.TK_TEMPORARY_ACR_SERVER }}
-  TK_TEMPORARY_SUBSCRIPTION_ID: ${{ vars.TK_TEMPORARY_SUBSCRIPTION_ID }}
-  TK_TEMPORARY_DNS_SUFFIX: ${{ vars.TK_TEMPORARY_DNS_SUFFIX }}
-  TK_TEMPORARY_STORAGE_ACCOUNT: ${{ vars.TK_TEMPORARY_STORAGE_ACCOUNT }}
-  TK_TEMPORARY_BLOB_CONTAINER: ${{ vars.TK_TEMPORARY_BLOB_CONTAINER }}
-  TK_TEMPORARY_AUTH0_DOMAIN: ${{ vars.TK_TEMPORARY_AUTH0_DOMAIN }}
-  TK_TEMPORARY_AUTH0_AUDIENCE: ${{ vars.TK_TEMPORARY_AUTH0_AUDIENCE }}
-  TK_TEMPORARY_AUTH0_CLIENT_ID: ${{ vars.TK_TEMPORARY_AUTH0_CLIENT_ID }}
-  TK_TEMPORARY_AUTH0_ALLOWED_HOST_SUFFIX: ${{ vars.TK_TEMPORARY_AUTH0_ALLOWED_HOST_SUFFIX }}
-  TK_TEMPORARY_BLOB_CONNECTION_STRING: ${{ secrets.TK_TEMPORARY_BLOB_CONNECTION_STRING }}
-  TK_TEMPORARY_AUTH0_MANAGEMENT_TOKEN: ${{ secrets.TK_TEMPORARY_AUTH0_MANAGEMENT_TOKEN }}
-  TK_TEMPORARY_STATE_DIR: ${{ runner.temp }}/traditional-knowledge-temporary
+  TEMPORARY_DEPLOYMENT_RESOURCE_GROUP: ${{ vars.TEMPORARY_DEPLOYMENT_RESOURCE_GROUP }}
+  TEMPORARY_DEPLOYMENT_CONTAINER_APPS_ENVIRONMENT: ${{ vars.TEMPORARY_DEPLOYMENT_CONTAINER_APPS_ENVIRONMENT }}
+  TEMPORARY_DEPLOYMENT_CONTAINER_REGISTRY_SERVER: ${{ vars.TEMPORARY_DEPLOYMENT_CONTAINER_REGISTRY_SERVER }}
+  TEMPORARY_DEPLOYMENT_AZURE_SUBSCRIPTION_ID: ${{ vars.TEMPORARY_DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}
+  TEMPORARY_DEPLOYMENT_DOMAIN_SUFFIX: ${{ vars.TEMPORARY_DEPLOYMENT_DOMAIN_SUFFIX }}
+  TEMPORARY_DEPLOYMENT_STORAGE_ACCOUNT: ${{ vars.TEMPORARY_DEPLOYMENT_STORAGE_ACCOUNT }}
+  TEMPORARY_DEPLOYMENT_BLOB_CONTAINER: ${{ vars.TEMPORARY_DEPLOYMENT_BLOB_CONTAINER }}
+  TEMPORARY_DEPLOYMENT_AUTH0_ALLOWED_HOST_SUFFIX: ${{ vars.TEMPORARY_DEPLOYMENT_AUTH0_ALLOWED_HOST_SUFFIX }}
+  TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING: ${{ secrets.TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING }}
+  TEMPORARY_DEPLOYMENT_AUTH0_MANAGEMENT_TOKEN: ${{ secrets.TEMPORARY_DEPLOYMENT_AUTH0_MANAGEMENT_TOKEN }}
+  TEMPORARY_DEPLOYMENT_STATE_DIRECTORY: ${{ runner.temp }}/traditional-knowledge-temporary
   GH_TOKEN: ${{ github.token }}
 
 steps:
   - uses: actions/checkout@v4
   - uses: azure/login@v2
     with:
-      client-id: ${{ secrets.TK_TEMPORARY_AZURE_CLIENT_ID }}
-      tenant-id: ${{ secrets.TK_TEMPORARY_AZURE_TENANT_ID }}
-      subscription-id: ${{ vars.TK_TEMPORARY_SUBSCRIPTION_ID }}
+      client-id: ${{ secrets.TEMPORARY_DEPLOYMENT_AZURE_CLIENT_ID }}
+      tenant-id: ${{ secrets.TEMPORARY_DEPLOYMENT_AZURE_TENANT_ID }}
+      subscription-id: ${{ vars.TEMPORARY_DEPLOYMENT_AZURE_SUBSCRIPTION_ID }}
   - run: bin/deploy temporary --pr "${{ github.event.pull_request.number }}"
   - if: ${{ always() }}
     run: bin/deploy temporary down --all --yes

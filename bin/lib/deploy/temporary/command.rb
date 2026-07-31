@@ -118,7 +118,7 @@ module TraditionalKnowledgeTemporaryDeployment
         bin/deploy temporary down --git-hash SHA
         bin/deploy temporary down --all --expired --yes
 
-      `ephemeral` is an alias for `temporary`. Configure TK_TEMPORARY_* values
+      `ephemeral` is an alias for `temporary`. Configure TEMPORARY_DEPLOYMENT_* values
       for a non-production Azure Container Apps environment.
     HELP
   end

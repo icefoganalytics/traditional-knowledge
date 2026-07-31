@@ -66,7 +66,8 @@ module TraditionalKnowledgeTemporaryDeployment
 
       endpoint = @config.blob_endpoint
       if endpoint.to_s.empty?
-        raise Error, "TK_TEMPORARY_BLOB_CONNECTION_STRING has no BlobEndpoint"
+        raise Error,
+              "TEMPORARY_DEPLOYMENT_BLOB_CONNECTION_STRING has no BlobEndpoint"
       end
 
       "BlobEndpoint=#{endpoint};SharedAccessSignature=#{sas.delete_prefix("?")}"

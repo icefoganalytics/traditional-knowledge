@@ -3,7 +3,10 @@ module TraditionalKnowledgeTemporaryDeployment
     attr_reader :directory
 
     def initialize(
-      directory = ENV.fetch("TK_TEMPORARY_STATE_DIR", DEFAULT_STATE_DIR)
+      directory = ENV.fetch(
+        "TEMPORARY_DEPLOYMENT_STATE_DIRECTORY",
+        DEFAULT_STATE_DIR
+      )
     )
       @directory = File.expand_path(directory)
     end

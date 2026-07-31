@@ -12,10 +12,10 @@ module TraditionalKnowledgeTemporaryDeployment
 
       new(normalized_kind, value)
     end
-
     def initialize(kind, value)
       @kind = kind
       @value = value.to_s.strip
+      @value = @value.downcase if kind == :git_hash
       validate!
     end
 

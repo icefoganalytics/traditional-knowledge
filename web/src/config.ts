@@ -36,9 +36,9 @@ const localProductionConfig = {
 }
 const qaConfig = {
   hostSuffix: import.meta.env.VITE_QA_HOST_SUFFIX || "",
-  domain: import.meta.env.VITE_QA_AUTH0_DOMAIN || "",
-  clientId: import.meta.env.VITE_QA_AUTH0_CLIENT_ID || "",
-  audience: import.meta.env.VITE_QA_AUTH0_AUDIENCE || "",
+  domain: import.meta.env.VITE_QA_AUTH0_DOMAIN || uatConfig.domain,
+  clientId: import.meta.env.VITE_QA_AUTH0_CLIENT_ID || uatConfig.clientId,
+  audience: import.meta.env.VITE_QA_AUTH0_AUDIENCE || uatConfig.audience,
   apiBaseUrl: "",
   applicationName: "Traditional Knowledge - QA",
 }

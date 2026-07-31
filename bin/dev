@@ -21,7 +21,7 @@ class DevHelper
     "edit-pr" => :edit_pr,
     "bash-completions" => :bash_completions,
     "plantuml-to-png" => :plantuml_to_png,
-    "sqlcmd-query" => :sqlcmd_query,
+    "sqlcmd-query" => :sqlcmd_query
   }
 
   METHOD_TO_COMMAND = COMMAND_TO_METHOD.invert
@@ -68,13 +68,24 @@ class DevHelper
   def up(*args, **kwargs)
     LocalDevelopmentGateway.ensure_running
     OpenInEditorBridge.with_running do
-      compose(*%w[up --remove-orphans --force-recreate], *args, execution_mode: WAIT_FOR_PROCESS, gateway: true, **kwargs)
+      compose(
+        *%w[up --remove-orphans --force-recreate],
+        *args,
+        execution_mode: WAIT_FOR_PROCESS,
+        gateway: true,
+        **kwargs
+      )
     end
   end
 
   def down(*args, **kwargs)
     OpenInEditorBridge.with_running(ensure_running: false) do
-      if compose(*%w[down --remove-orphans], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
+      if compose(
+           *%w[down --remove-orphans],
+           *args,
+           execution_mode: WAIT_FOR_PROCESS,
+           **kwargs
+         )
         LocalDevelopmentGateway.stop_if_unused
       end
     end
@@ -100,13 +111,20 @@ class DevHelper
     run(*%w[api sh], *args, **kwargs)
   end
 
-
   def web(*args, **kwargs)
     run(*%w[web], *args, **kwargs)
   end
 
   def api(*args, **kwargs)
     run(*%w[api], *args, **kwargs)
+  end
+  def qa(*args, **kwargs)
+    unless kwargs.empty?
+      raise ArgumentError,
+            "Unexpected options for qa: #{kwargs.keys.join(", ")}"
+    end
+
+    exec("ruby", File.join(project_root, "bin/qa"), *args)
   end
 
   def archiver(*args, **kwargs)
@@ -122,8 +140,12 @@ class DevHelper
   end
 
   def check_types(*args, **kwargs)
-    run(*%w[api npm run check-types], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs) &&
-      run(*%w[web npm run check-types], *args, **kwargs)
+    run(
+      *%w[api npm run check-types],
+      *args,
+      execution_mode: WAIT_FOR_PROCESS,
+      **kwargs
+    ) && run(*%w[web npm run check-types], *args, **kwargs)
   end
 
   def test(*args, **kwargs)
@@ -140,9 +162,16 @@ class DevHelper
   end
 
   def test_qa(*args, **kwargs)
-    raise ArgumentError, "Unexpected argument(s) for qa tests: #{args.join(" ")}" unless args.empty?
+    unless args.empty?
+      raise ArgumentError,
+            "Unexpected argument(s) for qa tests: #{args.join(" ")}"
+    end
+    unless kwargs.empty?
+      raise ArgumentError,
+            "Unexpected options for qa tests: #{kwargs.keys.join(", ")}"
+    end
 
-    exit 1 unless system("ruby", File.join(project_root, "bin/qa_test.rb"))
+    exec("ruby", File.join(project_root, "bin/qa_test.rb"))
   end
 
   def test_api(*args, **kwargs)
@@ -157,7 +186,12 @@ class DevHelper
 
   def knex(*args, **kwargs)
     if RUBY_PLATFORM =~ /linux/
-      run(*%w[api npm run knex], *args, execution_mode: WAIT_FOR_PROCESS, **kwargs)
+      run(
+        *%w[api npm run knex],
+        *args,
+        execution_mode: WAIT_FOR_PROCESS,
+        **kwargs
+      )
 
       file_or_directory = "api/src/db"
       exit(0) unless take_over_needed?(file_or_directory)
@@ -187,20 +221,16 @@ class DevHelper
   #
   # For direct queries and queries with special characters, see sqlcmd_query method.
   def sqlcmd(*args, **kwargs) # rubocop:disable Metrics/MethodLength
-    environment_hoist = ENV.slice(*%w[
-      DB_DATABASE
-      DB_USERNAME
-      DB_HOST
-      DB_PORT
-    ]).map { |key, value|
-      "export #{key}=\"#{value}\""
-    }.join("\n  ")
+    environment_hoist =
+      ENV
+        .slice(*%w[DB_DATABASE DB_USERNAME DB_HOST DB_PORT])
+        .map { |key, value| "export #{key}=\"#{value}\"" }
+        .join("\n  ")
 
     tty_argument = ""
     tty_argument = "-T" if kwargs.fetch(:enable_tty, false)
 
-    compose(
-      <<~BASH,
+    compose(<<~BASH, **kwargs)
         exec #{tty_argument} db sh -c '
           #{environment_hoist}
           /opt/mssql-tools18/bin/sqlcmd \
@@ -212,8 +242,6 @@ class DevHelper
             -I #{args.join(" ")}
           '
       BASH
-      **kwargs
-    )
   end
 
   ##
@@ -286,7 +314,9 @@ class DevHelper
   end
 
   def changes_from(branch_or_ref_or_commit_hash = "HEAD")
-    system("git --no-pager log origin/main..#{branch_or_ref_or_commit_hash} --patch")
+    system(
+      "git --no-pager log origin/main..#{branch_or_ref_or_commit_hash} --patch"
+    )
   end
 
   ##
@@ -294,13 +324,19 @@ class DevHelper
   # Example:
   #   dev edit-pr https://github.com/icefoganalytics/travel-authorization/pull/218
   def edit_pr(pull_request_url, *args, **kwargs)
-    PullRequestEditor.edit_pull_request_description(pull_request_url, *args, **kwargs)
+    PullRequestEditor.edit_pull_request_description(
+      pull_request_url,
+      *args,
+      **kwargs
+    )
     exit(0)
   end
 
   def ownit(*args, **kwargs)
     file_or_directory = args[0]
-    raise ScriptError, "Must provide a file or directory path." if file_or_directory.nil?
+    if file_or_directory.nil?
+      raise ScriptError, "Must provide a file or directory path."
+    end
 
     if RUBY_PLATFORM =~ /linux/
       puts "Take ownership of the file or directory? #{file_or_directory}"
@@ -315,7 +351,8 @@ class DevHelper
   def bash_completions
     all_public_methods = public_methods(false).sort
     all_public_methods.delete(:call)
-    completions = all_public_methods.map { |word| METHOD_TO_COMMAND.fetch(word, word) }
+    completions =
+      all_public_methods.map { |word| METHOD_TO_COMMAND.fetch(word, word) }
     puts completions
   end
 
@@ -383,9 +420,15 @@ class DevHelper
     if RUBY_PLATFORM =~ /linux/
       linux_override = "docker-compose.#{environment}.linux.yml"
       linux_override_path = File.join(project_root, linux_override)
-      compose_file_arguments.concat(["-f", linux_override]) if File.exist?(linux_override_path)
+      if File.exist?(linux_override_path)
+        compose_file_arguments.concat(["-f", linux_override])
+      end
     end
-    compose_file_arguments.concat(["-f", "docker-compose.development.gateway.yml"]) if gateway && environment == "development"
+    if gateway && environment == "development"
+      compose_file_arguments.concat(
+        %w[-f docker-compose.development.gateway.yml]
+      )
+    end
 
     compose_arguments = ["docker", "compose", *compose_file_arguments, *args]
     docker_command = compose_arguments.join(" ")
@@ -412,7 +455,7 @@ class DevHelper
 
   def dynamic_environment_variables
     variables = []
-    if RUBY_PLATFORM =~ /linux/ && user_id == '1000' && group_id == '1000'
+    if RUBY_PLATFORM =~ /linux/ && user_id == "1000" && group_id == "1000"
       variables << "HOST_USER_ID=#{Shellwords.escape(user_id)}"
       variables << "HOST_GROUP_ID=#{Shellwords.escape(group_id)}"
     end
@@ -423,15 +466,18 @@ class DevHelper
 
   def gateway_hostname
     checkout_name = File.basename(project_root).downcase.gsub(/[^a-z0-9]+/, "-")
-    return "traditional-knowledge.localhost" if checkout_name == "traditional-knowledge"
+    if checkout_name == "traditional-knowledge"
+      return "traditional-knowledge.localhost"
+    end
 
     "#{checkout_name}.traditional-knowledge.localhost"
   end
 
-
   def take_over_needed?(file_or_directory)
     files_owned_by_others =
-      system("find #{file_or_directory} -not -user #{user_id} -print -quit | grep -q .")
+      system(
+        "find #{file_or_directory} -not -user #{user_id} -print -quit | grep -q ."
+      )
     files_owned_by_others
   end
 
@@ -461,7 +507,10 @@ class DevHelper
       next unless arg.start_with?(prefix)
 
       if arg.start_with?(src_path_prefix)
-        args[index] = arg.gsub(/^#{src_path_regex}/, "tests/").gsub(/\.ts$/, ".test.ts")
+        args[index] = arg.gsub(/^#{src_path_regex}/, "tests/").gsub(
+          /\.ts$/,
+          ".test.ts"
+        )
       else
         args[index] = arg.gsub(/^#{test_path_regex}/, "")
       end
@@ -469,7 +518,9 @@ class DevHelper
       reformatted = true
     end
 
-    puts "Reformatted path filter from project relative to service relative for vitest." if reformatted
+    if reformatted
+      puts "Reformatted path filter from project relative to service relative for vitest."
+    end
   end
 
   ##
@@ -491,7 +542,11 @@ class DevHelper
   end
 
   def service_running?(container_name)
-    ps(*%w[-q --status=running], execution_mode: WAIT_FOR_PROCESS, slient: true) != ""
+    ps(
+      *%w[-q --status=running],
+      execution_mode: WAIT_FOR_PROCESS,
+      slient: true
+    ) != ""
   end
 end
 

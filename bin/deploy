@@ -4,7 +4,7 @@ require_relative "lib/deploy/all"
 
 if $PROGRAM_NAME == __FILE__
   begin
-    TraditionalKnowledgeTemporaryDeployment.run(ARGV)
+    TraditionalKnowledgeTemporaryDeployment::Command.call(ARGV)
   rescue ArgumentError => error
     warn error.message
     exit 1

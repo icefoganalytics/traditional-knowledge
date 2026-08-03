@@ -1,6 +1,6 @@
 import { logger } from "@/utils/logger"
 
-export function safeJsonParse(values: string): unknown[] {
+export function safeJsonParse(values: string): any[] {
   try {
     const lines = JSON.parse(values)
     if (Array.isArray(lines)) {

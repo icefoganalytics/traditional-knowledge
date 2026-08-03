@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import { toRefs } from "vue"
 
 import { type VBtn } from "vuetify/components"
@@ -81,7 +81,7 @@ const props = withDefaults(
 )
 
 const { groupId } = toRefs(props)
-const { group, policy } = useGroup(groupId)
+const { group, policy, isLoading } = useGroup(groupId)
 </script>
 
 <style scoped>

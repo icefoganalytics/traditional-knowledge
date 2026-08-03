@@ -1,13 +1,21 @@
-export class BaseService {
+type HasNoArgsConstructor<T> = T extends { new (): any } ? true : false
 
-  static perform<Args extends unknown[], Result>(
-    this: new (...args: Args) => { perform(): Result },
-    ...args: Args
-  ): Result {
-    return new this(...args).perform()
+type CleanConstructorParameters<T extends typeof BaseService> = HasNoArgsConstructor<T> extends true
+  ? []
+  : ConstructorParameters<T>
+
+export class BaseService {
+  constructor(...args: any[]) {}
+
+  static perform<T extends typeof BaseService>(
+    this: T,
+    ...args: CleanConstructorParameters<T>
+  ): ReturnType<InstanceType<T>["perform"]> {
+    const instance = new this(...args)
+    return instance.perform()
   }
 
-  perform(): unknown {
+  perform(): any {
     throw new Error("Not Implemented")
   }
 }

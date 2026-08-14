@@ -226,7 +226,8 @@ describe("api/src/services/information-sharing-agreements/update-service.ts", ()
         ])
       })
 
-      test("when internal secondary contact changes and group exists, removes old contact and adds new contact to group", async () => {
+      // The Manager field must never grant group admin or membership. See TK-66.
+      test("when internal secondary contact changes and group exists, removes old contact without adding the new contact", async () => {
         // Arrange
         const currentUser = await userFactory.create()
         const oldContact = await userFactory.create()
@@ -255,13 +256,7 @@ describe("api/src/services/information-sharing-agreements/update-service.ts", ()
 
         // Assert
         const userGroups = await UserGroup.findAll()
-        expect(userGroups).toEqual([
-          expect.objectContaining({
-            userId: newContact.id,
-            groupId: internalGroup.id,
-            isAdmin: true,
-          }),
-        ])
+        expect(userGroups).toEqual([])
       })
 
       test("when contact is set to null, removes old contact from group without adding a new one", async () => {
@@ -343,7 +338,7 @@ describe("api/src/services/information-sharing-agreements/update-service.ts", ()
         ])
       })
 
-      test("when both internal contacts change simultaneously, syncs both contacts in the internal group", async () => {
+      test("when both internal contacts change simultaneously, admits only the new primary contact", async () => {
         // Arrange
         const currentUser = await userFactory.create()
         const oldPrimaryContact = await userFactory.create()
@@ -386,11 +381,6 @@ describe("api/src/services/information-sharing-agreements/update-service.ts", ()
         expect(userGroups).toEqual([
           expect.objectContaining({
             userId: newPrimaryContact.id,
-            groupId: internalGroup.id,
-            isAdmin: true,
-          }),
-          expect.objectContaining({
-            userId: newSecondaryContact.id,
             groupId: internalGroup.id,
             isAdmin: true,
           }),

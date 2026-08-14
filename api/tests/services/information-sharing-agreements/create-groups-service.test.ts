@@ -189,7 +189,9 @@ describe("api/src/services/information-sharing-agreements/create-groups-service.
         ])
       })
 
-      test("when internal secondary contact exists, adds secondary contact as group admin with access grant", async () => {
+      // The Manager field records who signs the contract, and must not grant group
+      // admin, group membership, or an access grant. See TK-66.
+      test("when internal secondary contact exists, does not add secondary contact to the group", async () => {
         // Arrange
         const currentUser = await userFactory.create()
         const externalOrganization = await externalOrganizationFactory.create()
@@ -226,11 +228,14 @@ describe("api/src/services/information-sharing-agreements/create-groups-service.
             userId: internalGroupContact.id,
             accessLevel: "admin",
           }),
-          expect.objectContaining({
-            userId: internalGroupSecondaryContact.id,
-            accessLevel: "admin",
-          }),
         ])
+
+        const secondaryContactUserGroups = await UserGroup.findAll({
+          where: {
+            userId: internalGroupSecondaryContact.id,
+          },
+        })
+        expect(secondaryContactUserGroups).toEqual([])
       })
 
       test("when external group contact ID is nil, errors informatively", async () => {

@@ -50,10 +50,14 @@ export class UpdateService extends BaseService {
           oldInternalGroupContactId,
           newInternalGroupContactId
         )
-        await this.syncGroupAdmin(
+        // The secondary contact (Manager) records who signs the contract and must never
+        // gain group admin or membership, so a change only revokes the previous holder.
+        // See TK-66.
+        await this.revokeReplacedSecondaryContact(
           internalGroupId,
           oldInternalGroupSecondaryContactId,
-          newInternalGroupSecondaryContactId
+          newInternalGroupSecondaryContactId,
+          newInternalGroupContactId
         )
       }
 
@@ -81,6 +85,20 @@ export class UpdateService extends BaseService {
     if (!isNil(newContactId)) {
       await this.addGroupAdmin(newContactId, groupId)
     }
+  }
+
+  private async revokeReplacedSecondaryContact(
+    groupId: number,
+    oldContactId: number | null,
+    newContactId: number | null,
+    internalGroupContactId: number | null
+  ): Promise<void> {
+    if (oldContactId === newContactId) return
+    if (isNil(oldContactId)) return
+    // The primary contact is a group admin in their own right.
+    if (oldContactId === internalGroupContactId) return
+
+    await this.removeGroupAdmin(oldContactId, groupId)
   }
 
   private async removeGroupAdmin(userId: number, groupId: number): Promise<void> {

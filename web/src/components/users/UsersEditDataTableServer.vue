@@ -61,7 +61,7 @@
     <template #item.actions="{ item }">
       <div class="d-flex justify-end align-center">
         <v-btn
-          v-if="isSystemAdmin"
+          v-if="canManage(item)"
           :loading="isDeleting"
           title="Delete"
           icon="mdi-delete"
@@ -175,7 +175,12 @@ const usersQuery = computed(() => ({
 
 const { users, totalCount, isLoading, refresh } = useUsers(usersQuery)
 
-const { isSystemAdmin } = useCurrentUser()
+const { canManageInternalUsers, canManageExternalUsers } = useCurrentUser()
+
+// Mirrors User#canManageUser on the back end. See TK-36.
+function canManage(user: UserAsIndex) {
+  return user.isExternal ? canManageExternalUsers.value : canManageInternalUsers.value
+}
 
 const router = useRouter()
 

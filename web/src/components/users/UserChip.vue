@@ -59,6 +59,13 @@
             dense
           >
             <v-col
+              v-if="!isNil(user.externalOrganization)"
+              cols="12"
+            >
+              Yukon First Nation or Indigenous Government:
+              <strong>{{ user.externalOrganization.name }}</strong>
+            </v-col>
+            <v-col
               v-if="!isEmpty(user.department)"
               cols="12"
             >
@@ -127,7 +134,12 @@ const props = withDefaults(
 const { userId } = toRefs(props)
 const { user, isLoading } = useUser(userId)
 
-const { currentUser, isSystemAdmin } = useCurrentUser<true>()
+const { currentUser, canManageInternalUsers, canManageExternalUsers } = useCurrentUser<true>()
+
+// Mirrors User#canManageUser on the back end. See TK-36.
+function canManage(target: { isExternal: boolean }) {
+  return target.isExternal ? canManageExternalUsers.value : canManageInternalUsers.value
+}
 
 const userTitle = computed(() => {
   if (isNil(user.value)) return ""
@@ -158,9 +170,13 @@ const userProfileLink = computed(() => {
     }
   }
 
-  if (isSystemAdmin.value) {
+  // External users live on a different edit page, so route by the user's own type
+  // rather than always assuming internal. See TK-36.
+  if (!isNil(user.value) && canManage(user.value)) {
     return {
-      name: "users/UserInternalEditPage",
+      name: user.value.isExternal
+        ? "users/UserExternalEditPage"
+        : "users/UserInternalEditPage",
       params: {
         userId: userId.value,
       },

@@ -39,7 +39,19 @@ export function useCurrentUser<IsLoaded extends boolean = false>() {
   const isExternalGroupAdmin = computed(() => {
     return state.currentUser?.adminGroups.some((group) => group.isExternal)
   })
-  const isAdmin = computed(() => isSystemAdmin.value || isGroupAdmin.value)
+  // Role-based, mirroring api/src/models/user.ts. See TK-36.
+  const isAdmin = computed(() => state.currentUser?.roles.includes(UserRoles.ADMIN) ?? false)
+  const isExternalAdmin = computed(
+    () => state.currentUser?.roles.includes(UserRoles.EXTERNAL_ADMIN) ?? false
+  )
+  const canManageInternalUsers = computed(() => isSystemAdmin.value || isAdmin.value)
+  const canManageExternalUsers = computed(() => isSystemAdmin.value || isExternalAdmin.value)
+
+  /** Whether the Administration area should be reachable at all. */
+  const hasAdminAreaAccess = computed(
+    () =>
+      isSystemAdmin.value || isGroupAdmin.value || isAdmin.value || isExternalAdmin.value
+  )
 
   async function fetch(): Promise<UserAsShow> {
     state.isLoading = true
@@ -131,6 +143,10 @@ export function useCurrentUser<IsLoaded extends boolean = false>() {
     save,
     // Computed properties
     isAdmin,
+    isExternalAdmin,
+    canManageInternalUsers,
+    canManageExternalUsers,
+    hasAdminAreaAccess,
     isExternalGroupAdmin,
     isGroupAdmin,
     isSystemAdmin,

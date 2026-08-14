@@ -7,11 +7,9 @@
           label="Search"
           density="compact"
         />
-        <div
-          v-if="isSystemAdmin"
-          class="d-flex ga-2"
-        >
+        <div class="d-flex ga-2">
           <v-btn
+            v-if="canManageInternalUsers"
             color="secondary"
             variant="outlined"
             :to="{
@@ -19,16 +17,17 @@
             }"
             height="40px"
           >
-            New Internal User
+            Add YG User
           </v-btn>
           <v-btn
+            v-if="canManageExternalUsers"
             color="primary"
             :to="{
               name: 'users/UserExternalNewPage',
             }"
             height="40px"
           >
-            New External User
+            Add External User
           </v-btn>
         </div>
       </div>
@@ -48,7 +47,7 @@ import useCurrentUser from "@/use/use-current-user"
 import FilterSearchDebouncedTextField from "@/components/common/tables/FilterSearchDebouncedTextField.vue"
 import UsersEditDataTableServer from "@/components/users/UsersEditDataTableServer.vue"
 
-const { isSystemAdmin } = useCurrentUser()
+const { canManageInternalUsers, canManageExternalUsers } = useCurrentUser()
 
 const search = ref("")
 

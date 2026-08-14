@@ -1,4 +1,4 @@
-import { Attributes, FindOptions } from "@sequelize/core"
+import { Attributes, FindOptions, Op } from "@sequelize/core"
 
 import { Path } from "@/utils/deep-pick"
 import { User } from "@/models"
@@ -10,22 +10,17 @@ export class UsersPolicy extends PolicyFactory(User) {
   }
 
   create(): boolean {
-    if (this.user.isSystemAdmin) return true
-
-    return false
+    return this.user.canManageUser(this.record)
   }
 
   update(): boolean {
-    if (this.user.isSystemAdmin) return true
     if (this.user.id === this.record.id) return true
 
-    return false
+    return this.user.canManageUser(this.record)
   }
 
   destroy(): boolean {
-    if (this.user.isSystemAdmin) return true
-
-    return false
+    return this.user.canManageUser(this.record)
   }
 
   permittedAttributes(): Path[] {
@@ -42,7 +37,7 @@ export class UsersPolicy extends PolicyFactory(User) {
       "emailNotificationsEnabled",
     ]
 
-    if (this.user.isSystemAdmin) {
+    if (this.user.canManageUser(this.record)) {
       attributes.push("email", "roles")
     }
 
@@ -53,8 +48,38 @@ export class UsersPolicy extends PolicyFactory(User) {
     return ["isExternal", "externalOrganizationId", ...this.permittedAttributes()]
   }
 
-  static policyScope(_user: User): FindOptions<Attributes<User>> {
-    return ALL_RECORDS_SCOPE
+  /**
+   * Anyone administering users sees every record. Everyone else sees a directory:
+   * active users only, and an external user additionally sees only their own
+   * organization's people, never another First Nation's. The contact autocompletes in
+   * the agreement forms read through this scope, so it stays permissive enough for
+   * them. See TK-24.
+   */
+  static policyScope(user: User): FindOptions<Attributes<User>> {
+    if (user.isSystemAdmin || user.isAdmin || user.isExternalAdmin) {
+      return ALL_RECORDS_SCOPE
+    }
+
+    const visibleToEveryone = {
+      deactivatedAt: {
+        [Op.is]: null,
+      },
+    }
+
+    if (!user.isExternal) {
+      return { where: visibleToEveryone }
+    }
+
+    return {
+      where: {
+        ...visibleToEveryone,
+        [Op.or]: [
+          { isExternal: false },
+          { externalOrganizationId: user.externalOrganizationId },
+          { id: user.id },
+        ],
+      },
+    }
   }
 }
 

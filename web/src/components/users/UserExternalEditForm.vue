@@ -29,7 +29,7 @@
           >
             <ExternalOrganizationSearchableAutocomplete
               v-model="user.externalOrganizationId"
-              label="Yukon First Nation *"
+              label="Yukon First Nation or Indigenous Government *"
               :rules="[required]"
               required
             />
@@ -85,7 +85,7 @@
             />
           </v-col>
           <v-col
-            v-if="isSystemAdmin"
+            v-if="canManageExternalUsers"
             cols="12"
             md="3"
           >
@@ -195,7 +195,11 @@ const { user, policy, isLoading, save, refresh: refreshUser } = useUser(userId)
 
 const form = ref<InstanceType<typeof VForm> | null>(null)
 const snack = useSnack()
-const { currentUser, isSystemAdmin, refresh: refreshCurrentUser } = useCurrentUser<true>()
+const {
+  currentUser,
+  canManageExternalUsers,
+  refresh: refreshCurrentUser,
+} = useCurrentUser<true>()
 
 async function saveWrapper() {
   if (isNil(user.value)) return

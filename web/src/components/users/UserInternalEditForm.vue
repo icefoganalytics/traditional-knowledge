@@ -91,7 +91,7 @@
             </v-text-field>
           </v-col>
           <v-col
-            v-if="isSystemAdmin"
+            v-if="canManageInternalUsers"
             cols="12"
             md="3"
           >
@@ -167,16 +167,20 @@
         </v-row>
       </v-card-text>
 
-      <v-card-title>Roles</v-card-title>
+      <template v-if="canManageInternalUsers">
+        <v-card-title>Roles</v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col
+              cols="12"
+              md="6"
+            >
+              <UserRolesSelect v-model="user.roles" />
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </template>
       <v-card-text>
-        <v-row>
-          <v-col
-            cols="12"
-            md="6"
-          >
-            <UserRolesSelect v-model="user.roles" />
-          </v-col>
-        </v-row>
         <v-row>
           <v-col class="d-flex justify-end">
             <v-btn
@@ -257,7 +261,11 @@ const { user, policy, isLoading, save, refresh: refreshUser } = useUser(userId)
 
 const form = ref<InstanceType<typeof VForm> | null>(null)
 const snack = useSnack()
-const { currentUser, isSystemAdmin, refresh: refreshCurrentUser } = useCurrentUser<true>()
+const {
+  currentUser,
+  canManageInternalUsers,
+  refresh: refreshCurrentUser,
+} = useCurrentUser<true>()
 
 async function saveWrapper() {
   if (isNil(user.value)) return

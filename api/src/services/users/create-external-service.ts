@@ -22,6 +22,7 @@ export class CreateExternalService extends BaseService {
       firstName,
       lastName,
       displayName,
+      roles,
       ...optionalAttributes
     } = this.attributes
 
@@ -43,6 +44,7 @@ export class CreateExternalService extends BaseService {
 
     const auth0SubjectOrFallback = auth0Subject || email
     const displayNameOrFallback = displayName || `${firstName} ${lastName}`
+    const rolesOrFallback = roles ?? [User.Roles.USER]
 
     return db.transaction(async () => {
       const user = await User.create({
@@ -53,7 +55,7 @@ export class CreateExternalService extends BaseService {
         firstName,
         lastName,
         displayName: displayNameOrFallback,
-        roles: [User.Roles.USER],
+        roles: rolesOrFallback,
         isExternal: true,
         creatorId: this.currentUser.id,
       })

@@ -2,7 +2,11 @@ import { isNil, isUndefined, pick } from "lodash"
 
 import { User } from "@/models"
 import BaseSerializer from "@/serializers/base-serializer"
-import { Groups, InformationSharingAgreementAccessGrants } from "@/serializers"
+import {
+  ExternalOrganizations,
+  Groups,
+  InformationSharingAgreementAccessGrants,
+} from "@/serializers"
 
 export type UserAsShow = Pick<
   User,
@@ -36,11 +40,14 @@ export type UserAsShow = Pick<
 } & {
   adminGroups: Groups.AsReference[]
   adminInformationSharingAgreementAccessGrants: InformationSharingAgreementAccessGrants.AsReference[]
+  /** Which Yukon First Nation or Indigenous Government an external user belongs to. */
+  externalOrganization: ExternalOrganizations.AsReference | null
 }
 
 export class ShowSerializer extends BaseSerializer<User> {
   perform(): UserAsShow {
-    const { adminGroups, adminInformationSharingAgreementAccessGrants } = this.record
+    const { adminGroups, adminInformationSharingAgreementAccessGrants, externalOrganization } =
+      this.record
     if (isUndefined(adminGroups)) {
       throw new Error("Expected adminGroups association to be preloaded")
     }
@@ -92,6 +99,9 @@ export class ShowSerializer extends BaseSerializer<User> {
       adminGroups: serializedAdminGroups,
       adminInformationSharingAgreementAccessGrants:
         serializedAdminInformationSharingAgreementAccessGrants,
+      externalOrganization: isNil(externalOrganization)
+        ? null
+        : ExternalOrganizations.ReferenceSerializer.perform(externalOrganization),
     }
   }
 }

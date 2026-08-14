@@ -5,12 +5,17 @@ import {
   type QueryOptions,
   type WhereOptions,
 } from "@/api/base-api"
+import { type ExternalOrganizationAsReference } from "@/api/external-organizations-api"
 import { type GroupAsReference } from "@/api/groups-api"
 import { type InformationSharingAgreementAccessGrantAsReference } from "@/api/information-sharing-agreement-access-grants-api"
 
 /** Keep in sync with api/src/models/user.ts */
 export enum UserRoles {
   SYSTEM_ADMIN = "system_admin",
+  /** Manages internal (Yukon Government) users only. */
+  ADMIN = "admin",
+  /** Manages external (First Nation and Indigenous Government) users only. */
+  EXTERNAL_ADMIN = "external_admin",
   USER = "user",
 }
 
@@ -73,6 +78,8 @@ export type UserAsIndex = Pick<
   | "updatedAt"
 > & {
   isActive: boolean
+  /** Which Yukon First Nation or Indigenous Government an external user belongs to. */
+  externalOrganization: ExternalOrganizationAsReference | null
 }
 
 /** Keep in sync with api/src/serializers/users/show-serializer.ts */
@@ -108,6 +115,8 @@ export type UserAsShow = Pick<
 } & {
   adminGroups: GroupAsReference[]
   adminInformationSharingAgreementAccessGrants: InformationSharingAgreementAccessGrantAsReference[]
+  /** Which Yukon First Nation or Indigenous Government an external user belongs to. */
+  externalOrganization: ExternalOrganizationAsReference | null
 }
 
 /** Keep in sync with api/src/serializers/users/reference-serializer.ts */

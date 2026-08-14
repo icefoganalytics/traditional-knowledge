@@ -2,6 +2,7 @@ import { isNil, pick } from "lodash"
 
 import { User } from "@/models"
 import BaseSerializer from "@/serializers/base-serializer"
+import { ExternalOrganizations } from "@/serializers"
 
 export type UserIndexView = Pick<
   User,
@@ -32,10 +33,14 @@ export type UserIndexView = Pick<
   | "updatedAt"
 > & {
   isActive: boolean
+  /** Which Yukon First Nation or Indigenous Government an external user belongs to. */
+  externalOrganization: ExternalOrganizations.AsReference | null
 }
 
 export class IndexSerializer extends BaseSerializer<User> {
   perform(): UserIndexView {
+    const { externalOrganization } = this.record
+
     return {
       ...pick(this.record, [
         "id",
@@ -65,6 +70,9 @@ export class IndexSerializer extends BaseSerializer<User> {
         "updatedAt",
       ]),
       isActive: isNil(this.record.deactivatedAt),
+      externalOrganization: isNil(externalOrganization)
+        ? null
+        : ExternalOrganizations.ReferenceSerializer.perform(externalOrganization),
     }
   }
 }

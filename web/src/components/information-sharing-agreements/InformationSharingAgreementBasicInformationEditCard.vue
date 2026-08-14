@@ -44,6 +44,20 @@
             @selected="updateExternalGroupContactTitle"
             @update:model-value="emit('update:externalGroupContactId', $event)"
           />
+          <!-- Surfaces what is already captured on the selected external user. See TK-69. -->
+          <v-alert
+            v-if="!isNil(externalGroupContact)"
+            class="mt-2"
+            density="compact"
+            type="info"
+            variant="tonal"
+          >
+            <div>Email: {{ externalGroupContact.email }}</div>
+            <div>
+              Yukon First Nation or Indigenous Government:
+              {{ externalGroupContact.externalOrganization?.name ?? "Not specified" }}
+            </div>
+          </v-alert>
         </v-col>
         <v-col
           cols="12"
@@ -108,14 +122,16 @@
 
 <script setup lang="ts">
 import { isNil } from "lodash"
-import { computed } from "vue"
+import { computed, toRefs } from "vue"
 
 import { required } from "@/utils/validators"
+import useUser from "@/use/use-user"
+
 import UserSearchableAutocomplete, {
   type UserAsIndex,
 } from "@/components/users/UserSearchableAutocomplete.vue"
 
-defineProps<{
+const props = defineProps<{
   title: string | null | undefined
   purpose: string | null | undefined
   externalGroupContactId: number | null | undefined
@@ -134,6 +150,9 @@ const emit = defineEmits<{
   "update:internalGroupContactTitle": [value: string | null | undefined]
   "update:internalGroupSecondaryContactId": [value: number | null | undefined]
 }>()
+
+const { externalGroupContactId } = toRefs(props)
+const { user: externalGroupContact } = useUser(externalGroupContactId)
 
 const externalGroupContactWhere = computed(() => ({
   isExternal: true,

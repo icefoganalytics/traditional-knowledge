@@ -99,6 +99,7 @@ import { useRouteQuery } from "@vueuse/router"
 import { useDisplay } from "vuetify"
 import { isNil } from "lodash"
 
+import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
 import { required } from "@/utils/validators"
 
 import informationSharingAgreementsApi, {
@@ -179,7 +180,8 @@ const pageTitle = computed(() => {
     return "loading..."
   }
 
-  return `Mark as Signed: ${informationSharingAgreement.value.title}`
+  const { id, title } = informationSharingAgreement.value
+  return `Mark as Signed: ${formatInformationSharingAgreementNumber(id)} - ${title}`
 })
 
 useBreadcrumbs(pageTitle, [

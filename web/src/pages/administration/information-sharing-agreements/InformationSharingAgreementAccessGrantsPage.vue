@@ -30,6 +30,8 @@
 import { computed, ref } from "vue"
 import { isEmpty, isNil } from "lodash"
 
+import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
+
 import FilterSearchDebouncedTextField from "@/components/common/tables/FilterSearchDebouncedTextField.vue"
 import InformationSharingAgreementAccessGrantEditDataTableServer from "@/components/information-sharing-agreement-access-grants/InformationSharingAgreementAccessGrantEditDataTableServer.vue"
 
@@ -56,13 +58,29 @@ const filters = computed(() => {
   }
 })
 
-useBreadcrumbs("Information Sharing Agreement", [
-  ADMIN_CRUMB,
-  {
-    title: "Information Sharing Agreements",
-    to: {
-      name: "administration/InformationSharingAgreementsPage",
+const informationSharingAgreementNumber = computed(() =>
+  formatInformationSharingAgreementNumber(informationSharingAgreementIdAsNumber.value)
+)
+
+useBreadcrumbs(
+  computed(() => `${informationSharingAgreementNumber.value} - Access Grants`),
+  computed(() => [
+    ADMIN_CRUMB,
+    {
+      title: "Information Sharing Agreements",
+      to: {
+        name: "administration/InformationSharingAgreementsPage",
+      },
     },
-  },
-])
+    {
+      title: informationSharingAgreementNumber.value,
+      to: {
+        name: "administration/information-sharing-agreements/InformationSharingAgreementPage",
+        params: {
+          informationSharingAgreementId: props.informationSharingAgreementId,
+        },
+      },
+    },
+  ])
+)
 </script>

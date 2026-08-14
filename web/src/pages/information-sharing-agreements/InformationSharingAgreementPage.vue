@@ -77,6 +77,7 @@
 import { computed } from "vue"
 import { isNil } from "lodash"
 
+import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
 import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
 
@@ -102,8 +103,8 @@ const pageTitle = computed(() => {
     return "loading..."
   }
 
-  const { title } = informationSharingAgreement.value
-  return title
+  const { id, title } = informationSharingAgreement.value
+  return `${formatInformationSharingAgreementNumber(id)} - ${title}`
 })
 
 useBreadcrumbs(pageTitle, [

@@ -1,4 +1,5 @@
 export { formatBytes } from "./format-bytes"
 export { formatDate } from "./format-date"
 export { formatDateTime } from "./format-date-time"
+export { formatInformationSharingAgreementNumber } from "./format-information-sharing-agreement-number"
 export { formatRelative } from "./format-relative"

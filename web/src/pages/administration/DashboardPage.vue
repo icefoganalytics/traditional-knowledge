@@ -147,7 +147,7 @@
 </template>
 
 <script lang="ts" setup>
-import useBreadcrumbs from "@/use/use-breadcrumbs"
+import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
 
-useBreadcrumbs("Administration Dashboard", [])
+useBreadcrumbs("Administration Dashboard", [BASE_CRUMB])
 </script>

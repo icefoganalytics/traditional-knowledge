@@ -24,6 +24,7 @@
 import { isNil } from "lodash"
 import { computed } from "vue"
 
+import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
 import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
 import useCurrentUser from "@/use/use-current-user"
 import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
@@ -62,6 +63,15 @@ useBreadcrumbs("Grant Access", [
     title: "Information Sharing Agreements",
     to: {
       name: "administration/InformationSharingAgreementsPage",
+    },
+  },
+  {
+    title: formatInformationSharingAgreementNumber(informationSharingAgreementIdAsNumber.value),
+    to: {
+      name: "administration/information-sharing-agreements/InformationSharingAgreementPage",
+      params: {
+        informationSharingAgreementId: props.informationSharingAgreementId,
+      },
     },
   },
 ])

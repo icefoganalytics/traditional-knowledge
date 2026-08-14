@@ -58,12 +58,21 @@ const filters = computed(() => {
   }
 })
 
-useBreadcrumbs("Groups", [
+useBreadcrumbs("Group Users", [
   ADMIN_CRUMB,
   {
     title: "Groups",
     to: {
       name: "administration/GroupsPage",
+    },
+  },
+  {
+    title: "Group",
+    to: {
+      name: "administration/groups/GroupPage",
+      params: {
+        groupId: props.groupId,
+      },
     },
   },
 ])

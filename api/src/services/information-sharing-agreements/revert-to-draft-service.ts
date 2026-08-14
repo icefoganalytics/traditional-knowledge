@@ -8,7 +8,7 @@ import db, {
 } from "@/models"
 import { AttachmentTargetTypes } from "@/models/attachment"
 import BaseService from "@/services/base-service"
-import { InformationSharingAgreements } from "@/services"
+import { Attachments, InformationSharingAgreements } from "@/services"
 
 export class RevertToDraftService extends BaseService {
   constructor(
@@ -33,13 +33,20 @@ export class RevertToDraftService extends BaseService {
 
     return db.transaction(async () => {
       await this.destroyGroups(this.informationSharingAgreement, this.currentUser)
-      await Attachment.destroy({
-        where: {
-          targetId: this.informationSharingAgreement.id,
-          targetType: AttachmentTargetTypes.InformationSharingAgreement,
-          associationName: "signedConfidentialityAcknowledgement",
+      // Destroyed one at a time through the service so each removal notifies the
+      // designated contacts, as a bulk destroy would not. See TK-6.
+      await Attachment.findEach(
+        {
+          where: {
+            targetId: this.informationSharingAgreement.id,
+            targetType: AttachmentTargetTypes.InformationSharingAgreement,
+            associationName: "signedConfidentialityAcknowledgement",
+          },
         },
-      })
+        async (attachment) => {
+          await Attachments.DestroyService.perform(attachment, this.currentUser)
+        }
+      )
       await this.informationSharingAgreement.update({
         status: InformationSharingAgreement.Status.DRAFT,
         signedById: null,

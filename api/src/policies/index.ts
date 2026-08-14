@@ -2,6 +2,7 @@ export { type BaseScopeOptions } from "./base-policy"
 
 export { ArchiveItemAuditsPolicy } from "./archive-item-audits-policy"
 export { ArchiveItemsPolicy } from "./archive-items-policy"
+export { AttachmentPolicy } from "./attachment-policy"
 export { CategoryPolicy } from "./category-policy"
 export { ExternalOrganizationPolicy } from "./external-organization-policy"
 export { GroupPolicy } from "./group-policy"

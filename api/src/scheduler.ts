@@ -1,30 +1,38 @@
 import { scheduleJob } from "node-schedule"
 
-import { JOB_PORT, APPLICATION_NAME } from "@/config"
-import cache from "@/db/cache-client"
+import { APPLICATION_NAME, NODE_ENV } from "@/config"
 import logger from "@/utils/logger"
+import { InformationSharingAgreements } from "@/services"
 
 async function startScheduler() {
-  logger.info("Scheduler starting in " + APPLICATION_NAME)
+  logger.info(`Scheduler starting in ${APPLICATION_NAME}`)
 
-  const c = await cache.getClient()
-
-  if (c) await c.setValue("mj", ":te")
-
-  scheduleJob("testing", "* * * * *", () => {
-    logger.info("Job Running " + new Date())
+  // Daily is enough: expiry is driven by a date, and it keeps the idempotency check cheap.
+  scheduleJob("informationSharingAgreementExpiry", "0 8 * * *", async () => {
+    try {
+      await InformationSharingAgreements.NotifyOfUpcomingExpiryService.perform()
+    } catch (error) {
+      logger.error(`Failed to notify of upcoming agreement expiry: ${error}`, { error })
+    }
   })
 }
 
 if (require.main === module) {
   ;(async () => {
-    try {
-      await startScheduler()
-      logger.info(`${APPLICATION_NAME} JOBS listenting on port ${JOB_PORT}`)
-    } catch {
-      logger.error("Failed to start scheduler!")
+    if (NODE_ENV === "test") {
+      logger.info("Scheduler is disabled in the test environment")
+      return
     }
 
-    process.exit(0)
+    try {
+      await startScheduler()
+      logger.info(`${APPLICATION_NAME} scheduler started`)
+    } catch (error) {
+      logger.error(`Failed to start scheduler: ${error}`, { error })
+      process.exit(1)
+    }
+    // No process.exit on success: the process must stay alive for jobs to fire.
   })()
 }
+
+export default startScheduler

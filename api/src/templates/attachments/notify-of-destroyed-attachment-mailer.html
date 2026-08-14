@@ -1,0 +1,33 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ PAGE_TITLE }}</mj-title>
+  </mj-head>
+
+  <mj-body background-color="#ffffff">
+    <mj-section>
+      <mj-column>
+        <mj-text>
+          The attachment "{{ attachmentName }}" was removed from the Information Sharing Agreement
+          {{ identifier }} — "{{ title }}" — by {{ removedBy }}.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-button href="{{ FRONTEND_URL }}/information-sharing-agreements/{{ informationSharingAgreementId }}">
+          View the agreement
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-text>
+          If you no longer wish to receive these notifications, you can disable them in your profile
+          settings.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

@@ -54,6 +54,26 @@ services:
       - mail
       - cache
 
+  scheduler:
+    build:
+      context: ./api
+      dockerfile: development.Dockerfile
+    command: npm run start:scheduler
+    env_file:
+      - ./api/.env.development
+    environment:
+      <<: *default-environment
+    init: true
+    user: "${HOST_USER_ID:-0}:${HOST_GROUP_ID:-0}"
+    volumes:
+      - ./api:/usr/src/api
+      - ./.gitignore:/usr/src/.gitignore
+      - ./.prettierrc.yaml:/usr/src/.prettierrc.yaml
+    depends_on:
+      - db
+      - mail
+      - cache
+
   web:
     build:
       context: ./web
@@ -136,6 +156,8 @@ services:
       MSSQL_SA_PASSWORD: *default-db-password
       TZ: "America/Whitehorse"
       ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
     volumes:
       - db_data:/var/opt/mssql/data
 

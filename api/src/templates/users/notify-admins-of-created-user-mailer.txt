@@ -1,0 +1,3 @@
+A new {{ userType }} user, "{{ displayName }}" ({{ email }}), was added by {{ createdBy }}.
+
+If you no longer wish to receive these notifications, you can disable them in your profile settings.

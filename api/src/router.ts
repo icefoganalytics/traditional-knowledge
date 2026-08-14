@@ -27,6 +27,7 @@ import {
   ArchiveItemFilesController,
   Downloads,
   ArchiveItemsController,
+  AttachmentsController,
   CategoriesController,
   CurrentUserController,
   ExternalOrganizationsController,
@@ -79,6 +80,12 @@ router
   .post(Downloads.InformationSharingAgreements.SignedConfidentialityReceiptController.create)
 
 router.route("/api/current-user").get(CurrentUserController.show)
+
+router.route("/api/attachments").get(AttachmentsController.index)
+router
+  .route("/api/attachments/:attachmentId")
+  .get(AttachmentsController.show)
+  .delete(AttachmentsController.destroy)
 
 router.route("/api/notifications").get(NotificationsController.index)
 router.route("/api/notifications/:notificationId").get(NotificationsController.show)

@@ -1,0 +1,9 @@
+The Information Sharing Agreement {{ identifier }} - "{{ title }}" - expires on {{ endDate }}.
+
+On expiry, all previous authorisations and access are void and the Traditional Knowledge shared
+under this agreement is permanently removed from the Vault. This action cannot be reversed. If an
+amendment or extension is required, please arrange it before the expiration date.
+
+View the agreement: {{ FRONTEND_URL }}/information-sharing-agreements/{{ informationSharingAgreementId }}
+
+If you no longer wish to receive these notifications, you can disable them in your profile settings.

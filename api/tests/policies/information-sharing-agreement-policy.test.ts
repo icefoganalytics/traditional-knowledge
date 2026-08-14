@@ -119,17 +119,15 @@ describe("api/src/policies/information-sharing-agreement-policy.ts", () => {
         ])
       })
 
-      test("given user is internal, returns own draft information sharing agreement, and all information sharing agreements where user is group member", async () => {
+      // Every internal Yukon Government employee can see every non-draft agreement,
+      // including ones whose internal group they do not belong to. See TK-24.
+      test("given user is internal, returns own drafts and all non-draft information sharing agreements", async () => {
         // Arrange
         const internalUser = await userFactory.create({
           isExternal: false,
         })
         const internalGroup = await groupFactory.create({
           isExternal: false,
-        })
-        await userGroupFactory.create({
-          userId: internalUser.id,
-          groupId: internalGroup.id,
         })
 
         const otherInternalUser = await userFactory.create({
@@ -141,7 +139,7 @@ describe("api/src/policies/information-sharing-agreement-policy.ts", () => {
           status: InformationSharingAgreement.Status.DRAFT,
           internalGroupId: internalGroup.id,
         })
-        const withGroupMembership = await informationSharingAgreementFactory.create({
+        const signedWithoutGroupMembership = await informationSharingAgreementFactory.create({
           creatorId: otherInternalUser.id,
           status: InformationSharingAgreement.Status.SIGNED,
           internalGroupId: internalGroup.id,
@@ -166,7 +164,7 @@ describe("api/src/policies/information-sharing-agreement-policy.ts", () => {
             id: ownDraft.id,
           }),
           expect.objectContaining({
-            id: withGroupMembership.id,
+            id: signedWithoutGroupMembership.id,
           }),
         ])
       })

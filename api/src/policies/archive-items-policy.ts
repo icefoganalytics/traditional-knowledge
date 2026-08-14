@@ -60,15 +60,20 @@ export class ArchiveItemsPolicy extends PolicyFactory(ArchiveItem) {
   }
 
   static policyScope(user: User): FindOptions<Attributes<ArchiveItem>> {
+    // The view already exposes user_id and filters out soft-deleted grants and links,
+    // so no join back to information_sharing_agreement_access_grants is needed.
+    //
+    // The user id is interpolated rather than passed via `replacements` so this scope
+    // stays self-contained: replacements are not honoured when a scope is spread into
+    // an `include`, as InformationSharingAgreementArchiveItemPolicy does. See TK-24.
     const accessibleArchiveItemIds = sql`
       (
         SELECT
           archive_item_information_sharing_agreement_access_grants.archive_item_id
         FROM
           archive_item_information_sharing_agreement_access_grants
-          INNER JOIN information_sharing_agreement_access_grants ON archive_item_information_sharing_agreement_access_grants.access_grant_id = information_sharing_agreement_access_grants.id
         WHERE
-          information_sharing_agreement_access_grants.user_id = :userId
+          archive_item_information_sharing_agreement_access_grants.user_id = ${user.id}
       )
     `
     return {
@@ -83,9 +88,6 @@ export class ArchiveItemsPolicy extends PolicyFactory(ArchiveItem) {
             },
           },
         ],
-      },
-      replacements: {
-        userId: user.id,
       },
     }
   }

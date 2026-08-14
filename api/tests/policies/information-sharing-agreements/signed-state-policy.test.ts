@@ -98,9 +98,11 @@ describe("api/src/policies/information-sharing-agreements/signed-state-policy.ts
         expect(policy.show()).toBe(true)
       })
 
-      test("when user is not creator, not system admin, and not a member of any group, returns false", async () => {
+      // Agreement metadata is readable by every internal employee; the Traditional
+      // Knowledge shared under it stays restricted. See TK-24.
+      test("when user is internal but not a member of any group, returns true", async () => {
         // Arrange
-        const user1 = await userFactory.create()
+        const user1 = await userFactory.create({ isExternal: false })
         const user2 = await userFactory.create()
         const internalGroup = await groupFactory.create({ isExternal: false })
         const informationSharingAgreement = await informationSharingAgreementFactory.create({
@@ -112,6 +114,29 @@ describe("api/src/policies/information-sharing-agreements/signed-state-policy.ts
 
         // Act
         const policy = new SignedStatePolicy(user1, informationSharingAgreement)
+
+        // Assert
+        expect(policy.show()).toBe(true)
+      })
+
+      test("when user is external and not a member of the external group, returns false", async () => {
+        // Arrange
+        const externalOrganization = await externalOrganizationFactory.create()
+        const externalUser = await userFactory.create({
+          isExternal: true,
+          externalOrganizationId: externalOrganization.id,
+        })
+        const creator = await userFactory.create()
+        const externalGroup = await groupFactory.create({ isExternal: true })
+        const informationSharingAgreement = await informationSharingAgreementFactory.create({
+          creatorId: creator.id,
+          externalGroupId: externalGroup.id,
+        })
+
+        await externalUser.reload({ include: ["groups", "adminGroups"] })
+
+        // Act
+        const policy = new SignedStatePolicy(externalUser, informationSharingAgreement)
 
         // Assert
         expect(policy.show()).toBe(false)

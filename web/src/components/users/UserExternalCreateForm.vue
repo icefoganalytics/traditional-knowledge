@@ -24,7 +24,7 @@
           >
             <ExternalOrganizationSearchableAutocomplete
               v-model="userAttributes.externalOrganizationId"
-              label="Yukon First Nation *"
+              label="Yukon First Nation or Indigenous Government *"
               :rules="[required]"
               required
             />
@@ -48,16 +48,6 @@
               v-model="userAttributes.lastName"
               label="Last name *"
               :rules="[required]"
-              required
-            />
-          </v-col>
-          <v-col
-            cols="12"
-            md="6"
-          >
-            <v-text-field
-              v-model="userAttributes.displayName"
-              label="Display Name"
               required
             />
           </v-col>

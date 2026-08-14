@@ -7,7 +7,7 @@ import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
 
 import UserInternalCreateForm from "@/components/users/UserInternalCreateForm.vue"
 
-useBreadcrumbs("New Internal User", [
+useBreadcrumbs("Add YG User", [
   ADMIN_CRUMB,
   {
     title: "Users",

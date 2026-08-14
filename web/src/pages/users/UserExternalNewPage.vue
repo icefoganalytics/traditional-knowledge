@@ -7,7 +7,7 @@ import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
 
 import UserExternalCreateForm from "@/components/users/UserExternalCreateForm.vue"
 
-useBreadcrumbs("New External User", [
+useBreadcrumbs("Add External User", [
   ADMIN_CRUMB,
   {
     title: "Users",

@@ -1,7 +1,7 @@
 <template>
   <ErrorPageLayout
-    heading="Not Found (404)"
-    :message="t('apiError.404')"
+    heading="Temporarily Unavailable (503)"
+    :message="t('apiError.503')"
   />
 </template>
 

@@ -45,15 +45,6 @@
       </div>
       <v-spacer />
 
-      <v-btn
-        class="mr-2"
-        color="#f7f9ef"
-        icon="mdi-archive-plus"
-        :to="{
-          name: 'archive-items/ArchiveItemNewPage',
-        }"
-      />
-
       <NotificationMenu />
 
       <KebabMenu />

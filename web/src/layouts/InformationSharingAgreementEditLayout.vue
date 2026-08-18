@@ -77,7 +77,7 @@ import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { isNil } from "lodash"
 
-import { formatDateTime } from "@/utils/formatters"
+import { formatDateTime, formatInformationSharingAgreementNumber } from "@/utils/formatters"
 
 import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
@@ -144,6 +144,17 @@ const panels = computed<PanelDefinition[]>(() => [
       },
     },
   },
+  {
+    key: "additional-details",
+    title: "Additional Details (optional)",
+    icon: "mdi-text-box-outline",
+    to: {
+      name: "information-sharing-agreements/InformationSharingAgreementEditAdditionalDetailsPage",
+      params: {
+        informationSharingAgreementId: props.informationSharingAgreementId,
+      },
+    },
+  },
 ])
 
 // Computed subtitle properties
@@ -195,7 +206,14 @@ const confidentialitySubtitle = computed(() => {
 })
 
 // Breadcrumbs
-useBreadcrumbs("Information Sharing Agreement", [
+const pageTitle = computed(() => {
+  if (isNil(informationSharingAgreement.value)) return "loading..."
+
+  const { id, title } = informationSharingAgreement.value
+  return `${formatInformationSharingAgreementNumber(id)} - ${title}`
+})
+
+useBreadcrumbs(pageTitle, [
   BASE_CRUMB,
   {
     title: "Information Sharing Agreements",

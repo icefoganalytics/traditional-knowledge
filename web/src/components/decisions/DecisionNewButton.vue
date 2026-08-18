@@ -11,7 +11,7 @@
       <div>
         <div class="text-h6">Record a Decision</div>
         <span class="text-subtitle-2"
-          >Decisions are written to the archive and may include attachments and other
+          >Decisions are written to the Vault and may include attachments and other
           metadata.</span
         >
       </div>

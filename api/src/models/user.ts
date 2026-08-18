@@ -35,7 +35,28 @@ import ExternalOrganization from "@/models/external-organization"
 /** Keep in sync with web/src/api/users-api.ts */
 export enum UserRoles {
   SYSTEM_ADMIN = "system_admin",
+  /** Manages internal (Yukon Government) users only. */
+  ADMIN = "admin",
+  /** Manages external (First Nation and Indigenous Government) users only. */
+  EXTERNAL_ADMIN = "external_admin",
   USER = "user",
+}
+
+/**
+ * roles is a comma-joined string, so matching must respect the delimiters.
+ * A naive '%admin%' would also match system_admin and external_admin.
+ */
+function buildWithRoleScope(role: string) {
+  return {
+    where: {
+      [Op.or]: [
+        { roles: role },
+        { roles: { [Op.like]: `${role},%` } },
+        { roles: { [Op.like]: `%,${role}` } },
+        { roles: { [Op.like]: `%,${role},%` } },
+      ],
+    },
+  }
 }
 
 @Table({
@@ -98,9 +119,16 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
   })
   @NotNull
   @ValidateAttribute({
-    isIn: {
-      args: [Object.values(UserRoles)],
-      msg: `Role must be one of ${Object.values(UserRoles).join(", ")}`,
+    // Validates each role, not the comma-joined string, so a user may hold more than
+    // one role. isIn would compare against "user,admin" as a whole and always fail.
+    isEachRoleValid(value: unknown) {
+      const roles = Array.isArray(value) ? value : String(value).split(",")
+      const permittedRoles = Object.values(UserRoles) as string[]
+
+      const invalidRole = roles.find((role) => !permittedRoles.includes(role))
+      if (!isUndefined(invalidRole)) {
+        throw new Error(`Role must be one of ${permittedRoles.join(", ")}`)
+      }
     },
   })
   declare roles: string[]
@@ -162,6 +190,33 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
   // Magic Attributes
   get isSystemAdmin(): NonAttribute<boolean> {
     return this.roles.some((role) => role === UserRoles.SYSTEM_ADMIN)
+  }
+
+  get isAdmin(): NonAttribute<boolean> {
+    return this.roles.some((role) => role === UserRoles.ADMIN)
+  }
+
+  get isExternalAdmin(): NonAttribute<boolean> {
+    return this.roles.some((role) => role === UserRoles.EXTERNAL_ADMIN)
+  }
+
+  /**
+   * The user administration matrix, in one place so policies, services and the UI
+   * cannot drift apart. See TK-36.
+   */
+  canManageUser(target: User): boolean {
+    if (this.isSystemAdmin) return true
+    if (this.isAdmin && target.isExternal !== true) return true
+    if (this.isExternalAdmin && target.isExternal === true) return true
+
+    return false
+  }
+
+  /** Only a system admin may create or revoke another system admin. */
+  canGrantRole(role: string): boolean {
+    if (this.isSystemAdmin) return true
+
+    return role !== UserRoles.SYSTEM_ADMIN
   }
 
   get isGroupAdmin(): NonAttribute<boolean> {
@@ -376,15 +431,9 @@ export class User extends BaseModel<InferAttributes<User>, InferCreationAttribut
   static establishScopes(): void {
     this.addSearchScope(["firstName", "lastName", "displayName", "email"])
 
-    this.addScope("isSystemAdmin", () => {
-      return {
-        where: {
-          roles: {
-            [Op.like]: `%${UserRoles.SYSTEM_ADMIN}%`,
-          },
-        },
-      }
-    })
+    this.addScope("withRole", (role: string) => buildWithRoleScope(role))
+
+    this.addScope("isSystemAdmin", () => buildWithRoleScope(UserRoles.SYSTEM_ADMIN))
 
     this.addScope("inGroup", (groupId: number) => {
       return {

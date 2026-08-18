@@ -52,9 +52,21 @@
               :user-id="externalGroupContactId"
             />
           </div>
-          <div>
+          <div class="mb-3">
             <div class="text-body-2 text-grey-darken-1 mb-1">Title</div>
             <div class="font-weight-medium">{{ externalGroupContactTitle || "Not specified" }}</div>
+          </div>
+          <div class="mb-3">
+            <div class="text-body-2 text-grey-darken-1 mb-1">Email</div>
+            <div class="font-weight-medium">{{ externalGroupContact?.email || "Not specified" }}</div>
+          </div>
+          <div>
+            <div class="text-body-2 text-grey-darken-1 mb-1">
+              Yukon First Nation or Indigenous Government
+            </div>
+            <div class="font-weight-medium">
+              {{ externalGroupContact?.externalOrganization?.name || "Not specified" }}
+            </div>
           </div>
         </v-col>
 
@@ -108,11 +120,14 @@
 </template>
 
 <script setup lang="ts">
+import { toRefs } from "vue"
 import { isNil } from "lodash"
+
+import useUser from "@/use/use-user"
 
 import UserChip from "@/components/users/UserChip.vue"
 
-defineProps<{
+const props = defineProps<{
   title: string | null | undefined
   purpose: string | null | undefined
   externalGroupContactId: number | null | undefined
@@ -121,6 +136,11 @@ defineProps<{
   internalGroupContactTitle: string | null | undefined
   internalGroupSecondaryContactId: number | null | undefined
 }>()
+
+// The First Nation or Indigenous Government is captured on the external user, so it is
+// read from there rather than duplicated onto the agreement. See TK-69.
+const { externalGroupContactId } = toRefs(props)
+const { user: externalGroupContact } = useUser(externalGroupContactId)
 </script>
 
 <style scoped>

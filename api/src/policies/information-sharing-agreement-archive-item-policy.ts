@@ -4,15 +4,18 @@ import { isNil, isUndefined } from "lodash"
 import { type Path } from "@/utils/deep-pick"
 import { InformationSharingAgreementArchiveItem, User, type InformationSharingAgreement } from "@/models"
 import { PolicyFactory } from "@/policies/base-policy"
+import ArchiveItemsPolicy from "@/policies/archive-items-policy"
 import InformationSharingAgreementPolicy from "@/policies/information-sharing-agreement-policy"
 
 export class InformationSharingAgreementArchiveItemPolicy extends PolicyFactory(
   InformationSharingAgreementArchiveItem
 ) {
   show(): boolean {
-    if (this.informationSharingAgreementPolicy.show()) return true
+    // Both halves must be readable. Seeing the agreement is not enough: that would
+    // reveal which Knowledge Items are attached to it. See TK-24.
+    if (!this.informationSharingAgreementPolicy.show()) return false
 
-    return false
+    return this.archiveItemsPolicy.show()
   }
 
   create(): boolean {
@@ -51,6 +54,8 @@ export class InformationSharingAgreementArchiveItemPolicy extends PolicyFactory(
   }
 
   static policyScope(user: User): FindOptions<Attributes<InformationSharingAgreementArchiveItem>> {
+    // Intersects both scopes. Scoping on the agreement alone would list every Knowledge
+    // Item attached to every agreement an internal user can see. See TK-24.
     return {
       include: [
         {
@@ -59,8 +64,23 @@ export class InformationSharingAgreementArchiveItemPolicy extends PolicyFactory(
           ...InformationSharingAgreementPolicy.policyScope(user),
           required: true,
         },
+        {
+          association: "archiveItem",
+          attributes: ["id"],
+          ...ArchiveItemsPolicy.policyScope(user),
+          required: true,
+        },
       ],
     }
+  }
+
+  private get archiveItemsPolicy(): ArchiveItemsPolicy {
+    const { archiveItem } = this.record
+    if (isUndefined(archiveItem)) {
+      throw new Error("Expected archive item association to be pre-loaded")
+    }
+
+    return new ArchiveItemsPolicy(this.user, archiveItem)
   }
 
   private get informationSharingAgreementPolicy(): InformationSharingAgreementPolicy {

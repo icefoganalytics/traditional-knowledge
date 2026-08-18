@@ -1,0 +1,44 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ PAGE_TITLE }}</mj-title>
+  </mj-head>
+
+  <mj-body background-color="#ffffff">
+    <mj-section>
+      <mj-column>
+        <mj-text>
+          The Information Sharing Agreement {{ identifier }} — "{{ title }}" — expires on
+          {{ endDate }}.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-text>
+          On expiry, all previous authorisations and access are void and the Traditional Knowledge
+          shared under this agreement is permanently removed from the Vault. This action cannot be
+          reversed. If an amendment or extension is required, please arrange it before the
+          expiration date.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-button href="{{ FRONTEND_URL }}/information-sharing-agreements/{{ informationSharingAgreementId }}">
+          View the agreement
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-text>
+          If you no longer wish to receive these notifications, you can disable them in your profile
+          settings.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

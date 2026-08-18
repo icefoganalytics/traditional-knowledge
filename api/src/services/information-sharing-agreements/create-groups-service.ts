@@ -20,7 +20,6 @@ export class CreateGroupsService extends BaseService {
       externalGroupId,
       internalGroupContactId,
       internalGroupId,
-      internalGroupSecondaryContactId,
       signedAt,
     } = this.informationSharingAgreement
 
@@ -54,11 +53,7 @@ export class CreateGroupsService extends BaseService {
       })
 
       await this.ensureExternalGroupAdmin(externalGroupContactId, externalGroup)
-      await this.ensureInternalGroupAdmins(
-        internalGroupContactId,
-        internalGroupSecondaryContactId,
-        internalGroup
-      )
+      await this.ensureInternalGroupAdmin(internalGroupContactId, internalGroup)
     })
   }
 
@@ -150,9 +145,13 @@ export class CreateGroupsService extends BaseService {
     await this.ensureGroupAdmin(externalGroupContact, externalGroup)
   }
 
-  private async ensureInternalGroupAdmins(
+  /**
+   * The secondary contact (Manager) is deliberately excluded: that field records who
+   * the Manager is on the contract, and must not grant group admin or membership.
+   * See TK-66.
+   */
+  private async ensureInternalGroupAdmin(
     internalGroupContactId: number,
-    internalGroupSecondaryContactId: number | null,
     internalGroup: Group
   ): Promise<void> {
     const internalGroupContact = await User.findByPk(internalGroupContactId)
@@ -161,13 +160,6 @@ export class CreateGroupsService extends BaseService {
     }
 
     await this.ensureGroupAdmin(internalGroupContact, internalGroup)
-
-    if (!isNil(internalGroupSecondaryContactId)) {
-      const internalGroupSecondaryContact = await User.findByPk(internalGroupSecondaryContactId)
-      if (!isNil(internalGroupSecondaryContact)) {
-        await this.ensureGroupAdmin(internalGroupSecondaryContact, internalGroup)
-      }
-    }
   }
 
   private async ensureGroupAdmin(user: User, group: Group): Promise<void> {

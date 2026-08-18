@@ -59,6 +59,7 @@ import { isNil } from "lodash"
 import { computed } from "vue"
 import { useRouter } from "vue-router"
 
+import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
 import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
 import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
 
@@ -99,7 +100,14 @@ const editButtonProps = computed(() => ({
   },
 }))
 
-useBreadcrumbs("Information Sharing Agreement", [
+const pageTitle = computed(() => {
+  if (isNil(informationSharingAgreement.value)) return "loading..."
+
+  const { id, title } = informationSharingAgreement.value
+  return `${formatInformationSharingAgreementNumber(id)} - ${title}`
+})
+
+useBreadcrumbs(pageTitle, [
   ADMIN_CRUMB,
   {
     title: "Information Sharing Agreements",

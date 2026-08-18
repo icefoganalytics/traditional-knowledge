@@ -106,6 +106,13 @@ const routes: RouteRecordRaw[] = [
               import("@/pages/information-sharing-agreements/InformationSharingAgreementEditConfidentialityPage.vue"),
             props: true,
           },
+          {
+            path: "edit-additional-details",
+            name: "information-sharing-agreements/InformationSharingAgreementEditAdditionalDetailsPage",
+            component: () =>
+              import("@/pages/information-sharing-agreements/InformationSharingAgreementEditAdditionalDetailsPage.vue"),
+            props: true,
+          },
         ],
       },
       {
@@ -329,6 +336,24 @@ const routes: RouteRecordRaw[] = [
     path: "/errors/unauthorized",
     name: "UnauthorizedPage",
     component: () => import("@/pages/UnauthorizedPage.vue"),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/errors/forbidden",
+    name: "ForbiddenPage",
+    component: () => import("@/pages/ForbiddenPage.vue"),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/errors/server-error",
+    name: "ServerErrorPage",
+    component: () => import("@/pages/ServerErrorPage.vue"),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/errors/maintenance",
+    name: "MaintenancePage",
+    component: () => import("@/pages/MaintenancePage.vue"),
     meta: { requiresAuth: false },
   },
   {

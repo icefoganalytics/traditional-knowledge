@@ -48,17 +48,14 @@
 
 3. Go back to the top level directory, and do the same in the `archive` folder.
 
-4. [Set up the `dev`](#set-up-dev-command) command, or use `docker compose -f docker-compose.development.yml` instead of `dev` in all instructions.
+4. Run `bundle install`, then `dev up --watch`. The published `local-development-gateway` gem starts or reuses the shared gateway automatically. The gateway is the only browser entrypoint. The hostname is derived from the checkout folder, so an `issue-123` worktree uses `http://issue-123.traditional-knowledge.localhost`; the base checkout uses `http://traditional-knowledge.localhost`, with the API at the corresponding `api.` hostname.
 
-5. Boot the api, web, and db services via `dev up --watch` or `dev watch` or `docker compose -f docker-compose.development.yml up --watch`. This will run the boot pipeline and create the database, run migrations, and run seeds.
+5. Stop the backend, web, and database services via `ctrl+c` or `dev down`; if no other project is using the shared gateway, `dev down` stops it too. Use `dev down -v` to wipe the database.
 
-6. Stop the api, web, and db services via `ctrl+c` or `dev down` or if you want to wipe the database `dev down -v`.
+6. Install local dependencies by installing `asdf` and node via `asdf` and then running `npm install` at the top level of the project.
+7. To get the local per-service node_modules, so your code editor gets linting and types, do `cd api && npm i` and `cd web && npm i`.
 
-7. Install local dependencies by installing `asdf` and node via `asdf` and then running `npm install` at the top level of the project.
-
-8. To get the local per-service node_modules, so your code editor gets linting and types, do `cd api && npm i` and `cd web && npm i`.
-
-### API Service (a.k.a back-end)
+### Backend Service
 
 1. Boot only the api service using:
 
@@ -67,15 +64,11 @@
 
    # or
 
-   docker compose -f docker-compose.development.yml up --watch api
-
-   # or
-
    cd api
    npm run start
    ```
 
-2. Access the api by logging in to the front-end, then going to http://localhost:3000
+2. When using `dev up`, access the backend at `http://api.traditional-knowledge.localhost`. The backend is reachable through the shared gateway; it does not publish a host port.
 
 ### Web Service (a.k.a. front-end)
 
@@ -86,15 +79,11 @@
 
    # or
 
-   docker compose -f docker-compose.development.yml up --watch web
-
-   # or
-
    cd web
    npm run start
    ```
 
-2. Log in to the front-end service at http://localhost:8080
+2. When using `dev up`, log in at `http://traditional-knowledge.localhost`. The shared gateway routes the hostname to the web container.
 
 ### DB Service (a.k.a database service)
 
@@ -129,18 +118,18 @@
    '
    ```
 
-You can also run migrations and seeding manually after login in to the web UI by going to
+You can also run migrations and seeding manually after logging in to the web UI through the API gateway host:
 
-- http://localhost:3000/migrate/latest
-- http://localhost:3000/migrate/up
-- http://localhost:3000/migrate/down
-- http://localhost:3000/migrate/seed
+- `http://api.traditional-knowledge.localhost/migrate/latest`
+- `http://api.traditional-knowledge.localhost/migrate/up`
+- `http://api.traditional-knowledge.localhost/migrate/down`
+- `http://api.traditional-knowledge.localhost/migrate/seed`
 
 You can also skip seeding if database is not empty by setting the `SKIP_SEEDING_UNLESS_EMPTY=true` environment variable.
 
 ### Mail Service (a.k.a mail server)
 
-1. Access the web interface at http://localhost:1080
+1. When using `dev up`, access MailDev at `http://mail.traditional-knowledge.localhost`.
 
 ### Troubleshooting
 
@@ -148,13 +137,13 @@ If you are getting a bunch of "Login required" errors in the console, make sure 
 
 Auth0 use third-party cookies for authentication, and they get blocked by all major browsers
 by default.
+Configure Auth0 once with `http://*.traditional-knowledge.localhost/callback` in Allowed Callback URLs, and `http://*.traditional-knowledge.localhost` in Allowed Logout URLs and Allowed Web Origins. The shared gateway routes these local hostnames to the web, API, and MailDev containers. The hostname suffix resolves only to this machine; no public domain or DNS service is used.
 
 ## Testing
 
-1. Run the api test suite via `dev test_api`.
+1. Run the api test suite via `dev test api`.
 
 See [api/tests/README.md](./api/tests/README.md) for more detailed info.
-
 ## Migrations - Database Management
 
 This project is using [knex](https://knexjs.org/guide/migrations.html#migration-cli) with the config hoisted from the db/db-client.ts file.

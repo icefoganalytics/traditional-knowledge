@@ -42,7 +42,7 @@
             >mdi-library</v-icon
           >
           <div class="text-center px-5">
-            <h2 class="text-h3 font-weight-semibold mb-4 mx-10">Yukon's Traditional Knowledge Archive</h2>
+            <h2 class="text-h3 font-weight-semibold mb-4 mx-10">Traditional Knowledge Vault</h2>
             <div class="text-subtitle-1 mb-6 mt-n3 font-weight-bold">Yukon Government</div>
             <div class="mt-6 text-center">
               <v-btn
@@ -54,6 +54,25 @@
               <div class="text-subtitle-1 mt-5">Using your MyYukon Credentials</div>
               <v-divider class="my-2" />
               <em style="font-weight: 700">Secure Digital Storage</em>
+            </div>
+
+            <v-divider class="my-5" />
+
+            <div class="text-caption text-left">
+              <p class="mb-2">
+                You're about to login to the Vault that holds information provided under a
+                government-to-government agreement, for the purpose of informing the Government of
+                Yukon's work, actions and/or decision-making.
+              </p>
+              <p class="mb-2">
+                All access to contents will be audited and viewable to the respective Parties of an
+                information sharing agreement for accountability.
+              </p>
+              <p class="mb-0">
+                By logging in, you indicate you are aware of the expectations of working with
+                Traditional Knowledge, risks for failing to comply with the terms and conditions of
+                an information sharing agreement and, that you are responsible for your own actions.
+              </p>
             </div>
           </div>
         </div>

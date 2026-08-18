@@ -1,0 +1,6 @@
+The attachment "{{ attachmentName }}" was removed from the Information Sharing Agreement
+{{ identifier }} - "{{ title }}" - by {{ removedBy }}.
+
+View the agreement: {{ FRONTEND_URL }}/information-sharing-agreements/{{ informationSharingAgreementId }}
+
+If you no longer wish to receive these notifications, you can disable them in your profile settings.

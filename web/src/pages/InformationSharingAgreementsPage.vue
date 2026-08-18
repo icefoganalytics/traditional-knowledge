@@ -27,7 +27,7 @@
 import { computed, ref } from "vue"
 import { isEmpty, isNil } from "lodash"
 
-import useBreadcrumbs, { ADMIN_CRUMB } from "@/use/use-breadcrumbs"
+import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
 
 import FilterSearchDebouncedTextField from "@/components/common/tables/FilterSearchDebouncedTextField.vue"
 import InformationSharingAgreementsEditDataTableServer from "@/components/information-sharing-agreements/InformationSharingAgreementsEditDataTableServer.vue"
@@ -42,5 +42,5 @@ const filters = computed(() => {
   }
 })
 
-useBreadcrumbs("Information Sharing Agreements", [ADMIN_CRUMB])
+useBreadcrumbs("Information Sharing Agreements", [BASE_CRUMB])
 </script>

@@ -8,6 +8,7 @@ export { RevertToDraftService } from "./revert-to-draft-service"
 // Special services
 export { CreateGroupsService } from "./create-groups-service"
 export { DestroyGroupsService } from "./destroy-groups-service"
+export { NotifyOfUpcomingExpiryService } from "./notify-of-upcoming-expiry-service"
 
 // Bundled exports
 export * as ArchiveItems from "./archive-items"

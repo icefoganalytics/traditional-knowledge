@@ -20,13 +20,6 @@
       </v-list-item>
 
       <v-list-item
-        title="Knowledge Items"
-        :to="{ name: 'archive-items/ArchiveItemListPage' }"
-        :exact="false"
-        prepend-icon="mdi-archive"
-      />
-
-      <v-list-item
         title="Sharing Agreements"
         :to="{
           name: 'InformationSharingAgreementsPage',
@@ -41,7 +34,7 @@
       </v-list-item>
 
       <v-list-item
-        v-if="isAdmin"
+        v-if="hasAdminAreaAccess"
         title="Administration"
         :to="{ name: 'administration/DashboardPage' }"
         :exact="false"
@@ -72,7 +65,7 @@ function toggle() {
 
 const open = ref([])
 
-const { isAdmin } = useCurrentUser<true>()
+const { hasAdminAreaAccess } = useCurrentUser<true>()
 
 defineExpose({
   toggle,

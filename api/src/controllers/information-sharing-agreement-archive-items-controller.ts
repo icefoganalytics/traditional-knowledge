@@ -188,6 +188,12 @@ export class InformationSharingAgreementArchiveItemsController extends BaseContr
             association: "informationSharingAgreement",
             include: ["accessGrants"],
           },
+          // The policy checks the Knowledge Item's own access grants, not just the
+          // agreement's. See TK-24.
+          {
+            association: "archiveItem",
+            include: ["accessGrants"],
+          },
         ],
       }
     )

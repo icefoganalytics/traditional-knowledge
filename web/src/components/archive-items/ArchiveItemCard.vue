@@ -68,7 +68,7 @@
     <v-card-title>Tags</v-card-title>
     <v-card-text>
       <p class="mb-4">
-        Tags are used as filter criteria to find items in the archive. You can select as many as are
+        Tags are used as filter criteria to find items in the Vault. You can select as many as are
         applicable to this item.
       </p>
       <v-combobox

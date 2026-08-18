@@ -38,24 +38,6 @@ export class InformationSharingAgreementPolicy extends PolicyFactory(Information
   }
 
   static policyScope(user: User): FindOptions<Attributes<InformationSharingAgreement>> {
-    if (user.isSystemAdmin) {
-      return {
-        where: {
-          [Op.or]: [
-            {
-              status: InformationSharingAgreement.Status.DRAFT,
-              creatorId: user.id,
-            },
-            {
-              status: {
-                [Op.ne]: InformationSharingAgreement.Status.DRAFT,
-              },
-            },
-          ],
-        },
-      }
-    }
-
     if (user.isExternal) {
       const accessibleIdsQueryForExternalUser =
         Queries.InformationSharingAgreements.buildAccessibleInformationSharingAgreementIdsForExternalUserQuery()
@@ -69,19 +51,26 @@ export class InformationSharingAgreementPolicy extends PolicyFactory(Information
           userId: user.id,
         },
       }
-    } else {
-      const accessibleIdsQueryForInternalUser =
-        Queries.InformationSharingAgreements.buildAccessibleInformationSharingAgreementIdsForInternalUserQuery()
-      return {
-        where: {
-          id: {
-            [Op.in]: accessibleIdsQueryForInternalUser,
+    }
+
+    // Every internal Yukon Government employee can see every agreement that is no
+    // longer a draft, plus their own drafts. This exposes the agreement metadata only;
+    // the Knowledge Items shared under it stay restricted to those with an access
+    // grant, enforced by ArchiveItemsPolicy. See TK-24.
+    return {
+      where: {
+        [Op.or]: [
+          {
+            status: InformationSharingAgreement.Status.DRAFT,
+            creatorId: user.id,
           },
-        },
-        replacements: {
-          userId: user.id,
-        },
-      }
+          {
+            status: {
+              [Op.ne]: InformationSharingAgreement.Status.DRAFT,
+            },
+          },
+        ],
+      },
     }
   }
 

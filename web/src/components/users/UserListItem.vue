@@ -19,6 +19,9 @@
       <p v-if="!isNil(departmentAndBranch)">
         <em>{{ departmentAndBranch }}</em>
       </p>
+      <p v-if="!isNil(user.externalOrganization)">
+        <em>{{ user.externalOrganization.name }}</em>
+      </p>
       <p>{{ user.email }}</p>
       <slot name="default"></slot>
     </template>

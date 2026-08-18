@@ -1,22 +1,11 @@
 <template>
-  <v-container class="text-center mt-16">
-    <h1>Unauthorized (401)</h1>
-    <p>Authentication failed. If you think this is an error, please contact support.</p>
+  <ErrorPageLayout
+    heading="Unauthorized (401)"
+    :message="t('apiError.401')"
+  >
     <p>Alternatively, try logging out and signing in again.</p>
+
     <v-row class="mt-6">
-      <v-spacer />
-      <v-col>
-        <!-- href="/" performs a more aggressive refresh than using to="xxx" -->
-        <v-btn
-          color="primary"
-          variant="outlined"
-          href="/"
-          >Back</v-btn
-        >
-      </v-col>
-      <v-spacer />
-    </v-row>
-    <v-row>
       <v-spacer />
       <v-col>
         <v-btn
@@ -27,24 +16,20 @@
       </v-col>
       <v-spacer />
     </v-row>
-    <hr />
-    <p>Site: {{ APPLICATION_NAME }}</p>
-    <p>Version: {{ releaseTag }}</p>
-    <p>Commit Hash: {{ gitCommitHash }}</p>
-  </v-container>
+  </ErrorPageLayout>
 </template>
 
 <script lang="ts" setup>
 import { useAuth0 } from "@auth0/auth0-vue"
+import { useI18n } from "vue-i18n"
 
-import { APPLICATION_NAME } from "@/config"
 import useCurrentUser from "@/use/use-current-user"
-import useStatus from "@/use/use-status"
 
+import ErrorPageLayout from "@/components/common/ErrorPageLayout.vue"
+
+const { t } = useI18n()
 const { logout } = useAuth0()
 const { reset: resetCurrentUser } = useCurrentUser()
-
-const { releaseTag, gitCommitHash } = useStatus()
 
 async function signOut() {
   resetCurrentUser()
@@ -57,14 +42,3 @@ async function signOut() {
   })
 }
 </script>
-
-<style scoped>
-body {
-  text-align: center;
-  padding-top: 100px;
-}
-hr {
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
-</style>

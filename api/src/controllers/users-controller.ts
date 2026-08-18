@@ -19,6 +19,7 @@ export class UsersController extends BaseController<User> {
       const users = await scopedUsers.findAll({
         where,
         order,
+        include: ["externalOrganization"],
         limit: this.pagination.limit,
         offset: this.pagination.offset,
       })
@@ -65,7 +66,11 @@ export class UsersController extends BaseController<User> {
 
   async create() {
     try {
-      const policy = this.buildPolicy()
+      // The policy branches on whether the user being created is internal or external,
+      // so it must see the requested attributes rather than an empty record. See TK-36.
+      const requestedUser = User.build()
+      requestedUser.isExternal = this.request.body.isExternal === true
+      const policy = this.buildPolicy(requestedUser)
       if (!policy.create()) {
         return this.response.status(403).json({
           message: "You are not authorized to create users",
@@ -148,7 +153,11 @@ export class UsersController extends BaseController<User> {
 
   private async loadUser() {
     return User.findByPk(this.params.id, {
-      include: ["adminGroups", "adminInformationSharingAgreementAccessGrants"],
+      include: [
+        "adminGroups",
+        "adminInformationSharingAgreementAccessGrants",
+        "externalOrganization",
+      ],
     })
   }
 

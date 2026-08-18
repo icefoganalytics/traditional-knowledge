@@ -38,12 +38,17 @@ httpClient.interceptors.request.use(async (config) => {
 httpClient.interceptors.response.use(null, async (error) => {
   if (error?.error === "login_required") {
     throw new ApiError("You must be logged in to access this endpoint", 401)
-  } else if (error?.response?.data?.message) {
-    throw new ApiError(error.response.data.message, error.response.status)
+  }
+
+  // A timeout never reaches the server, so it carries no response status of its own.
+  const status = error.code === "ECONNABORTED" ? 408 : error.response?.status || 500
+
+  if (error?.response?.data?.message) {
+    throw new ApiError(error.response.data.message, status)
   } else if (error.message) {
-    throw new ApiError(error.message, error.response?.status || 500)
+    throw new ApiError(error.message, status)
   } else {
-    throw new ApiError("An unknown error occurred", error.response?.status || 500)
+    throw new ApiError("An unknown error occurred", status)
   }
 })
 

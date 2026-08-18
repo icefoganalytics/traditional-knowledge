@@ -2,7 +2,6 @@ import { isNil } from "lodash"
 import { DateTime } from "luxon"
 
 import logger from "@/utils/logger"
-import quickStartBufferStream from "@/utils/quick-start-buffer-stream"
 
 import { InformationSharingAgreement } from "@/models"
 import { InformationSharingAgreementPolicy } from "@/policies"
@@ -34,14 +33,16 @@ export class GenerateConfidentialityAcknowledgementController extends BaseContro
         })
       }
 
+      // Generate before sending any bytes, otherwise a failure mid-stream produces a
+      // truncated file that the browser saves as a corrupt .docx. See TK-39.
+      const content = await CreateService.perform(informationSharingAgreement, this.currentUser)
+
       const fileName = this.buildFileName(informationSharingAgreement)
       const mimeType = this.buildMimeType()
       this.response.setHeader("Content-Disposition", `attachment;filename="${fileName}"`)
       this.response.setHeader("Content-Type", mimeType)
 
-      return quickStartBufferStream(this.response, mimeType, async () => {
-        return CreateService.perform(informationSharingAgreement, this.currentUser)
-      })
+      return this.response.send(content)
     } catch (error) {
       logger.error(
         `Failed to download information sharing agreement acknowledgement template: ${error}`,
@@ -61,7 +62,9 @@ export class GenerateConfidentialityAcknowledgementController extends BaseContro
   private buildFileName(informationSharingAgreement: InformationSharingAgreement) {
     const { id, title } = informationSharingAgreement
     const currentDateTime = DateTime.now().toFormat("yyyy-MM-dd")
-    const displayName = `${title} - ${id}`
+    // Quotes and newlines in the title would otherwise break the Content-Disposition header.
+    const sanitizedTitle = title.replace(/["\\\r\n]/g, " ").trim()
+    const displayName = `${sanitizedTitle} - ${id}`
     return `Confidentiality Acknowledgement, ${displayName}, ${currentDateTime}.docx`
   }
 

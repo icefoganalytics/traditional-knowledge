@@ -4,6 +4,10 @@ import { type Policy } from "@/api/base-api"
 // Keep in sync with api/src/models/notification.ts
 export enum NotificationSourceTypes {
   SYSTEM = "system",
+  GROUP = "group",
+  USER = "user",
+  ATTACHMENT = "attachment",
+  INFORMATION_SHARING_AGREEMENT = "information_sharing_agreement",
 }
 
 export type Notification = {
@@ -14,6 +18,8 @@ export type Notification = {
   subtitle: string | null
   href: string | null
   sourceType: NotificationSourceTypes
+  sourceId: number | null
+  sourceKey: string | null
   createdAt: string
   updatedAt: string
 }

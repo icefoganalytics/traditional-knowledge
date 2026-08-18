@@ -28,11 +28,71 @@ export default {
       expiration_date: "Expiration Date",
       undetermined_with_default_expiration: "Undetermined with Default Expiration",
     },
+    detailLevels: {
+      original: "Original: No alterations or summary",
+      summary: "Summary: Notes, high-level summary, redacted portions",
+      context_specific: "Context specific: Details below",
+    },
+    formats: {
+      word_documents: "Word documents",
+      audio_or_video: "Audio and/or video",
+      excel_spreadsheets: "Excel spreadsheets",
+      gis_files: "GIS files",
+      pdf_or_scanned: "PDF / Scanned",
+      photos: "Photos",
+      hard_copies: "Hard copies (to be uploaded into electronic format)",
+      other: "Other",
+    },
+    creditLines: {
+      external_organization: "Yukon First Nation or Indigenous Government",
+      other: "Other (specify below)",
+    },
+    expirationActions: {
+      notify_designated_contacts_for_amendment:
+        "Notify both designated contacts before expiration: to determine if an amendment or extension is required",
+      notify_authorized_personnel:
+        "Notify authorised Yukon Government personnel before expiration: reminder that previous authorisations end on the expiration date",
+      notify_designated_contacts_of_expiry:
+        "Notify both designated contacts before expiration: reminder that upon expiry all authorisations and access are void, and the action is non-reversable",
+      send_removal_receipt:
+        "Send receipt to both designated contacts confirming the Traditional Knowledge has been permanently removed from the Vault",
+      other: "Other (specify below)",
+    },
+    breachActions: {
+      notify_and_resolve:
+        "Yukon Government notifies the designated contact at the earliest convenience; the contacts may resolve the breach with terms remaining status quo",
+      notify_and_pause_authorizations:
+        "Yukon Government informs the designated contact immediately and all previous authorisations are paused until the issue is addressed",
+      terminate_and_delete:
+        "If terminated, all authorisations are rescinded immediately and the Traditional Knowledge is permanently removed from the Vault",
+      communicate_amendments:
+        "Yukon Government's designated contact communicates amendments and requirements to authorised personnel",
+      reconcile_completed_purpose:
+        "If the purpose has been completed, the designated contacts determine next steps and reconcile the outcome",
+    },
   },
   user: {
     roles: {
       user: "User",
+      admin: "Admin",
+      external_admin: "External Admin",
       system_admin: "System Admin",
     },
+  },
+  apiError: {
+    offline:
+      "You appear to be offline. Check your internet connection and try again.",
+    unknown:
+      "Something went wrong. Please try again, and contact support if the problem continues.",
+    400: "That request couldn't be processed. Please check the information you entered and try again.",
+    401: "Your session has expired. Please sign in again.",
+    403: "You don't have permission to do that. If you believe you should, contact your administrator.",
+    404: "We couldn't find what you were looking for. It may have been moved or deleted.",
+    408: "The request took too long to complete. Please try again.",
+    410: "That item is no longer available.",
+    422: "Some of the information provided isn't valid. Please review the form and try again.",
+    429: "Too many requests were made in a short time. Please wait a moment and try again.",
+    500: "Something went wrong on our end. Please try again, and contact support if the problem continues.",
+    503: "The Vault is temporarily unavailable, likely for maintenance. Please try again shortly.",
   },
 }

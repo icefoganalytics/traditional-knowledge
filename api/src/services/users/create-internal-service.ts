@@ -20,7 +20,7 @@ export class CreateInternalService extends BaseService {
   }
 
   async perform(): Promise<User> {
-    const { email, auth0Subject, firstName, lastName, displayName, ...optionalAttributes } =
+    const { email, auth0Subject, firstName, lastName, displayName, roles, ...optionalAttributes } =
       this.attributes
 
     if (isNil(email)) {
@@ -37,6 +37,7 @@ export class CreateInternalService extends BaseService {
 
     const auth0SubjectOrFallback = auth0Subject || email
     const displayNameOrFallback = displayName || `${firstName} ${lastName}`
+    const rolesOrFallback = roles ?? [User.Roles.USER]
 
     return db.transaction(async () => {
       const user = await User.create({
@@ -46,7 +47,7 @@ export class CreateInternalService extends BaseService {
         firstName,
         lastName,
         displayName: displayNameOrFallback,
-        roles: [User.Roles.USER],
+        roles: rolesOrFallback,
         isExternal: false,
         creatorId: this.currentUser.id,
       })

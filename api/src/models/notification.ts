@@ -32,6 +32,9 @@ export const SUBTITLE_MAX_LENGTH = 255
 export enum NotificationSourceTypes {
   SYSTEM = "system",
   GROUP = "group",
+  USER = "user",
+  ATTACHMENT = "attachment",
+  INFORMATION_SHARING_AGREEMENT = "information_sharing_agreement",
 }
 
 export class Notification extends BaseModel<
@@ -74,6 +77,17 @@ export class Notification extends BaseModel<
     },
   })
   declare sourceType: NotificationSourceTypes
+
+  /** The id of the record that caused this notification, when there is one. */
+  @Attribute(DataTypes.INTEGER)
+  declare sourceId: number | null
+
+  /**
+   * Distinguishes repeat notifications about the same record, such as the 30-day and
+   * 7-day agreement expiry reminders. See TK-6.
+   */
+  @Attribute(DataTypes.STRING(100))
+  declare sourceKey: string | null
 
   @Attribute(DataTypes.DATE(0))
   @NotNull

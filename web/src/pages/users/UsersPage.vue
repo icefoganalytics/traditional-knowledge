@@ -59,5 +59,13 @@ const filters = computed(() => {
   }
 })
 
-useBreadcrumbs("Users", [ADMIN_CRUMB])
+useBreadcrumbs("Users", [
+  ADMIN_CRUMB,
+  {
+    title: "Users",
+    to: {
+      name: "users/UsersPage",
+    },
+  },
+])
 </script>

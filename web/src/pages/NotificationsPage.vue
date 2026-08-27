@@ -35,6 +35,7 @@ import { computed } from "vue"
 
 import { stringTransformer } from "@/utils/use-route-query-transformers"
 
+import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
 import { NotificationWhereOptions } from "@/use/use-notifications"
 
 import AppCard from "@/components/common/AppCard.vue"
@@ -53,4 +54,14 @@ const where = computed<NotificationWhereOptions>(() => {
 
   return {}
 })
+
+useBreadcrumbs("Notifications", [
+  BASE_CRUMB,
+  {
+    title: "Notifications",
+    to: {
+      name: "NotificationsPage",
+    },
+  },
+])
 </script>

@@ -12,10 +12,6 @@ describe("sharing agreement and knowledge item routes", () => {
     ],
     ["/sharing-agreements/12", "information-sharing-agreements/InformationSharingAgreementPage"],
     [
-      "/sharing-agreements/12/knowledge-items",
-      "information-sharing-agreements/InformationSharingAgreementKnowledgeItemsPage",
-    ],
-    [
       "/sharing-agreements/12/knowledge-items/34",
       "information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage",
     ],

@@ -120,15 +120,6 @@ useBreadcrumbs(
         },
       },
     },
-    {
-      title: "Knowledge Items",
-      to: {
-        name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemsPage",
-        params: {
-          informationSharingAgreementId: props.informationSharingAgreementId,
-        },
-      },
-    },
   ])
 )
 </script>

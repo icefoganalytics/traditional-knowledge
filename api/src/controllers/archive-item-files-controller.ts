@@ -1,12 +1,61 @@
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 
 import logger from "@/utils/logger"
-import { ArchiveItem, ArchiveItemAudit } from "@/models"
+import { ArchiveItem, ArchiveItemAudit, ArchiveItemFile } from "@/models"
 import { ArchiveItemsPolicy } from "@/policies"
-import { FileStorageService } from "@/services"
+import { ArchiveItemFiles, FileStorageService } from "@/services"
 import BaseController from "@/controllers/base-controller"
 
 export class ArchiveItemFilesController extends BaseController<ArchiveItem> {
+  async create() {
+    try {
+      const archiveItem = await this.loadArchiveItem()
+      if (isNil(archiveItem)) {
+        return this.response.status(404).json({
+          message: "Archive item not found",
+        })
+      }
+
+      const policy = this.buildPolicy(archiveItem)
+      if (!policy.update()) {
+        return this.response.status(403).json({
+          message: "You are not authorized to attach files to this item",
+        })
+      }
+
+      const files = this.request.body.files
+      if (isNil(files) || isEmpty(files)) {
+        return this.response.status(422).json({
+          message: "At least one file is required",
+        })
+      }
+
+      const archiveItemFiles: ArchiveItemFile[] = []
+      for (const file of files) {
+        const archiveItemFile = await ArchiveItemFiles.CreateService.perform(file.path, file.name, {
+          archiveItemId: archiveItem.id,
+        })
+        archiveItemFiles.push(archiveItemFile)
+
+        await ArchiveItemAudit.create({
+          archiveItemId: archiveItem.id,
+          archiveItemFileId: archiveItemFile.id,
+          action: `Uploaded ${archiveItemFile.originalFileName}`,
+          userId: this.currentUser.id,
+        })
+      }
+
+      return this.response.status(201).json({
+        archiveItemFiles,
+      })
+    } catch (error) {
+      logger.error(`Error attaching file: ${error}`, { error })
+      return this.response.status(422).json({
+        message: `Error attaching file: ${error}`,
+      })
+    }
+  }
+
   async show() {
     try {
       const archiveItem = await this.loadArchiveItem()
@@ -71,7 +120,15 @@ export class ArchiveItemFilesController extends BaseController<ArchiveItem> {
 
   private async loadArchiveItem() {
     const item = await ArchiveItem.findByPk(this.params.archiveItemId, {
-      include: ["files"],
+      include: [
+        "files",
+        {
+          association: "accessGrants",
+          through: {
+            attributes: [],
+          },
+        },
+      ],
     })
     if (isNil(item)) return null
 

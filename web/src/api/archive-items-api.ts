@@ -118,6 +118,21 @@ export const archiveItemsApi = {
   },
 
   // Special Actions
+  async createFiles(
+    archiveItemId: number,
+    files: File[]
+  ): Promise<{
+    archiveItemFiles: ArchiveItemFile[]
+  }> {
+    const { data } = await http.post(
+      `/api/archive-items/${archiveItemId}/files`,
+      { files },
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    )
+    return data
+  },
   async download(archiveItemId: number, fileId: number, getProtected: boolean) {
     const { data } = await http.get(
       `/api/archive-items/${archiveItemId}/files/${fileId}${getProtected ? "?format=protected" : ""}`,

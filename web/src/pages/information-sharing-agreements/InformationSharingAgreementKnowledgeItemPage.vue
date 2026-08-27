@@ -42,11 +42,12 @@
 
 <script setup lang="ts">
 import { isNil } from "lodash"
-import { ref, useTemplateRef, watch } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import informationSharingAgreementArchiveItemsApi, {
   type InformationSharingAgreementArchiveItem,
 } from "@/api/information-sharing-agreement-archive-items-api"
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
+import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
 
 import ArchiveItemAttachmentsCard from "@/components/archive-items/ArchiveItemAttachmentsCard.vue"
 import ArchiveItemAuditCard from "@/components/archive-items/ArchiveItemAuditCard.vue"
@@ -58,6 +59,10 @@ const props = defineProps<{
   informationSharingAgreementId: string
   informationSharingAgreementArchiveItemId: string
 }>()
+
+const informationSharingAgreementNumber = computed(() =>
+  formatInformationSharingAgreementNumber(parseInt(props.informationSharingAgreementId))
+)
 
 const informationSharingAgreementArchiveItem = ref<InformationSharingAgreementArchiveItem | null>(
   null
@@ -96,16 +101,34 @@ watch(
   { immediate: true }
 )
 
-useBreadcrumbs("Knowledge Item", [
-  BASE_CRUMB,
-  {
-    title: "Information Sharing Agreement Knowledge Items",
-    to: {
-      name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemsPage",
-      params: {
-        informationSharingAgreementId: props.informationSharingAgreementId,
+useBreadcrumbs(
+  "Knowledge Item",
+  computed(() => [
+    BASE_CRUMB,
+    {
+      title: "Information Sharing Agreements",
+      to: {
+        name: "InformationSharingAgreementsPage",
       },
     },
-  },
-])
+    {
+      title: informationSharingAgreementNumber.value,
+      to: {
+        name: "information-sharing-agreements/InformationSharingAgreementPage",
+        params: {
+          informationSharingAgreementId: props.informationSharingAgreementId,
+        },
+      },
+    },
+    {
+      title: "Knowledge Items",
+      to: {
+        name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemsPage",
+        params: {
+          informationSharingAgreementId: props.informationSharingAgreementId,
+        },
+      },
+    },
+  ])
+)
 </script>

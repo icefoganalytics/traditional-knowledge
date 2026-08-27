@@ -34,12 +34,20 @@ import { computed } from "vue"
 import useArchiveItems from "@/use/use-archive-items"
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
 import useInformationSharingAgreementArchiveItems from "@/use/use-information-sharing-agreement-archive-items"
+import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
 
 import InformationSharingAgreementKnowledgeItemListItem from "@/components/information-sharing-agreements/InformationSharingAgreementKnowledgeItemListItem.vue"
 
 const props = defineProps<{
   informationSharingAgreementId: string
 }>()
+
+const informationSharingAgreementIdAsNumber = computed(() =>
+  parseInt(props.informationSharingAgreementId)
+)
+const informationSharingAgreementNumber = computed(() =>
+  formatInformationSharingAgreementNumber(informationSharingAgreementIdAsNumber.value)
+)
 
 const informationSharingAgreementArchiveItemsQuery = computed(() => ({
   where: {
@@ -73,13 +81,25 @@ const knowledgeItems = computed(() =>
   })
 )
 
-useBreadcrumbs("Knowledge Items", [
-  BASE_CRUMB,
-  {
-    title: "Information Sharing Agreements",
-    to: {
-      name: "InformationSharingAgreementsPage",
+useBreadcrumbs(
+  computed(() => `${informationSharingAgreementNumber.value} - Knowledge Items`),
+  computed(() => [
+    BASE_CRUMB,
+    {
+      title: "Information Sharing Agreements",
+      to: {
+        name: "InformationSharingAgreementsPage",
+      },
     },
-  },
-])
+    {
+      title: informationSharingAgreementNumber.value,
+      to: {
+        name: "information-sharing-agreements/InformationSharingAgreementPage",
+        params: {
+          informationSharingAgreementId: props.informationSharingAgreementId,
+        },
+      },
+    },
+  ])
+)
 </script>

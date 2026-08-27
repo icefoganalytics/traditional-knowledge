@@ -4,7 +4,7 @@
     :loading="isLoading"
   >
     <template
-      v-if="!isNil(informationSharingAgreement) && isNil(archiveItemId)"
+      v-if="!isLoading && !isNil(informationSharingAgreement) && !hasKnowledgeItems"
       #dialogs
     >
       <InformationSharingAgreementArchiveItemCreateDialog
@@ -49,7 +49,7 @@
       />
     </v-list-item>
     <v-list-item
-      v-if="isNil(archiveItemId)"
+      v-if="!isLoading && !hasKnowledgeItems"
       class="cursor-pointer"
     >
       <v-list-item-title>Revert to Draft</v-list-item-title>
@@ -96,11 +96,10 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
-
 const { informationSharingAgreementId } = toRefs(props)
-const { informationSharingAgreement, isLoading } = useInformationSharingAgreement(
-  informationSharingAgreementId
-)
+
+const { informationSharingAgreement, isLoading: isLoadingInformationSharingAgreement } =
+  useInformationSharingAgreement(informationSharingAgreementId)
 
 const hasSignedConfidentialityReceipt = computed(() => {
   if (isNil(informationSharingAgreement.value)) {
@@ -117,12 +116,13 @@ const informationSharingAgreementArchiveItemsQuery = computed(() => ({
   },
   perPage: 1,
 }))
-const { informationSharingAgreementArchiveItems } = useInformationSharingAgreementArchiveItems(
-  informationSharingAgreementArchiveItemsQuery
+const { informationSharingAgreementArchiveItems, isLoading: isLoadingKnowledgeItems } =
+  useInformationSharingAgreementArchiveItems(informationSharingAgreementArchiveItemsQuery)
+const isLoading = computed(
+  () => isLoadingInformationSharingAgreement.value || isLoadingKnowledgeItems.value
 )
-const archiveItemId = computed(
-  () => informationSharingAgreementArchiveItems.value?.at(0)?.archiveItemId
-)
+const knowledgeItem = computed(() => informationSharingAgreementArchiveItems.value.at(0))
+const hasKnowledgeItems = computed(() => !isNil(knowledgeItem.value))
 const informationSharingAgreementArchiveItemCreateDialogRef = useTemplateRef(
   "informationSharingAgreementArchiveItemCreateDialogRef"
 )
@@ -132,13 +132,14 @@ function openCreateArchiveItemDialog() {
 }
 
 const primaryButtonAttributes = computed(() => {
-  if (!isNil(archiveItemId.value)) {
+  if (!isNil(knowledgeItem.value)) {
     return {
       primaryButtonText: "View Knowledge Item",
       primaryButtonTo: {
-        name: "archive-items/ArchiveItemInformationSharingAgreementsPage",
+        name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage",
         params: {
-          archiveItemId: archiveItemId.value,
+          informationSharingAgreementId: props.informationSharingAgreementId,
+          informationSharingAgreementArchiveItemId: knowledgeItem.value.id,
         },
       },
     }

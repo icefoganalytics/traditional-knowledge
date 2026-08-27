@@ -114,13 +114,15 @@ const informationSharingAgreementArchiveItemsQuery = computed(() => ({
   where: {
     informationSharingAgreementId: props.informationSharingAgreementId,
   },
+  perPage: 1,
 }))
 const { informationSharingAgreementArchiveItems, isLoading: isLoadingKnowledgeItems } =
   useInformationSharingAgreementArchiveItems(informationSharingAgreementArchiveItemsQuery)
 const isLoading = computed(
   () => isLoadingInformationSharingAgreement.value || isLoadingKnowledgeItems.value
 )
-const hasKnowledgeItems = computed(() => informationSharingAgreementArchiveItems.value.length > 0)
+const knowledgeItem = computed(() => informationSharingAgreementArchiveItems.value.at(0))
+const hasKnowledgeItems = computed(() => !isNil(knowledgeItem.value))
 const informationSharingAgreementArchiveItemCreateDialogRef = useTemplateRef(
   "informationSharingAgreementArchiveItemCreateDialogRef"
 )
@@ -130,13 +132,14 @@ function openCreateArchiveItemDialog() {
 }
 
 const primaryButtonAttributes = computed(() => {
-  if (hasKnowledgeItems.value) {
+  if (!isNil(knowledgeItem.value)) {
     return {
-      primaryButtonText: "View Knowledge Items",
+      primaryButtonText: "View Knowledge Item",
       primaryButtonTo: {
-        name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemsPage",
+        name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage",
         params: {
           informationSharingAgreementId: props.informationSharingAgreementId,
+          informationSharingAgreementArchiveItemId: knowledgeItem.value.id,
         },
       },
     }

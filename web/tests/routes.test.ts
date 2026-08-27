@@ -1,7 +1,7 @@
 import { createMemoryHistory, createRouter } from "vue-router"
 import routes from "@/routes"
 
-describe("sharing agreement routes", () => {
+describe("sharing agreement and knowledge item routes", () => {
   const router = createRouter({ history: createMemoryHistory(), routes })
 
   test.each([
@@ -36,15 +36,22 @@ describe("sharing agreement routes", () => {
       "/administration/sharing-agreements/12/access-grants",
       "administration/information-sharing-agreements/InformationSharingAgreementAccessGrantsPage",
     ],
+    ["/knowledge-items", "archive-items/ArchiveItemListPage"],
+    ["/knowledge-items/new", "archive-items/ArchiveItemNewPage"],
     [
-      "/archive-items/34/sharing-agreements",
+      "/knowledge-items/34/sharing-agreements",
       "archive-items/ArchiveItemInformationSharingAgreementsPage",
     ],
+    ["/knowledge-items/34/users-with-access", "archive-items/ArchiveItemUsersWithAccessPage"],
   ])("resolves %s", (path, name) => {
     expect(router.resolve(path).matched.some((record) => record.name === name)).toBe(true)
   })
 
   test("does not resolve the former public prefix", () => {
     expect(router.resolve("/information-sharing-agreements").name).toBe("NotFoundPage")
+  })
+
+  test("does not resolve the former archive-items prefix", () => {
+    expect(router.resolve("/archive-items/34/sharing-agreements").name).toBe("NotFoundPage")
   })
 })

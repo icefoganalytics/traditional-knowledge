@@ -298,20 +298,20 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
-        path: "archive-items",
+        path: "knowledge-items",
         name: "archive-items/ArchiveItemListPage",
         component: () => import("@/pages/archive-items/ArchiveItemListPage.vue"),
         meta: { title: "Traditional Knowledge" },
         props: true,
       },
       {
-        path: "archive-items/new",
+        path: "knowledge-items/new",
         name: "archive-items/ArchiveItemNewPage",
         component: () => import("@/pages/archive-items/ArchiveItemNewPage.vue"),
         props: true,
       },
       {
-        path: "archive-items/:archiveItemId",
+        path: "knowledge-items/:archiveItemId",
         component: () => import("@/pages/archive-items/ArchiveItemPage.vue"),
         props: true,
         children: [
@@ -322,7 +322,6 @@ const routes: RouteRecordRaw[] = [
               name: "archive-items/ArchiveItemInformationSharingAgreementsPage",
             },
           },
-
           {
             path: "sharing-agreements",
             name: "archive-items/ArchiveItemInformationSharingAgreementsPage",

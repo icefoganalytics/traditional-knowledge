@@ -61,10 +61,32 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "sharing-agreements/:informationSharingAgreementId/knowledge-items/:informationSharingAgreementArchiveItemId",
-        name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage",
         component: () =>
           import("@/pages/information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage.vue"),
         props: true,
+        children: [
+          {
+            path: "",
+            name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage",
+            redirect: {
+              name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemInformationSharingAgreementsPage",
+            },
+          },
+          {
+            path: "sharing-agreements",
+            name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemInformationSharingAgreementsPage",
+            component: () =>
+              import("@/pages/information-sharing-agreements/InformationSharingAgreementKnowledgeItemInformationSharingAgreementsPage.vue"),
+            props: true,
+          },
+          {
+            path: "users-with-access",
+            name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemUsersWithAccessPage",
+            component: () =>
+              import("@/pages/information-sharing-agreements/InformationSharingAgreementKnowledgeItemUsersWithAccessPage.vue"),
+            props: true,
+          },
+        ],
       },
       {
         path: "sharing-agreements/:informationSharingAgreementId/sign",

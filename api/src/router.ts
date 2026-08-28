@@ -137,6 +137,7 @@ router
   .patch(ArchiveItemsController.update)
   .delete(ArchiveItemsController.destroy)
 
+router.route("/api/archive-items/:archiveItemId/files").post(ArchiveItemFilesController.create)
 router.route("/api/archive-items/:archiveItemId/files/:fileId").get(ArchiveItemFilesController.show)
 router.route("/api/archive-items/:archiveItemId/audits").get(ArchiveItemAuditsController.index)
 

@@ -115,5 +115,14 @@ useBreadcrumbs(pageTitle, [
       name: "administration/InformationSharingAgreementsPage",
     },
   },
+  {
+    title: formatInformationSharingAgreementNumber(informationSharingAgreementIdAsNumber.value),
+    to: {
+      name: "administration/information-sharing-agreements/InformationSharingAgreementPage",
+      params: {
+        informationSharingAgreementId: props.informationSharingAgreementId,
+      },
+    },
+  },
 ])
 </script>

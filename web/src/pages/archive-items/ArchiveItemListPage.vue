@@ -142,7 +142,15 @@ const headers = [
   { title: "Attachments", value: "archiveItemFileCount" },
 ]
 
-useBreadcrumbs("Knowledge Items", [BASE_CRUMB])
+useBreadcrumbs("Knowledge Items", [
+  BASE_CRUMB,
+  {
+    title: "Knowledge Items",
+    to: {
+      name: "archive-items/ArchiveItemListPage",
+    },
+  },
+])
 
 function updatePage(newPage: number) {
   if (isLoading.value) return

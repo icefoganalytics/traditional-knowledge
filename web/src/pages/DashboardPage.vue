@@ -10,8 +10,8 @@
           <p class="text-subtitle-1 mb-4">
             The Vault provides layers of secure storage for Yukon First Nations and Indigenous
             Governments to share their Traditional Knowledge with the Yukon Government. An
-            Information Sharing Agreement sets the terms of the sharing, and Traditional Knowledge is
-            then added under that agreement.
+            Information Sharing Agreement sets the terms of the sharing, and Traditional Knowledge
+            is then added under that agreement.
           </p>
 
           <v-row>

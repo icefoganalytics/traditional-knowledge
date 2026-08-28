@@ -46,5 +46,13 @@ const filters = computed(() => {
 
 const { isSystemAdmin } = useCurrentUser<true>()
 
-useBreadcrumbs("Groups", [ADMIN_CRUMB])
+useBreadcrumbs("Groups", [
+  ADMIN_CRUMB,
+  {
+    title: "Groups",
+    to: {
+      name: "administration/GroupsPage",
+    },
+  },
+])
 </script>

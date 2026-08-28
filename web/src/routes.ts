@@ -42,32 +42,61 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: "information-sharing-agreements",
+        path: "sharing-agreements",
         name: "InformationSharingAgreementsPage",
         component: () => import("@/pages/InformationSharingAgreementsPage.vue"),
       },
       {
-        path: "information-sharing-agreements/new",
+        path: "sharing-agreements/new",
         name: "information-sharing-agreements/InformationSharingAgreementNewPage",
         component: () =>
           import("@/pages/information-sharing-agreements/InformationSharingAgreementNewPage.vue"),
       },
       {
-        path: "information-sharing-agreements/:informationSharingAgreementId",
+        path: "sharing-agreements/:informationSharingAgreementId",
         name: "information-sharing-agreements/InformationSharingAgreementPage",
         component: () =>
           import("@/pages/information-sharing-agreements/InformationSharingAgreementPage.vue"),
         props: true,
       },
       {
-        path: "information-sharing-agreements/:informationSharingAgreementId/sign",
+        path: "sharing-agreements/:informationSharingAgreementId/knowledge-items/:informationSharingAgreementArchiveItemId",
+        component: () =>
+          import("@/pages/information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage.vue"),
+        props: true,
+        children: [
+          {
+            path: "",
+            name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage",
+            redirect: {
+              name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemInformationSharingAgreementsPage",
+            },
+          },
+          {
+            path: "sharing-agreements",
+            name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemInformationSharingAgreementsPage",
+            component: () =>
+              import("@/pages/information-sharing-agreements/InformationSharingAgreementKnowledgeItemInformationSharingAgreementsPage.vue"),
+            props: true,
+          },
+          {
+            path: "users-with-access",
+            name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemUsersWithAccessPage",
+            component: () =>
+              import("@/pages/information-sharing-agreements/InformationSharingAgreementKnowledgeItemUsersWithAccessPage.vue"),
+            props: true,
+          },
+        ],
+      },
+      {
+        path: "sharing-agreements/:informationSharingAgreementId/sign",
         name: "information-sharing-agreements/InformationSharingAgreementSignPage",
         component: () =>
           import("@/pages/information-sharing-agreements/InformationSharingAgreementSignPage.vue"),
         props: true,
       },
       {
-        path: "information-sharing-agreements/:informationSharingAgreementId/edit",
+        path: "sharing-agreements/:informationSharingAgreementId/edit",
         component: () => import("@/layouts/InformationSharingAgreementEditLayout.vue"),
         props: true,
         children: [
@@ -202,12 +231,12 @@ const routes: RouteRecordRaw[] = [
             props: true,
           },
           {
-            path: "information-sharing-agreements",
+            path: "sharing-agreements",
             name: "administration/InformationSharingAgreementsPage",
             component: () => import("@/pages/administration/InformationSharingAgreementsPage.vue"),
           },
           {
-            path: "information-sharing-agreements/:informationSharingAgreementId",
+            path: "sharing-agreements/:informationSharingAgreementId",
             component: () =>
               import("@/pages/administration/information-sharing-agreements/InformationSharingAgreementPage.vue"),
             props: true,
@@ -284,20 +313,20 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
-        path: "archive-items",
+        path: "knowledge-items",
         name: "archive-items/ArchiveItemListPage",
         component: () => import("@/pages/archive-items/ArchiveItemListPage.vue"),
         meta: { title: "Traditional Knowledge" },
         props: true,
       },
       {
-        path: "archive-items/new",
+        path: "knowledge-items/new",
         name: "archive-items/ArchiveItemNewPage",
         component: () => import("@/pages/archive-items/ArchiveItemNewPage.vue"),
         props: true,
       },
       {
-        path: "archive-items/:archiveItemId",
+        path: "knowledge-items/:archiveItemId",
         component: () => import("@/pages/archive-items/ArchiveItemPage.vue"),
         props: true,
         children: [
@@ -308,9 +337,8 @@ const routes: RouteRecordRaw[] = [
               name: "archive-items/ArchiveItemInformationSharingAgreementsPage",
             },
           },
-
           {
-            path: "information-sharing-agreements",
+            path: "sharing-agreements",
             name: "archive-items/ArchiveItemInformationSharingAgreementsPage",
             component: () =>
               import("@/pages/archive-items/ArchiveItemInformationSharingAgreementsPage.vue"),

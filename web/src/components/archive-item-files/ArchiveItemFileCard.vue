@@ -1,6 +1,7 @@
 <template>
   <v-card
-    class="bg-secondary mb-4"
+    class="mb-4"
+    color="secondary"
     :loading="isLoading"
     :disabled="isLoading"
   >
@@ -92,8 +93,8 @@
       v-if="file.comment"
       class="text-black pt-1 pa-4"
     >
-      {{ file.comment }}This file is really impoerant and shoudl be reviewed by the team daily until
-      the understand the ramifications of it's importantance to the organizations
+      {{ file.comment }}This file is really important and should be reviewed by the team daily until
+      the understand the ramifications of it's importance to the organizations
     </div>
   </v-card>
 </template>
@@ -140,3 +141,11 @@ async function previewFile(usePdf: boolean = false) {
   emit("accessed", props.file.id)
 }
 </script>
+
+<style scoped>
+:deep(.v-card-title),
+:deep(.v-card-text),
+:deep(.v-card-text p) {
+  color: rgb(var(--v-theme-on-secondary));
+}
+</style>

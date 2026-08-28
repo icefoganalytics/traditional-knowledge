@@ -115,9 +115,7 @@ export class CreateService extends BaseService {
       ],
     })
 
-    if (isNil(organization)) {
-      throw new Error("External group contact is missing its associated external organization")
-    }
+    if (isNil(organization)) return null
 
     const { name } = organization
     return [name]

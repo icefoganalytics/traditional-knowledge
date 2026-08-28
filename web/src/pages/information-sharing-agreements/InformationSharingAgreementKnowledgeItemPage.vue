@@ -16,9 +16,7 @@
       cols="12"
       md="8"
     >
-      <ArchiveItemCard :archive-item-id="informationSharingAgreementArchiveItem.archiveItemId" />
-
-      <v-card class="mt-5 border">
+      <v-card class="border">
         <v-tabs
           slider-color="primary"
           grow
@@ -50,19 +48,33 @@
         <v-divider />
         <router-view></router-view>
       </v-card>
+
+      <ArchiveItemAttachmentsCard
+        :archive-item-id="informationSharingAgreementArchiveItem.archiveItemId"
+        class="mt-5"
+        @accessed="reloadArchiveItemAuditCard"
+      />
     </v-col>
 
     <v-col
       cols="12"
       md="4"
     >
+      <div class="d-flex align-center pa-2">
+        <v-spacer />
+        <v-btn
+          size="small"
+          color="error"
+          variant="outlined"
+          :loading="isDeleting"
+          @click="deleteArchiveItem"
+        >
+          Delete
+        </v-btn>
+      </div>
+
       <ArchiveItemQuickInfoCard
         :archive-item-id="informationSharingAgreementArchiveItem.archiveItemId"
-      />
-
-      <ArchiveItemAttachmentsCard
-        :archive-item-id="informationSharingAgreementArchiveItem.archiveItemId"
-        @accessed="reloadArchiveItemAuditCard"
       />
 
       <ArchiveItemAuditCard
@@ -78,15 +90,20 @@
 
 <script setup lang="ts">
 import { isNil } from "lodash"
-import { computed, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef } from "vue"
+import { useRouter } from "vue-router"
+
+import blockedToTrueConfirm from "@/utils/blocked-to-true-confirm"
+import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
+
+import archiveItemsApi from "@/api/archive-items-api"
 
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
 import useInformationSharingAgreementArchiveItem from "@/use/use-information-sharing-agreement-archive-item"
-import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
+import useSnack from "@/use/use-snack"
 
 import ArchiveItemAttachmentsCard from "@/components/archive-items/ArchiveItemAttachmentsCard.vue"
 import ArchiveItemAuditCard from "@/components/archive-items/ArchiveItemAuditCard.vue"
-import ArchiveItemCard from "@/components/archive-items/ArchiveItemCard.vue"
 import ArchiveItemQuickInfoCard from "@/components/archive-items/ArchiveItemQuickInfoCard.vue"
 import PreviewDialog from "@/components/pdf/PreviewDialog.vue"
 
@@ -98,8 +115,10 @@ const props = defineProps<{
 const informationSharingAgreementArchiveItemIdAsNumber = computed(() =>
   parseInt(props.informationSharingAgreementArchiveItemId)
 )
-const { informationSharingAgreementArchiveItem: rawInformationSharingAgreementArchiveItem, isLoading } =
-  useInformationSharingAgreementArchiveItem(informationSharingAgreementArchiveItemIdAsNumber)
+const {
+  informationSharingAgreementArchiveItem: rawInformationSharingAgreementArchiveItem,
+  isLoading,
+} = useInformationSharingAgreementArchiveItem(informationSharingAgreementArchiveItemIdAsNumber)
 
 const informationSharingAgreementArchiveItem = computed(() => {
   if (isNil(rawInformationSharingAgreementArchiveItem.value)) {
@@ -123,6 +142,34 @@ const archiveItemAuditCard =
 
 function reloadArchiveItemAuditCard() {
   archiveItemAuditCard.value?.reload()
+}
+
+const router = useRouter()
+const snack = useSnack()
+const isDeleting = ref(false)
+
+async function deleteArchiveItem() {
+  if (isNil(informationSharingAgreementArchiveItem.value)) return
+
+  const result = blockedToTrueConfirm("Are you sure you want to delete this knowledge item?")
+  if (result !== true) return
+
+  isDeleting.value = true
+  try {
+    await archiveItemsApi.delete(informationSharingAgreementArchiveItem.value.archiveItemId)
+    snack.success("Knowledge item deleted")
+    router.push({
+      name: "information-sharing-agreements/InformationSharingAgreementPage",
+      params: {
+        informationSharingAgreementId: props.informationSharingAgreementId,
+      },
+    })
+  } catch (error) {
+    console.error("Failed to delete knowledge item:", error)
+    snack.error("Failed to delete knowledge item")
+  } finally {
+    isDeleting.value = false
+  }
 }
 
 useBreadcrumbs(

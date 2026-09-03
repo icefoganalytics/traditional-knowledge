@@ -34,7 +34,7 @@
       :loading="isDownloadingDraft"
       @click="downloadDraft"
     >
-      <v-list-item-title>Download Confidentiality Acknowledgement</v-list-item-title>
+      <v-list-item-title>Download Information Sharing Agreement</v-list-item-title>
       <template #prepend>
         <v-icon
           size="small"
@@ -44,7 +44,7 @@
       </template>
       <v-tooltip
         activator="parent"
-        text="Download the confidentiality acknowledgement for printing and signature."
+        text="Download the information sharing agreement for printing and signature."
       />
     </v-list-item>
     <v-list-item

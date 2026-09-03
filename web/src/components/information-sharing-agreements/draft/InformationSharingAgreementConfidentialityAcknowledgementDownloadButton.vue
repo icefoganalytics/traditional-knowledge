@@ -1,9 +1,9 @@
 <template>
   <AuthenticatedPostForm
     :action-url="generateConfidentialityAcknowledgementUrl"
-    text="Download Confidentiality Acknowledgement"
+    text="Download Information Sharing Agreement"
     :activator-props="{
-      title: 'Download the confidentiality acknowledgement for printing and signature',
+      title: 'Download the information sharing agreement for printing and signature',
       ...activatorProps,
     }"
   />

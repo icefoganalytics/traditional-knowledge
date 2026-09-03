@@ -13,7 +13,7 @@
             class="w-100 w-md-auto"
             prepend-icon="mdi-download"
             text="Download"
-            title="Download signed confidentiality acknowledgement"
+            title="Download signed information sharing agreement"
             variant="outlined"
             color="secondary"
             :loading="isDownloadingAcknowledgement"

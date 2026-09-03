@@ -8,6 +8,7 @@ import { PolicyFactory } from "@/policies/base-policy"
 // created by archive item create service?
 export class ArchiveItemsPolicy extends PolicyFactory(ArchiveItem) {
   show(): boolean {
+    if (this.user.isSystemAdmin) return true
     if (this.user.id === this.record.userId) return true
     if (this.record.hasAccessGrantFor(this.user.id)) return true
 
@@ -15,6 +16,10 @@ export class ArchiveItemsPolicy extends PolicyFactory(ArchiveItem) {
   }
 
   create(): boolean {
+    if (this.user.isExternal) {
+      return false
+    }
+
     return true
   }
 

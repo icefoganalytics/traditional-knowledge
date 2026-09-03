@@ -18,6 +18,10 @@ export class InformationSharingAgreementPolicy extends PolicyFactory(Information
   }
 
   create(): boolean {
+    if (this.user.isExternal) {
+      return false
+    }
+
     return true
   }
 

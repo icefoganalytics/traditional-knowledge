@@ -13,6 +13,36 @@ import InformationSharingAgreementPolicy from "@/policies/information-sharing-ag
 
 describe("api/src/policies/information-sharing-agreement-policy.ts", () => {
   describe("InformationSharingAgreementPolicy", () => {
+    describe("#create", () => {
+      test("when actor is internal, returns true", async () => {
+        // Arrange
+        const actor = await userFactory.create({ isExternal: false })
+        const informationSharingAgreement = InformationSharingAgreement.build()
+
+        // Act, Assert
+        expect(
+          new InformationSharingAgreementPolicy(actor, informationSharingAgreement).create()
+        ).toBe(true)
+      })
+
+      // External Users cannot create ISAs or Knowledge Items. External Group Admins can
+      // attach files but not create ISAs.
+      test("when actor is external, returns false", async () => {
+        // Arrange
+        const externalOrganization = await externalOrganizationFactory.create()
+        const actor = await userFactory.create({
+          isExternal: true,
+          externalOrganizationId: externalOrganization.id,
+        })
+        const informationSharingAgreement = InformationSharingAgreement.build()
+
+        // Act, Assert
+        expect(
+          new InformationSharingAgreementPolicy(actor, informationSharingAgreement).create()
+        ).toBe(false)
+      })
+    })
+
     describe(".applyScope", () => {
       test("when user is system admin, returns all non-draft information sharing agreements, unless the user also created the draft", async () => {
         // Arrange

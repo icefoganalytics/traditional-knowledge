@@ -2,10 +2,14 @@ import { Attributes, FindOptions } from "@sequelize/core"
 
 import { Path } from "@/utils/deep-pick"
 import { Retention, User } from "@/models"
-import { PolicyFactory } from "@/policies/base-policy"
+import { ALL_RECORDS_SCOPE, NO_RECORDS_SCOPE, PolicyFactory } from "@/policies/base-policy"
 
 export class RetentionPolicy extends PolicyFactory(Retention) {
   show(): boolean {
+    if (this.user.isExternal) {
+      return false
+    }
+
     return true
   }
 
@@ -42,8 +46,12 @@ export class RetentionPolicy extends PolicyFactory(Retention) {
     return [...this.permittedAttributes()]
   }
 
-  static policyScope(_user: User): FindOptions<Attributes<Retention>> {
-    return {}
+  static policyScope(user: User): FindOptions<Attributes<Retention>> {
+    if (user.isExternal) {
+      return NO_RECORDS_SCOPE
+    }
+
+    return ALL_RECORDS_SCOPE
   }
 }
 

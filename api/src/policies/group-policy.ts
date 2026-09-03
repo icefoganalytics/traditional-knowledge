@@ -6,9 +6,14 @@ import { ALL_RECORDS_SCOPE, PolicyFactory } from "@/policies/base-policy"
 
 export class GroupPolicy extends PolicyFactory(Group) {
   show(): boolean {
-    // TODO: check if groups should be public information or restricted?
-    // maybe you should only see groups you are part of unless you are a system admin?
-    return true
+    if (this.user.isSystemAdmin) return true
+    if (!this.user.isExternal) return true
+
+    if (this.user.isMemberOfGroup(this.record.id)) {
+      return true
+    }
+
+    return false
   }
 
   create(): boolean {
@@ -38,8 +43,21 @@ export class GroupPolicy extends PolicyFactory(Group) {
     return ["isExternal", ...this.permittedAttributes()]
   }
 
-  static policyScope(_user: User): FindOptions<Attributes<Group>> {
-    return ALL_RECORDS_SCOPE
+  static policyScope(user: User): FindOptions<Attributes<Group>> {
+    if (!user.isExternal) {
+      return ALL_RECORDS_SCOPE
+    }
+
+    return {
+      include: [
+        {
+          association: "userGroups",
+          where: {
+            userId: user.id,
+          },
+        },
+      ],
+    }
   }
 }
 

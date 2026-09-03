@@ -2,10 +2,14 @@ import { Attributes, FindOptions } from "@sequelize/core"
 
 import { Path } from "@/utils/deep-pick"
 import { Category, User } from "@/models"
-import { PolicyFactory } from "@/policies/base-policy"
+import { ALL_RECORDS_SCOPE, NO_RECORDS_SCOPE, PolicyFactory } from "@/policies/base-policy"
 
 export class CategoryPolicy extends PolicyFactory(Category) {
   show(): boolean {
+    if (this.user.isExternal) {
+      return false
+    }
+
     return true
   }
 
@@ -34,8 +38,12 @@ export class CategoryPolicy extends PolicyFactory(Category) {
     return [...this.permittedAttributes()]
   }
 
-  static policyScope(_user: User): FindOptions<Attributes<Category>> {
-    return {}
+  static policyScope(user: User): FindOptions<Attributes<Category>> {
+    if (user.isExternal) {
+      return NO_RECORDS_SCOPE
+    }
+
+    return ALL_RECORDS_SCOPE
   }
 }
 

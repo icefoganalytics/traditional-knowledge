@@ -3,10 +3,14 @@ import { Attributes, FindOptions } from "@sequelize/core"
 import { type Path } from "@/utils/deep-pick"
 
 import { ExternalOrganization, User } from "@/models"
-import { ALL_RECORDS_SCOPE, PolicyFactory } from "@/policies/base-policy"
+import { ALL_RECORDS_SCOPE, NO_RECORDS_SCOPE, PolicyFactory } from "@/policies/base-policy"
 
 export class ExternalOrganizationPolicy extends PolicyFactory(ExternalOrganization) {
   show(): boolean {
+    if (this.user.isExternal) {
+      return false
+    }
+
     return true
   }
 
@@ -36,7 +40,11 @@ export class ExternalOrganizationPolicy extends PolicyFactory(ExternalOrganizati
     return [...this.permittedAttributes()]
   }
 
-  static policyScope(_user: User): FindOptions<Attributes<ExternalOrganization>> {
+  static policyScope(user: User): FindOptions<Attributes<ExternalOrganization>> {
+    if (user.isExternal) {
+      return NO_RECORDS_SCOPE
+    }
+
     return ALL_RECORDS_SCOPE
   }
 }

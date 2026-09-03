@@ -17,7 +17,7 @@
 
         <EnhancedFileInput
           v-model="signedConfidentialityAcknowledgement"
-          label="Signed Confidentiality Acknowledgement"
+          label="Signed Information Sharing Agreement"
           :rules="[required]"
           accept=".pdf,.doc,.docx"
           show-size
@@ -155,7 +155,7 @@ async function signAndRedirect() {
   if (!valid) return
 
   if (isNil(signedConfidentialityAcknowledgement.value)) {
-    throw new Error("Signed confidentiality acknowledgement is required")
+    throw new Error("Signed information sharing agreement is required")
   }
 
   isLoading.value = true

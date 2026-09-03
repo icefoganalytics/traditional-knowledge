@@ -17,7 +17,7 @@
       :loading="isDownloadingSignedConfidentialityAcknowledgement"
       @click="downloadSignedConfidentialityAcknowledgement"
     >
-      <v-list-item-title>Signed Confidentiality Acknowledgement</v-list-item-title>
+      <v-list-item-title>Signed Information Sharing Agreement</v-list-item-title>
       <template #prepend>
         <v-icon
           size="small"
@@ -27,7 +27,7 @@
       </template>
       <v-tooltip
         activator="parent"
-        text="Download the signed confidentiality acknowledgement document."
+        text="Download the signed information sharing agreement document."
       />
     </v-list-item>
     <v-list-item

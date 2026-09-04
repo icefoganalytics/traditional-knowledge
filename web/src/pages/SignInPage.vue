@@ -41,6 +41,7 @@
             <h2 class="text-h3 font-weight-semibold mb-4 mx-10">Traditional Knowledge Vault</h2>
             <div class="mt-6 text-center">
               <v-btn
+                class="text-none"
                 color="primary"
                 @click="doLogin"
               >

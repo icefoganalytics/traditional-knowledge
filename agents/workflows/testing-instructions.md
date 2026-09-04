@@ -195,7 +195,7 @@ Before finalizing:
 5. Click **New Agreement** button
 6. Fill in the agreement details:
    - **Title**: Enter "Test Agreement"
-   - **Yukon First Nation or Transboundary Contact Name**: Select a contact
+   - **Yukon First Nation or Indigenous Government Contact Name**: Select a contact
 7. Click **Save** to submit
 8. Verify the agreement appears in the list with status "Draft"
 9. Click the agreement to open it

@@ -37,7 +37,7 @@
               mdi-account-group
             </v-icon>
             <span class="font-weight-bold text-primary">
-              Yukon First Nation or Transboundary Contact
+              Yukon First Nation or Indigenous Government Contact
             </span>
           </div>
           <div class="mb-3">

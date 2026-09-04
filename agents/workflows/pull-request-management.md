@@ -260,7 +260,7 @@ Write testing instructions as if a real person is sitting at the app doing QA. R
 4. Click **Information Sharing Agreements** in the left sidebar.
 5. Click the **New Agreement** button.
 6. Fill in the **Title** field with "Test Agreement".
-7. Select a contact from the **Yukon First Nation or Transboundary Contact Name** dropdown.
+7. Select a contact from the **Yukon First Nation or Indigenous Government Contact Name** dropdown.
 8. Click **Save**.
 9. Verify the agreement appears in the list with status "Draft".
 ```

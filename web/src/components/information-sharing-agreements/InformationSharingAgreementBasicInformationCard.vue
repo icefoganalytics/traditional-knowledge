@@ -58,7 +58,9 @@
           </div>
           <div class="mb-3">
             <div class="text-body-2 text-grey-darken-1 mb-1">Email</div>
-            <div class="font-weight-medium">{{ externalGroupContact?.email || "Not specified" }}</div>
+            <div class="font-weight-medium">
+              {{ externalGroupContact?.email || "Not specified" }}
+            </div>
           </div>
           <div>
             <div class="text-body-2 text-grey-darken-1 mb-1">

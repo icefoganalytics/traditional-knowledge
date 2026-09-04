@@ -168,6 +168,7 @@ import useSnack from "@/use/use-snack"
 import useUser from "@/use/use-user"
 
 import UserAccountActivationSwitch from "@/components/users/UserAccountActivationSwitch.vue"
+import ExternalOrganizationSearchableAutocomplete from "@/components/external-organizations/ExternalOrganizationSearchableAutocomplete.vue"
 
 type CancelButtonOptions = VBtn["$props"]
 
@@ -195,11 +196,7 @@ const { user, policy, isLoading, save, refresh: refreshUser } = useUser(userId)
 
 const form = ref<InstanceType<typeof VForm> | null>(null)
 const snack = useSnack()
-const {
-  currentUser,
-  canManageExternalUsers,
-  refresh: refreshCurrentUser,
-} = useCurrentUser<true>()
+const { currentUser, canManageExternalUsers, refresh: refreshCurrentUser } = useCurrentUser<true>()
 
 async function saveWrapper() {
   if (isNil(user.value)) return

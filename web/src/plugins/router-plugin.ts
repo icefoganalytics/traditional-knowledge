@@ -10,7 +10,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  document.title = `${APPLICATION_NAME} : ${to.meta.title ? " " + to.meta.title : ""}`
+  document.title = to.meta.title ? `${APPLICATION_NAME} - ${to.meta.title}` : APPLICATION_NAME
 
   if (to.meta.requiresAuth === false) return true
 

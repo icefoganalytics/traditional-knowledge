@@ -1,4 +1,5 @@
 import { CreationAttributes } from "@sequelize/core"
+import { isNil } from "lodash"
 
 import logger from "@/utils/logger"
 import { User } from "@/models"
@@ -20,6 +21,8 @@ export class CreateService extends BaseService {
   }
 
   async perform(): Promise<User> {
+    this.assertRolesAreGrantable()
+
     const { isExternal } = this.attributes
 
     const user = isExternal
@@ -29,6 +32,16 @@ export class CreateService extends BaseService {
     await this.safeAttemptNotifyAdmins(user)
 
     return user
+  }
+
+  private assertRolesAreGrantable(): void {
+    const { roles } = this.attributes
+    if (isNil(roles)) return
+
+    const ungrantableRole = roles.find((role) => !this.currentUser.canGrantRole(role))
+    if (!isNil(ungrantableRole)) {
+      throw new Error(`You are not authorized to grant the ${ungrantableRole} role`)
+    }
   }
 
   /**

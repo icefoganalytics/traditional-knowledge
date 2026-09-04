@@ -39,7 +39,7 @@
       >
         <UserSearchableAutocomplete
           v-model="informationSharingAgreement.externalGroupContactId"
-          label="Yukon First Nation or Transboundary Contact Name *"
+          label="Yukon First Nation or Indigenous Government Contact Name *"
           :where="externalGroupContactWhere"
           :rules="[required]"
           required
@@ -53,7 +53,7 @@
       >
         <v-text-field
           v-model="informationSharingAgreement.externalGroupContactTitle"
-          label="Yukon First Nation or Transboundary Contact Title *"
+          label="Yukon First Nation or Indigenous Government Contact Title *"
           :rules="[required]"
           required
         />

@@ -36,7 +36,7 @@
         >
           <UserSearchableAutocomplete
             :model-value="externalGroupContactId"
-            label="Yukon First Nation or Transboundary Contact Name *"
+            label="Yukon First Nation or Indigenous Government Contact Name *"
             :where="externalGroupContactWhere"
             :rules="[required]"
             required
@@ -65,7 +65,7 @@
         >
           <v-text-field
             :model-value="externalGroupContactTitle"
-            label="Yukon First Nation or Transboundary Contact Title *"
+            label="Yukon First Nation or Indigenous Government Contact Title *"
             :rules="[required]"
             required
             @update:model-value="emit('update:externalGroupContactTitle', $event)"

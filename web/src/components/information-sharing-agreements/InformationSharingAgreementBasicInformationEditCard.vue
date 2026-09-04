@@ -10,7 +10,9 @@
         >
           <v-text-field
             :model-value="title"
-            label="Title *"
+            label="ISA Title *"
+            hint="Format: FNG-YG Department Acronym-Project/Purpose-YYYY-YYYY (e.g. KDFN-HPW-Whitehorse Generating Station-2026-2029)"
+            persistent-hint
             :rules="[required]"
             required
             @update:model-value="emit('update:title', $event)"

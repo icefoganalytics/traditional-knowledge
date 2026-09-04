@@ -9,7 +9,7 @@
     <v-divider />
     <v-card-text class="pa-6 pa-md-8">
       <div class="mb-6">
-        <div class="text-overline text-grey-darken-1 mb-2">Agreement Title</div>
+        <div class="text-overline text-grey-darken-1 mb-2">ISA Title</div>
         <div class="text-h5 font-weight-bold">{{ title }}</div>
       </div>
 

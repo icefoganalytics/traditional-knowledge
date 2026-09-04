@@ -11,12 +11,14 @@ This workflow guides you through creating comprehensive, accurate testing instru
 **WHY this workflow exists:** Pull requests need clear, actionable testing instructions that developers can follow to validate changes. Without proper testing instructions, PR validation becomes inconsistent and error-prone.
 
 **WHAT this workflow produces:**
+
 - Comprehensive testing instructions with exact UI element names
 - Sequential test cases covering happy paths, edge cases, and error conditions
 - Proper formatting following Traditional Knowledge project standards
 - Navigation paths and verification steps for each test scenario
 
 **Decision Rules:**
+
 - **Always verify UI element names**: Never guess button names, tab names, or labels - search the Vue code
 - **Use exact formatting**: Follow the established bold formatting and sequential numbering patterns
 - **Cover all scenarios**: Include happy paths, edge cases, error conditions, and cleanup flows
@@ -30,6 +32,7 @@ This workflow guides you through creating comprehensive, accurate testing instru
 ### Step 1: Understand the PR changes
 
 Read the PR description to understand:
+
 - What feature or bug is being addressed
 - What specific functionality changed
 - What edge cases need testing
@@ -41,7 +44,7 @@ Identify the main test scenarios that need coverage.
 
 **CRITICAL**: Always verify exact button names, tab names, and UI element labels from the actual Vue components. Never guess or assume names.
 
-#### Finding button text and labels:
+#### Finding button text and labels
 
 ```bash
 # Find button text in Vue components
@@ -59,7 +62,7 @@ grep -r "v-tab" web/src --include="*.vue"
 grep -r "label=" web/src --include="*.vue" | grep -i "keyword"
 ```
 
-#### Finding navigation structure:
+#### Finding navigation structure
 
 ```bash
 # Find router paths and page names
@@ -71,7 +74,7 @@ grep -r "v-list-item" web/src --include="*.vue"
 grep -r "v-navigation" web/src --include="*.vue"
 ```
 
-#### Example searches for common UI patterns:
+#### Example searches for common UI patterns
 
 ```bash
 # Agreement-related buttons
@@ -100,6 +103,7 @@ find web/src/components -name "*Nav*" -o -name "*Sidebar*" -o -name "*Menu*"
 ```
 
 Read relevant navigation components to understand:
+
 - Exact menu item text
 - Navigation hierarchy
 - Page locations
@@ -107,12 +111,14 @@ Read relevant navigation components to understand:
 ### Step 4: Structure test cases
 
 Break testing into logical test cases:
+
 - **Test Case 1**: Main happy path scenario
 - **Test Case 2**: Edge cases and variations
 - **Test Case 3**: Error conditions or negative tests
 - **Test Case 4**: Additional scenarios specific to the feature
 
 Each test case should:
+
 - Have a clear descriptive heading
 - Test one specific aspect of the functionality
 - Include verification steps with expected outcomes
@@ -162,6 +168,7 @@ Use this exact structure:
 ### Step 7: Include all test scenarios
 
 Ensure coverage of:
+
 - Main happy path functionality
 - Edge cases (e.g., empty states, boundary conditions)
 - Error conditions (e.g., validation errors, permission errors)
@@ -172,6 +179,7 @@ Ensure coverage of:
 ### Step 8: Review and validate
 
 Before finalizing:
+
 - [ ] All UI element names match actual code
 - [ ] Navigation paths are accurate
 - [ ] All test cases have clear expected outcomes

@@ -10,12 +10,14 @@ auto_execution_mode: 1
 **WHY this workflow exists:** Pull requests communicate intent to reviewers and future maintainers. A well-structured PR explains the problem, the solution approach, and how to verify correctness. This reduces review friction and creates valuable documentation.
 
 **WHAT this workflow produces:** A draft PR with:
+
 - Clear title following naming conventions
 - Context explaining WHY the change is needed
 - Implementation summarizing WHAT was changed (purpose, not files)
 - Testing instructions that verify correctness
 
 **Decision Rules:**
+
 - **Title format:** Use `Issue-<number>: Description` for GitHub issues, `TICKET-ID: Description` for Jira tickets, `Fix: Description` for bug fixes, or `Action Verb + Noun` for features. Always use AP style title case.
 - **Ticket prefix rule:** Only use ticket prefixes (`TK-123:`, `Issue-123:`) when referencing actual external ticket entities. For internal work without external tracking, use descriptive titles without prefixes.
 - **Implementation section:** Describe what the user or system can now do — not how it was built. Never name specific methods, services, controllers, or files unless the file itself is the subject of the change. A reviewer can see the diff; they don't need a guided tour of it.
@@ -89,14 +91,15 @@ git branch -vv
 Use one of these patterns:
 
 | Pattern | When to Use | Example |
-|---------|-------------|---------|
+| --------- | ------------- | --------- |
 | `Issue-<number>: Description` | Linked to GitHub issue | `Issue-314: Normalize Knowledge Entry Components to Modern Patterns` |
 | `TICKET-ID: Description` | Linked to Jira ticket | `TK-123: Add Traditional Knowledge Export Feature` |
 | `Fix: Description` | Bug fixes without ticket | `Fix: Knowledge Record Search Not Returning Results` |
 | `Action Verb + Noun` | Features/improvements | `Add Knowledge Category Management` |
 
 **Title Guidelines:**
-- Use **AP style title case** (validate at https://titlecaseconverter.com/?style=AP)
+
+- Use **AP style title case** (validate at <https://titlecaseconverter.com/?style=AP>)
 - Be specific but concise
 - Start with action verb when no ticket ID
 - **Important:** Only use ticket prefixes (`TK-123:`, `Issue-123:`) when referencing actual external ticket entities. For internal work without external tracking, use descriptive titles without prefixes.
@@ -156,6 +159,7 @@ The GitHub PR template provides the basic structure. Fill in each section follow
 - **Focus on problem and solution**: Remove redundant words and unnecessary context
 
 **Example:**
+
 ```markdown
 # Context
 
@@ -177,6 +181,7 @@ Investigation revealed that the search indexing was not considering Indigenous l
 - **Avoid redundant qualifiers**: Remove words like "entire", "proper", "fully", "completely"
 
 **Good Example (user/outcome-focused):**
+
 ```markdown
 # Implementation
 
@@ -187,6 +192,7 @@ Investigation revealed that the search indexing was not considering Indigenous l
 ```
 
 **Bad Example (technical-detail-focused — avoid this):**
+
 ```markdown
 # Implementation
 
@@ -196,6 +202,7 @@ Investigation revealed that the search indexing was not considering Indigenous l
 ```
 
 **Bad Example (file-focused — avoid this):**
+
 ```markdown
 # Implementation
 
@@ -210,6 +217,7 @@ Investigation revealed that the search indexing was not considering Indigenous l
 #### Screenshots Section
 
 **Before writing this section, check the diff:**
+
 ```bash
 git diff main...HEAD --name-only | grep -E "^web/src/(components|pages)/"
 ```
@@ -218,11 +226,13 @@ git diff main...HEAD --name-only | grep -E "^web/src/(components|pages)/"
 - **If no files returned:** Write "N/A - backend changes only"
 
 **For humans adding screenshots:**
+
 - Use `<img>` tags with width/height
 - Include before/after comparisons for visual changes
 - Capture the relevant UI state after the change
 
 **Example:**
+
 ```markdown
 # Screenshots
 
@@ -232,6 +242,7 @@ git diff main...HEAD --name-only | grep -E "^web/src/(components|pages)/"
 #### Testing Instructions Section
 
 **Always start with these three steps:**
+
 ```markdown
 1. Run the test suite via `dev test`.
 2. Boot the app via `dev up`.
@@ -239,6 +250,7 @@ git diff main...HEAD --name-only | grep -E "^web/src/(components|pages)/"
 ```
 
 **Then add specific steps:**
+
 - Use **bold** for UI elements: **Create Entry**, **Save**
 - Use arrows for navigation: **Knowledge Base** → **Create New**
 - Include verification: "Verify that..." or "Check that..."
@@ -256,6 +268,7 @@ Write testing instructions as if a real person is sitting at the app doing QA. R
 - **Verify with visible outcomes**: "Verify a success message appears", "Verify the new entry appears in the table", not "verify the record was created"
 
 **Example:**
+
 ```markdown
 4. Click **Information Sharing Agreements** in the left sidebar.
 5. Click the **New Agreement** button.
@@ -285,6 +298,7 @@ EOF
 ```
 
 To mark a draft PR as ready for review:
+
 ```bash
 gh api repos/{owner}/{repo}/pulls/NUMBER -X PATCH -F draft=false
 ```
@@ -314,7 +328,7 @@ gh api repos/{owner}/{repo}/pulls/NUMBER
 **Common Scenarios for Editing:**
 
 | Scenario | What to Update |
-|----------|----------------|
+| ---------- | ---------------- |
 | **Missing context** | Add detailed problem explanation to Context section |
 | **Unclear implementation** | Expand Implementation section with numbered list |
 | **Missing screenshots** | Add Screenshots section with images or "N/A - backend changes only" |
@@ -330,6 +344,7 @@ gh api repos/{owner}/{repo}/pulls/NUMBER
 4. **Verify completeness** - Run through the quality checklist again
 
 **Example Edit:**
+
 ```bash
 # Add missing testing instructions to PR #123
 cat <<'EOF' | gh api repos/icefoganalytics/traditional-knowledge/pulls/123 -X PATCH -F body=@-
@@ -387,7 +402,7 @@ Always use these exact commands in testing instructions:
 - **Tests:** `npm run test`
 - **Type checking:** `npm run type-check`
 - **App startup:** `npm run dev`
-- **Login URL:** http://localhost:3000
+- **Login URL:** <http://localhost:3000>
 
 ### Code Quality Standards
 
@@ -477,7 +492,7 @@ The current system only supports screen viewing and printing, making it difficul
 ## Common Pitfalls
 
 | Pitfall | Solution |
-|---------|----------|
+| --------- | ---------- |
 | PR not in draft mode | Always create PRs as drafts using `draft=true` |
 | Vague context | Be specific about the problem and user impact |
 | Missing testing steps | Start with standard 3 steps for Traditional Knowledge |

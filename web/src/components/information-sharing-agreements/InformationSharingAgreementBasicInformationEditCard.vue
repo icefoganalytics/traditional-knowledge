@@ -10,10 +10,20 @@
         >
           <v-text-field
             :model-value="title"
-            label="Title *"
+            label="ISA Title *"
+            hint="Format: FNG-YG Department Acronym-Project/Purpose-YYYY-YYYY (e.g. KDFN-HPW-Whitehorse Generating Station-2026-2029)"
+            persistent-hint
             :rules="[required]"
             required
             @update:model-value="emit('update:title', $event)"
+          />
+          <v-alert
+            v-if="!isNil(titleFormatWarning)"
+            type="warning"
+            variant="tonal"
+            density="compact"
+            class="mt-1"
+            :text="titleFormatWarning"
           />
         </v-col>
         <v-col cols="12">
@@ -121,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 import { computed, toRefs } from "vue"
 
 import { required } from "@/utils/validators"
@@ -153,6 +163,19 @@ const emit = defineEmits<{
 
 const { externalGroupContactId } = toRefs(props)
 const { user: externalGroupContact } = useUser(externalGroupContactId)
+
+// Non-blocking guidance only. See TK-65: the exact format is still being
+// confirmed, so we warn rather than reject. Project/Purpose is free text and
+// may contain dashes, so this pattern only checks the overall shape:
+// FNG-Department-Purpose-YYYY-YYYY.
+const TITLE_FORMAT_PATTERN = /^.+-.+-.+-\d{4}-\d{4}$/
+const titleFormatWarning = computed(() => {
+  const { title } = props
+  if (isNil(title) || isEmpty(title)) return null
+  if (TITLE_FORMAT_PATTERN.test(title)) return null
+
+  return "Title does not match the recommended format: FNG-YG Department Acronym-Project/Purpose-YYYY-YYYY (e.g. KDFN-HPW-Whitehorse Generating Station-2026-2029)."
+})
 
 const externalGroupContactWhere = computed(() => ({
   isExternal: true,

@@ -12,7 +12,7 @@ const prodConfig = {
   clientId: "cGFfr4ZNoqn88sJGBS8VgnbG6oCV2ACc",
   audience: "generic-production",
   apiBaseUrl: "",
-  applicationName: "Traditional Knowledge",
+  applicationName: "Traditional Knowledge Vault",
   matomoHost: MATOMO_HOST,
   matomoSiteId: MATOMO_SITE_ID,
 }
@@ -22,7 +22,7 @@ const uatConfig = {
   clientId: "11878vWk1pmhwyVQwsr2m2zM3w3e912U",
   audience: "generic-uat",
   apiBaseUrl: "",
-  applicationName: "Traditional Knowledge - UAT",
+  applicationName: "Traditional Knowledge Vault - UAT",
   matomoHost: MATOMO_HOST,
   matomoSiteId: MATOMO_SITE_ID,
 }
@@ -32,7 +32,7 @@ const devConfig = {
   clientId: "fsWyrDohhHtojdOpOFnAYtFMxwAMHUEF",
   audience: "testing",
   apiBaseUrl: DEVELOPMENT_API_BASE_URL,
-  applicationName: "Traditional Knowledge",
+  applicationName: "Traditional Knowledge Vault",
   matomoHost: MATOMO_HOST,
   matomoSiteId: MATOMO_SITE_ID,
 }
@@ -42,7 +42,7 @@ const localProductionConfig = {
   clientId: "cGFfr4ZNoqn88sJGBS8VgnbG6oCV2ACc",
   audience: "generic-production",
   apiBaseUrl: "http://localhost:8080",
-  applicationName: "Traditional Knowledge",
+  applicationName: "Traditional Knowledge Vault",
   matomoHost: MATOMO_HOST,
   matomoSiteId: MATOMO_SITE_ID,
 }

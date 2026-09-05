@@ -3,7 +3,7 @@ import type * as Integrations from "@/integrations"
 import { User } from "@/models"
 import { yukonGovernmentIntegration } from "@/integrations"
 
-import { userFactory } from "@/tests/factories"
+import { externalOrganizationFactory, userFactory } from "@/tests/factories"
 import { mockCurrentUser, request } from "@/tests/support"
 
 vi.mock("@/integrations", async (importOriginal) => {
@@ -19,8 +19,8 @@ vi.mock("@/integrations", async (importOriginal) => {
 
 const mockedFetchEmployee = vi.mocked(yukonGovernmentIntegration.fetchEmployee)
 
-describe("api/src/controllers/information-sharing-agreements-controller.ts", () => {
-  describe("InformationSharingAgreementsController", () => {
+describe("api/src/controllers/users/directory-users-controller.ts", () => {
+  describe("DirectoryUsersController", () => {
     describe("#create", () => {
       let currentUser: User
 
@@ -29,29 +29,25 @@ describe("api/src/controllers/information-sharing-agreements-controller.ts", () 
         mockCurrentUser(currentUser)
       })
 
-      test("resolves the Manager email to an existing internal user without creating a duplicate", async () => {
+      test("returns the existing internal user without creating a duplicate", async () => {
         const manager = await userFactory.create({
           email: "manager@example.com",
           isExternal: false,
         })
         const userCountBefore = await User.count()
 
-        const response = await request().post("/api/information-sharing-agreements").send({
-          title: "Test ISA",
-          internalGroupSecondaryContactEmail: "manager@example.com",
-        })
+        const response = await request()
+          .post("/api/users/directory-users")
+          .send({ email: "manager@example.com" })
 
         expect(response.status).toBe(201)
-        const { informationSharingAgreement } = response.body
-        expect(informationSharingAgreement.internalGroupSecondaryContactId).toBe(manager.id)
-        expect(informationSharingAgreement.internalGroupSecondaryContactEmail).toBe(
-          "manager@example.com"
-        )
+        expect(response.body.user.id).toBe(manager.id)
+        expect(response.body.user.email).toBe("manager@example.com")
         expect(mockedFetchEmployee).not.toHaveBeenCalled()
         expect(await User.count()).toBe(userCountBefore)
       })
 
-      test("creates an internal user from the directory when the Manager email is new", async () => {
+      test("creates an internal user from the directory when the email is new", async () => {
         mockedFetchEmployee.mockResolvedValue({
           full_name: "Jane Manager",
           first_name: "Jane",
@@ -79,18 +75,30 @@ describe("api/src/controllers/information-sharing-agreements-controller.ts", () 
           username: "jmanager",
         })
 
-        const response = await request().post("/api/information-sharing-agreements").send({
-          title: "Test ISA 2",
-          internalGroupSecondaryContactEmail: "jane.manager@yukon.ca",
-        })
+        const response = await request()
+          .post("/api/users/directory-users")
+          .send({ email: "jane.manager@yukon.ca" })
 
         expect(response.status).toBe(201)
         const createdManager = await User.findOne({ where: { email: "jane.manager@yukon.ca" } })
         expect(createdManager).not.toBeNull()
         expect(createdManager?.isExternal).toBe(false)
-        expect(response.body.informationSharingAgreement.internalGroupSecondaryContactId).toBe(
-          createdManager?.id
-        )
+        expect(response.body.user.id).toBe(createdManager?.id)
+      })
+
+      test("returns 403 when the current user is external", async () => {
+        const externalOrganization = await externalOrganizationFactory.create()
+        const externalUser = await userFactory.create({
+          isExternal: true,
+          externalOrganizationId: externalOrganization.id,
+        })
+        mockCurrentUser(externalUser)
+
+        const response = await request()
+          .post("/api/users/directory-users")
+          .send({ email: "manager@example.com" })
+
+        expect(response.status).toBe(403)
       })
     })
   })

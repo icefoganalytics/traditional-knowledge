@@ -52,7 +52,6 @@ export type InformationSharingAgreementAsShow = Pick<
   startDate: string | null
   endDate: string | null
   signedAt: string | null
-  internalGroupSecondaryContactEmail: string | null
   // Associations
   signedConfidentialityAcknowledgement: Attachments.AsReference | null
   signedConfidentialityReceipt: Attachments.AsReference | null
@@ -128,7 +127,6 @@ export class ShowSerializer extends BaseSerializer<InformationSharingAgreement> 
       startDate: formattedStartDate,
       endDate: formattedEndDate,
       signedAt: formattedSignedAt,
-      internalGroupSecondaryContactEmail: this.record.internalGroupSecondaryContact?.email ?? null,
       signedConfidentialityAcknowledgement: serializedSignedConfidentialityAcknowledgement,
       signedConfidentialityReceipt: serializedSignedConfidentialityReceipt,
     }

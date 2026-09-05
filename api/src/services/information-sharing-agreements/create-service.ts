@@ -34,7 +34,6 @@ export class CreateService extends BaseService {
       return informationSharingAgreement.reload({
         include: [
           "accessGrants",
-          "internalGroupSecondaryContact",
           "signedConfidentialityAcknowledgement",
           "signedConfidentialityReceipt",
         ],

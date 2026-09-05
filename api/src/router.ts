@@ -97,6 +97,9 @@ router
 
 router.route("/api/users").get(UsersController.index).post(UsersController.create)
 router
+  .route("/api/users/directory-users")
+  .post(Users.DirectoryUsersController.create)
+router
   .route("/api/users/:id")
   .get(UsersController.show)
   .patch(UsersController.update)

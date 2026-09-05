@@ -25,7 +25,7 @@ export class DraftStatePolicy extends GenericStatePolicy {
     return [
       "externalGroupContactId",
       "internalGroupContactId",
-      "internalGroupSecondaryContactEmail",
+      "internalGroupSecondaryContactId",
       "identifier",
       "externalGroupInfo",
       "internalGroupInfo",

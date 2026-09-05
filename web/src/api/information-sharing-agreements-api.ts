@@ -43,9 +43,6 @@ export type InformationSharingAgreement = {
   internalGroupId: number | null
   internalGroupContactId: number | null
   internalGroupSecondaryContactId: number | null
-  // Write-side directory field: on read it is the selected Manager's email, on write it
-  // resolves to the internal user stored in internalGroupSecondaryContactId. See TK-66.
-  internalGroupSecondaryContactEmail: string | null
   status: InformationSharingAgreementStatuses
   identifier: string | null
   externalGroupInfo: string | null
@@ -114,7 +111,6 @@ export type InformationSharingAgreementAsShow = Pick<
   | "internalGroupId"
   | "internalGroupContactId"
   | "internalGroupSecondaryContactId"
-  | "internalGroupSecondaryContactEmail"
   | "status"
   | "identifier"
   | "externalGroupInfo"

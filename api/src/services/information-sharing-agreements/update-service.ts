@@ -64,7 +64,6 @@ export class UpdateService extends BaseService {
       return this.informationSharingAgreement.reload({
         include: [
           "accessGrants",
-          "internalGroupSecondaryContact",
           "signedConfidentialityAcknowledgement",
           "signedConfidentialityReceipt",
         ],

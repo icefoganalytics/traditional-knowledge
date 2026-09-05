@@ -1,11 +1,9 @@
-import { Attributes } from "@sequelize/core"
-import { isEmpty, isNil } from "lodash"
+import { isNil } from "lodash"
 
 import logger from "@/utils/logger"
 import { InformationSharingAgreement } from "@/models"
 import { InformationSharingAgreementPolicy } from "@/policies"
 import { CreateService, UpdateService } from "@/services/information-sharing-agreements"
-import { Users } from "@/services"
 import { IndexSerializer, ShowSerializer } from "@/serializers/information-sharing-agreements"
 import BaseController from "@/controllers/base-controller"
 
@@ -86,8 +84,10 @@ export class InformationSharingAgreementsController extends BaseController<Infor
       }
 
       const permittedAttributes = policy.permitAttributesForCreate(this.request.body)
-      const attributes = await this.resolveInternalGroupSecondaryContact(permittedAttributes)
-      const informationSharingAgreement = await CreateService.perform(attributes, this.currentUser)
+      const informationSharingAgreement = await CreateService.perform(
+        permittedAttributes,
+        this.currentUser
+      )
 
       const serializedInformationSharingAgreement = ShowSerializer.perform(
         informationSharingAgreement
@@ -120,8 +120,7 @@ export class InformationSharingAgreementsController extends BaseController<Infor
       }
 
       const permittedAttributes = policy.permitAttributes(this.request.body)
-      const attributes = await this.resolveInternalGroupSecondaryContact(permittedAttributes)
-      await UpdateService.perform(informationSharingAgreement, attributes, this.currentUser)
+      await UpdateService.perform(informationSharingAgreement, permittedAttributes, this.currentUser)
 
       const serializedInformationSharingAgreement = ShowSerializer.perform(
         informationSharingAgreement
@@ -168,39 +167,10 @@ export class InformationSharingAgreementsController extends BaseController<Infor
     return InformationSharingAgreement.findByPk(this.params.informationSharingAgreementId, {
       include: [
         "accessGrants",
-        "internalGroupSecondaryContact",
         "signedConfidentialityAcknowledgement",
         "signedConfidentialityReceipt",
       ],
     })
-  }
-
-  /**
-   * The Manager (secondary contact) is chosen from the Active Directory on the client, which
-   * submits an email. Resolve it to an internal User (creating one from the directory when
-   * missing) and store its id. The group services deliberately never grant this user any group
-   * membership. See TK-66.
-   */
-  private async resolveInternalGroupSecondaryContact(
-    permittedAttributes: Partial<Attributes<InformationSharingAgreement>>
-  ): Promise<Partial<Attributes<InformationSharingAgreement>>> {
-    const { internalGroupSecondaryContactEmail, ...attributes } = permittedAttributes as Partial<
-      Attributes<InformationSharingAgreement>
-    > & { internalGroupSecondaryContactEmail?: string | null }
-
-    if (internalGroupSecondaryContactEmail === undefined) {
-      return attributes
-    }
-
-    if (isNil(internalGroupSecondaryContactEmail) || isEmpty(internalGroupSecondaryContactEmail)) {
-      return { ...attributes, internalGroupSecondaryContactId: null }
-    }
-
-    const manager = await Users.EnsureFromDirectoryEmailService.perform(
-      internalGroupSecondaryContactEmail,
-      this.currentUser
-    )
-    return { ...attributes, internalGroupSecondaryContactId: manager.id }
   }
 
   private async buildInformationSharingAgreement() {

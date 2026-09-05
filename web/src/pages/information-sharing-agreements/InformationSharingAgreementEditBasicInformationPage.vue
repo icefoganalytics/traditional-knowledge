@@ -91,7 +91,7 @@
         md="6"
       >
         <YukonGovernmentEmployeeSearchableAutocomplete
-          v-model="informationSharingAgreement.internalGroupSecondaryContactEmail"
+          v-model="managerEmail"
           label="Yukon Government (YG) Manager Contact Name *"
           hint="Typically the manager of the primary YG contact, but can be any appropriate internal contact. Search the Active Directory."
           :rules="[required]"
@@ -130,15 +130,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useDisplay } from "vuetify"
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 
 import { required } from "@/utils/validators"
 
 import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
 import useSnack from "@/use/use-snack"
+import usersApi from "@/api/users-api"
 
 import UserSearchableAutocomplete, {
   type UserAsIndex,
@@ -154,6 +155,22 @@ const informationSharingAgreementIdAsNumber = computed(() =>
 )
 const { informationSharingAgreement, isLoading, save } = useInformationSharingAgreement(
   informationSharingAgreementIdAsNumber
+)
+
+const managerEmail = ref<string | null | undefined>(undefined)
+
+watch(
+  () => informationSharingAgreement.value?.internalGroupSecondaryContactId,
+  async (secondaryContactId) => {
+    if (isNil(secondaryContactId)) {
+      managerEmail.value = undefined
+      return
+    }
+
+    const { user } = await usersApi.get(secondaryContactId)
+    managerEmail.value = user.email
+  },
+  { immediate: true }
 )
 
 const externalGroupContactWhere = computed(() => ({
@@ -197,6 +214,15 @@ async function saveWrapper() {
   }
 
   try {
+    if (isNil(informationSharingAgreement.value)) return
+
+    if (!isNil(managerEmail.value) && !isEmpty(managerEmail.value)) {
+      const { user } = await usersApi.ensureFromDirectory(managerEmail.value)
+      informationSharingAgreement.value.internalGroupSecondaryContactId = user.id
+    } else {
+      informationSharingAgreement.value.internalGroupSecondaryContactId = null
+    }
+
     await save()
     snack.success("Basic Information updated.")
 

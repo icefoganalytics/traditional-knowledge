@@ -1,14 +1,6 @@
-import { isUndefined } from "lodash"
-
-import db, {
-  Attachment,
-  InformationSharingAgreement,
-  User,
-  InformationSharingAgreementArchiveItem,
-} from "@/models"
-import { AttachmentTargetTypes } from "@/models/attachment"
+import db, { InformationSharingAgreement, User } from "@/models"
 import BaseService from "@/services/base-service"
-import { Attachments, InformationSharingAgreements } from "@/services"
+import { InformationSharingAgreements } from "@/services"
 
 export class RevertToDraftService extends BaseService {
   constructor(
@@ -23,30 +15,11 @@ export class RevertToDraftService extends BaseService {
       throw new Error("Only signed agreements can be reverted to draft.")
     }
 
-    const { informationSharingAgreementArchiveItems } = this.informationSharingAgreement
-    if (isUndefined(informationSharingAgreementArchiveItems)) {
-      throw new Error(
-        "Expected informationSharingAgreementArchiveItems association to be pre-loaded."
-      )
-    }
-    this.assertNoArchiveItemsLinked(informationSharingAgreementArchiveItems)
-
     return db.transaction(async () => {
+      // The groups (and their access grants) are removed on revert, but signed documents and
+      // any linked knowledge items are intentionally kept so that amending a signed agreement
+      // does not lose them. See TK-32.
       await this.destroyGroups(this.informationSharingAgreement, this.currentUser)
-      // Destroyed one at a time through the service so each removal notifies the
-      // designated contacts, as a bulk destroy would not. See TK-6.
-      await Attachment.findEach(
-        {
-          where: {
-            targetId: this.informationSharingAgreement.id,
-            targetType: AttachmentTargetTypes.InformationSharingAgreement,
-            associationName: "signedConfidentialityAcknowledgement",
-          },
-        },
-        async (attachment) => {
-          await Attachments.DestroyService.perform(attachment, this.currentUser)
-        }
-      )
       await this.informationSharingAgreement.update({
         status: InformationSharingAgreement.Status.DRAFT,
         signedById: null,
@@ -60,14 +33,6 @@ export class RevertToDraftService extends BaseService {
         ],
       })
     })
-  }
-
-  private assertNoArchiveItemsLinked(
-    informationSharingAgreementArchiveItems: InformationSharingAgreementArchiveItem[]
-  ): void {
-    if (informationSharingAgreementArchiveItems.length > 0) {
-      throw new Error("Cannot revert to draft because archive items are linked to this agreement.")
-    }
   }
 
   private async destroyGroups(

@@ -10,8 +10,8 @@
 
       <v-card-text>
         <p>
-          Are you sure you want to revert this agreement to draft? Any signed documents will be
-          removed.
+          Are you sure you want to revert this agreement to draft? Its groups and access will be
+          removed, but any signed documents and linked knowledge items will be kept.
         </p>
       </v-card-text>
 

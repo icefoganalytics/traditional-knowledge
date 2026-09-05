@@ -41,6 +41,12 @@ export const FRONTEND_URL = process.env.FRONTEND_URL || ""
 export const APPLICATION_NAME = process.env.VITE_APPLICATION_NAME || ""
 export const RUN_SCHEDULER = process.env.RUN_SCHEDULER || "false"
 
+// Matomo analytics tracker host; used to allowlist the tracker in the CSP. Defaults to the
+// Yukon Government analytics host and can be overridden with VITE_MATOMO_HOST. See TK-34.
+export const MATOMO_TRACKER_HOST = stripTrailingSlash(
+  process.env.VITE_MATOMO_HOST || "https://analytics.gov.yk.ca"
+)
+
 // ====================
 // Authentication & Authorization
 // ====================

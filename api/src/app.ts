@@ -4,7 +4,7 @@ import path from "path"
 import helmet from "helmet"
 import formData from "express-form-data"
 
-import { AUTH0_DOMAIN, FRONTEND_URL } from "@/config"
+import { AUTH0_DOMAIN, FRONTEND_URL, MATOMO_TRACKER_HOST } from "@/config"
 import { betterFormDataBodyParserMiddleware, requestLoggerMiddleware } from "@/middlewares"
 import router from "@/router"
 import enhancedQsDecoder from "@/utils/enhanced-qs-decoder"
@@ -26,11 +26,11 @@ app.use(
       "frame-ancestors": ["'self'"],
       "img-src": ["'self'", "data:", "https:"],
       "object-src": ["'none'"],
-      "script-src": ["'self'", "'unsafe-eval'"],
+      "script-src": ["'self'", "'unsafe-eval'", MATOMO_TRACKER_HOST],
       "script-src-attr": ["'none'"],
       "style-src": ["'self'", "https:", "'unsafe-inline'"],
       "worker-src": ["'self'", "blob:"],
-      "connect-src": ["'self'", FRONTEND_URL, AUTH0_DOMAIN],
+      "connect-src": ["'self'", FRONTEND_URL, AUTH0_DOMAIN, MATOMO_TRACKER_HOST],
     },
   })
 )

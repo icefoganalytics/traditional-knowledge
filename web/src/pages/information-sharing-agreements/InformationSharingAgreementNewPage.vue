@@ -20,8 +20,8 @@
           v-model:internal-group-contact-title="
             informationSharingAgreementAttributes.internalGroupContactTitle
           "
-          v-model:internal-group-secondary-contact-id="
-            informationSharingAgreementAttributes.internalGroupSecondaryContactId
+          v-model:internal-group-secondary-contact-email="
+            informationSharingAgreementAttributes.internalGroupSecondaryContactEmail
           "
           class="border"
         />
@@ -76,7 +76,7 @@ const informationSharingAgreementAttributes = ref<Partial<InformationSharingAgre
   externalGroupContactTitle: undefined,
   internalGroupContactId: undefined,
   internalGroupContactTitle: undefined,
-  internalGroupSecondaryContactId: undefined,
+  internalGroupSecondaryContactEmail: undefined,
 })
 
 const form = useTemplateRef("form")

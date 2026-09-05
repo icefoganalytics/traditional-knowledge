@@ -90,11 +90,10 @@
         cols="12"
         md="6"
       >
-        <UserSearchableAutocomplete
-          v-model="informationSharingAgreement.internalGroupSecondaryContactId"
+        <YukonGovernmentEmployeeSearchableAutocomplete
+          v-model="informationSharingAgreement.internalGroupSecondaryContactEmail"
           label="Yukon Government (YG) Manager Contact Name *"
-          :where="internalGroupSecondaryContactWhere"
-          hint="Typically the manager of the primary YG contact, but can be any appropriate internal contact."
+          hint="Typically the manager of the primary YG contact, but can be any appropriate internal contact. Search the Active Directory."
           :rules="[required]"
           required
         />
@@ -144,6 +143,7 @@ import useSnack from "@/use/use-snack"
 import UserSearchableAutocomplete, {
   type UserAsIndex,
 } from "@/components/users/UserSearchableAutocomplete.vue"
+import YukonGovernmentEmployeeSearchableAutocomplete from "@/components/yukon-government-directory/YukonGovernmentEmployeeSearchableAutocomplete.vue"
 
 const props = defineProps<{
   informationSharingAgreementId: string
@@ -160,9 +160,6 @@ const externalGroupContactWhere = computed(() => ({
   isExternal: true,
 }))
 const internalGroupContactWhere = computed(() => ({
-  isExternal: false,
-}))
-const internalGroupSecondaryContactWhere = computed(() => ({
   isExternal: false,
 }))
 

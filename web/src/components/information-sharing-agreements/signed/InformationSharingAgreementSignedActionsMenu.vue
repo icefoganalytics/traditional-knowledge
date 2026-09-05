@@ -49,7 +49,7 @@
       />
     </v-list-item>
     <v-list-item
-      v-if="!isLoading && !hasKnowledgeItems"
+      v-if="!isLoading"
       class="cursor-pointer"
     >
       <v-list-item-title>Revert to Draft</v-list-item-title>

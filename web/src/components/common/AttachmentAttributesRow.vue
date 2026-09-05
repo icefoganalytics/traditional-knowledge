@@ -27,7 +27,7 @@
 import { computed } from "vue"
 
 import { type AttachmentAsReference } from "@/api/attachments-api"
-import { formatBytes, formatDate } from "@/utils/formatters"
+import { formatBytes, formatDateTime } from "@/utils/formatters"
 
 const props = defineProps<{
   attachment: AttachmentAsReference
@@ -65,6 +65,6 @@ const icon = computed(() => {
   return "mdi-file"
 })
 
-const formattedDate = computed(() => formatDate(props.attachment.createdAt))
+const formattedDate = computed(() => formatDateTime(props.attachment.createdAt))
 const formattedSize = computed(() => formatBytes(props.attachment.size))
 </script>

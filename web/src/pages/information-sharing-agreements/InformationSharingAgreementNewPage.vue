@@ -20,9 +20,7 @@
           v-model:internal-group-contact-title="
             informationSharingAgreementAttributes.internalGroupContactTitle
           "
-          v-model:internal-group-secondary-contact-id="
-            informationSharingAgreementAttributes.internalGroupSecondaryContactId
-          "
+          v-model:internal-group-secondary-contact-email="managerEmail"
           class="border"
         />
       </v-col>
@@ -63,6 +61,7 @@ import { VForm } from "vuetify/components"
 import informationSharingAgreementsApi, {
   type InformationSharingAgreement,
 } from "@/api/information-sharing-agreements-api"
+import usersApi from "@/api/users-api"
 
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
 import useSnack from "@/use/use-snack"
@@ -76,8 +75,9 @@ const informationSharingAgreementAttributes = ref<Partial<InformationSharingAgre
   externalGroupContactTitle: undefined,
   internalGroupContactId: undefined,
   internalGroupContactTitle: undefined,
-  internalGroupSecondaryContactId: undefined,
 })
+
+const managerEmail = ref<string | null | undefined>(undefined)
 
 const form = useTemplateRef("form")
 const isLoading = ref(false)
@@ -105,9 +105,15 @@ async function saveAndGoToEditPage() {
 
   isLoading.value = true
   try {
-    const { informationSharingAgreement } = await informationSharingAgreementsApi.create(
-      informationSharingAgreementAttributes.value
-    )
+    const attributes: Partial<InformationSharingAgreement> = {
+      ...informationSharingAgreementAttributes.value,
+    }
+    if (!isNil(managerEmail.value) && !isEmpty(managerEmail.value)) {
+      const { user } = await usersApi.ensureFromDirectory(managerEmail.value)
+      attributes.internalGroupSecondaryContactId = user.id
+    }
+    const { informationSharingAgreement } =
+      await informationSharingAgreementsApi.create(attributes)
     snack.success("Information Sharing Agreement created.")
     await router.push({
       name: "information-sharing-agreements/InformationSharingAgreementEditDurationPage",

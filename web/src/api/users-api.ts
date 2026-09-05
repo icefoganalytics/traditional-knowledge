@@ -225,6 +225,11 @@ export const usersApi = {
     const { data } = await http.post(`/api/users/${userId}/directory-sync`)
     return data
   },
+
+  async ensureFromDirectory(email: string): Promise<{ user: UserAsReference }> {
+    const { data } = await http.post("/api/users/directory-users", { email })
+    return data
+  },
 }
 
 export default usersApi

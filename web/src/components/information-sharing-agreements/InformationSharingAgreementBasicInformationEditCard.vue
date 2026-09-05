@@ -115,14 +115,13 @@
           cols="12"
           md="6"
         >
-          <UserSearchableAutocomplete
-            :model-value="internalGroupSecondaryContactId"
+          <YukonGovernmentEmployeeSearchableAutocomplete
+            :model-value="internalGroupSecondaryContactEmail"
             label="Yukon Government (YG) Manager Contact Name *"
-            :where="internalGroupSecondaryContactWhere"
-            hint="Typically the manager of the primary YG contact, but can be any appropriate internal contact."
+            hint="Typically the manager of the primary YG contact, but can be any appropriate internal contact. Search the Active Directory."
             :rules="[required]"
             required
-            @update:model-value="emit('update:internalGroupSecondaryContactId', $event)"
+            @update:model-value="emit('update:internalGroupSecondaryContactEmail', $event)"
           />
         </v-col>
       </v-row>
@@ -140,6 +139,7 @@ import useUser from "@/use/use-user"
 import UserSearchableAutocomplete, {
   type UserAsIndex,
 } from "@/components/users/UserSearchableAutocomplete.vue"
+import YukonGovernmentEmployeeSearchableAutocomplete from "@/components/yukon-government-directory/YukonGovernmentEmployeeSearchableAutocomplete.vue"
 
 const props = defineProps<{
   title: string | null | undefined
@@ -148,7 +148,7 @@ const props = defineProps<{
   externalGroupContactTitle: string | null | undefined
   internalGroupContactId: number | null | undefined
   internalGroupContactTitle: string | null | undefined
-  internalGroupSecondaryContactId: number | null | undefined
+  internalGroupSecondaryContactEmail: string | null | undefined
 }>()
 
 const emit = defineEmits<{
@@ -158,7 +158,7 @@ const emit = defineEmits<{
   "update:externalGroupContactTitle": [value: string | null | undefined]
   "update:internalGroupContactId": [value: number | null | undefined]
   "update:internalGroupContactTitle": [value: string | null | undefined]
-  "update:internalGroupSecondaryContactId": [value: number | null | undefined]
+  "update:internalGroupSecondaryContactEmail": [value: string | null | undefined]
 }>()
 
 const { externalGroupContactId } = toRefs(props)
@@ -181,9 +181,6 @@ const externalGroupContactWhere = computed(() => ({
   isExternal: true,
 }))
 const internalGroupContactWhere = computed(() => ({
-  isExternal: false,
-}))
-const internalGroupSecondaryContactWhere = computed(() => ({
   isExternal: false,
 }))
 

@@ -3,9 +3,9 @@
     :model-value="modelValue"
     :loading="isLoading"
     :items="allItems"
-    label="Search Active Directory"
+    :label="label"
     placeholder="Start typing name or email..."
-    hint="Pre-populates user information directly from the directory."
+    :hint="hint"
     item-value="email"
     item-title="email"
     prepend-inner-icon="mdi-magnify"
@@ -55,9 +55,17 @@ import useYukonGovernmentEmployees, {
   type YukonGovernmentEmployeeQueryOptions,
 } from "@/use/yukon-government-directory/use-yukon-government-employees"
 
-const props = defineProps<{
-  modelValue: string | null | undefined
-}>()
+const props = withDefaults(
+  defineProps<{
+    modelValue: string | null | undefined
+    label?: string
+    hint?: string
+  }>(),
+  {
+    label: "Search Active Directory",
+    hint: "Pre-populates user information directly from the directory.",
+  }
+)
 
 const emit = defineEmits<{
   "update:modelValue": [email: string | null | undefined]

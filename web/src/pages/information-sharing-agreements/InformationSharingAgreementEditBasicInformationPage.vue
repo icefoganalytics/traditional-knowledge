@@ -90,11 +90,10 @@
         cols="12"
         md="6"
       >
-        <UserSearchableAutocomplete
-          v-model="informationSharingAgreement.internalGroupSecondaryContactId"
+        <YukonGovernmentEmployeeSearchableAutocomplete
+          v-model="managerEmail"
           label="Yukon Government (YG) Manager Contact Name *"
-          :where="internalGroupSecondaryContactWhere"
-          hint="Typically the manager of the primary YG contact, but can be any appropriate internal contact."
+          hint="Typically the manager of the primary YG contact, but can be any appropriate internal contact. Search the Active Directory."
           :rules="[required]"
           required
         />
@@ -131,19 +130,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useDisplay } from "vuetify"
-import { isNil } from "lodash"
+import { isEmpty, isNil } from "lodash"
 
 import { required } from "@/utils/validators"
 
 import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
 import useSnack from "@/use/use-snack"
+import usersApi from "@/api/users-api"
 
 import UserSearchableAutocomplete, {
   type UserAsIndex,
 } from "@/components/users/UserSearchableAutocomplete.vue"
+import YukonGovernmentEmployeeSearchableAutocomplete from "@/components/yukon-government-directory/YukonGovernmentEmployeeSearchableAutocomplete.vue"
 
 const props = defineProps<{
   informationSharingAgreementId: string
@@ -156,13 +157,26 @@ const { informationSharingAgreement, isLoading, save } = useInformationSharingAg
   informationSharingAgreementIdAsNumber
 )
 
+const managerEmail = ref<string | null | undefined>(undefined)
+
+watch(
+  () => informationSharingAgreement.value?.internalGroupSecondaryContactId,
+  async (secondaryContactId) => {
+    if (isNil(secondaryContactId)) {
+      managerEmail.value = undefined
+      return
+    }
+
+    const { user } = await usersApi.get(secondaryContactId)
+    managerEmail.value = user.email
+  },
+  { immediate: true }
+)
+
 const externalGroupContactWhere = computed(() => ({
   isExternal: true,
 }))
 const internalGroupContactWhere = computed(() => ({
-  isExternal: false,
-}))
-const internalGroupSecondaryContactWhere = computed(() => ({
   isExternal: false,
 }))
 
@@ -200,6 +214,15 @@ async function saveWrapper() {
   }
 
   try {
+    if (isNil(informationSharingAgreement.value)) return
+
+    if (!isNil(managerEmail.value) && !isEmpty(managerEmail.value)) {
+      const { user } = await usersApi.ensureFromDirectory(managerEmail.value)
+      informationSharingAgreement.value.internalGroupSecondaryContactId = user.id
+    } else {
+      informationSharingAgreement.value.internalGroupSecondaryContactId = null
+    }
+
     await save()
     snack.success("Basic Information updated.")
 

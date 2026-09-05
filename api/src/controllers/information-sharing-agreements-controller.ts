@@ -120,11 +120,7 @@ export class InformationSharingAgreementsController extends BaseController<Infor
       }
 
       const permittedAttributes = policy.permitAttributes(this.request.body)
-      await UpdateService.perform(
-        informationSharingAgreement,
-        permittedAttributes,
-        this.currentUser
-      )
+      await UpdateService.perform(informationSharingAgreement, permittedAttributes, this.currentUser)
 
       const serializedInformationSharingAgreement = ShowSerializer.perform(
         informationSharingAgreement

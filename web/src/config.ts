@@ -3,13 +3,7 @@ import { stripTrailingSlash } from "@/utils/strip-trailing-slash"
 export const ENVIRONMENT = import.meta.env.MODE
 const DEVELOPMENT_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000"
 
-/**
- * Matomo tracking is disabled unless the host is configured for the environment.
- * Production defaults to the Yukon Government analytics host; VITE_MATOMO_HOST overrides it.
- * See TK-34.
- */
 const MATOMO_HOST = import.meta.env.VITE_MATOMO_HOST || ""
-const PRODUCTION_MATOMO_HOST = import.meta.env.VITE_MATOMO_HOST || "https://analytics.gov.yk.ca"
 const MATOMO_SITE_ID = 115
 
 const prodConfig = {
@@ -18,7 +12,7 @@ const prodConfig = {
   audience: "generic-production",
   apiBaseUrl: "",
   applicationName: "Traditional Knowledge Vault",
-  matomoHost: PRODUCTION_MATOMO_HOST,
+  matomoHost: MATOMO_HOST,
   matomoSiteId: MATOMO_SITE_ID,
 }
 

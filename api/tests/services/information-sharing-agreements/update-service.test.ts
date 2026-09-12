@@ -1,4 +1,8 @@
-import { InformationSharingAgreement, UserGroup } from "@/models"
+import {
+  InformationSharingAgreement,
+  InformationSharingAgreementAudit,
+  UserGroup,
+} from "@/models"
 
 import {
   externalOrganizationFactory,
@@ -472,6 +476,48 @@ describe("api/src/services/information-sharing-agreements/update-service.ts", ()
         // Assert
         const userGroups = await UserGroup.findAll()
         expect(userGroups).toHaveLength(0)
+      })
+
+      describe("audit trail", () => {
+        test("does not record an audit when the agreement has never been signed", async () => {
+          const currentUser = await userFactory.create()
+          const informationSharingAgreement = await informationSharingAgreementFactory.create({
+            title: "Original Title",
+          })
+
+          await UpdateService.perform(
+            informationSharingAgreement,
+            { title: "Updated Title" },
+            currentUser
+          )
+
+          expect(await InformationSharingAgreementAudit.count()).toBe(0)
+        })
+
+        test("records an 'Updated' audit when the agreement has been signed", async () => {
+          const currentUser = await userFactory.create()
+          const informationSharingAgreement = await informationSharingAgreementFactory.create({
+            title: "Original Title",
+            status: InformationSharingAgreement.Status.SIGNED,
+            auditEnabled: true,
+          })
+
+          await UpdateService.perform(
+            informationSharingAgreement,
+            { title: "Updated Title" },
+            currentUser
+          )
+
+          const audits = await InformationSharingAgreementAudit.findAll()
+          expect(audits).toEqual([
+            expect.objectContaining({
+              informationSharingAgreementId: informationSharingAgreement.id,
+              userId: currentUser.id,
+              action: "Updated",
+              description: `${currentUser.displayName} updated the agreement`,
+            }),
+          ])
+        })
       })
     })
   })

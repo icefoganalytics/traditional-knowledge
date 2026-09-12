@@ -256,6 +256,13 @@ const routes: RouteRecordRaw[] = [
                 props: true,
               },
               {
+                path: "audits",
+                name: "administration/information-sharing-agreements/InformationSharingAgreementAuditsPage",
+                component: () =>
+                  import("@/pages/administration/information-sharing-agreements/InformationSharingAgreementAuditsPage.vue"),
+                props: true,
+              },
+              {
                 path: "access-grants/new",
                 name: "administration/information-sharing-agreements/InformationSharingAgreementAccessGrantNewPage",
                 component: () =>

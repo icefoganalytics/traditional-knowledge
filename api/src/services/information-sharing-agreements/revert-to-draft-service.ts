@@ -1,4 +1,8 @@
-import db, { InformationSharingAgreement, User } from "@/models"
+import db, {
+  InformationSharingAgreement,
+  InformationSharingAgreementAudit,
+  User,
+} from "@/models"
 import BaseService from "@/services/base-service"
 import { InformationSharingAgreements } from "@/services"
 
@@ -25,6 +29,16 @@ export class RevertToDraftService extends BaseService {
         signedById: null,
         signedAt: null,
       })
+
+      if (this.informationSharingAgreement.auditEnabled) {
+        await InformationSharingAgreementAudit.create({
+          informationSharingAgreementId: this.informationSharingAgreement.id,
+          userId: this.currentUser.id,
+          action: "Reverted to draft",
+          description: `${this.currentUser.displayName} reverted the agreement to draft`,
+        })
+      }
+
       return this.informationSharingAgreement.reload({
         include: [
           "accessGrants",

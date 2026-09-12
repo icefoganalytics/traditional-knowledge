@@ -45,6 +45,17 @@
       >
         Access Grants
       </v-tab>
+      <v-tab
+        v-if="informationSharingAgreement?.auditEnabled"
+        :to="{
+          name: 'administration/information-sharing-agreements/InformationSharingAgreementAuditsPage',
+          params: {
+            informationSharingAgreementId,
+          },
+        }"
+      >
+        Audit
+      </v-tab>
     </v-tabs>
     <v-divider />
 

@@ -1,7 +1,12 @@
 import { Attributes } from "@sequelize/core"
 import { isNil } from "lodash"
 
-import db, { InformationSharingAgreement, User, UserGroup } from "@/models"
+import db, {
+  InformationSharingAgreement,
+  InformationSharingAgreementAudit,
+  User,
+  UserGroup,
+} from "@/models"
 import BaseService from "@/services/base-service"
 import { UserGroups } from "@/services"
 
@@ -27,6 +32,15 @@ export class UpdateService extends BaseService {
 
     return db.transaction(async () => {
       await this.informationSharingAgreement.update(this.attributes)
+
+      if (this.informationSharingAgreement.auditEnabled) {
+        await InformationSharingAgreementAudit.create({
+          informationSharingAgreementId: this.informationSharingAgreement.id,
+          userId: this.currentUser.id,
+          action: "Updated",
+          description: `${this.currentUser.displayName} updated the agreement`,
+        })
+      }
 
       const {
         externalGroupId,

@@ -34,6 +34,7 @@ import {
   GroupsController,
   InformationSharingAgreementAccessGrantsController,
   InformationSharingAgreementArchiveItemsController,
+  InformationSharingAgreementAuditsController,
   InformationSharingAgreements,
   InformationSharingAgreementsController,
   Notifications,
@@ -189,6 +190,9 @@ router
 router
   .route("/api/information-sharing-agreements/:informationSharingAgreementId/archive-items")
   .post(InformationSharingAgreements.ArchiveItemsController.create)
+router
+  .route("/api/information-sharing-agreements/:informationSharingAgreementId/audits")
+  .get(InformationSharingAgreementAuditsController.index)
 
 router
   .route("/api/information-sharing-agreement-access-grants")

@@ -1,7 +1,12 @@
 import { DateTime } from "luxon"
 import { isNil, truncate } from "lodash"
 
-import db, { Attachment, InformationSharingAgreement, User } from "@/models"
+import db, {
+  Attachment,
+  InformationSharingAgreement,
+  InformationSharingAgreementAudit,
+  User,
+} from "@/models"
 import BaseService from "@/services/base-service"
 import { Attachments, InformationSharingAgreements } from "@/services"
 
@@ -93,6 +98,14 @@ export class SignService extends BaseService {
         status: InformationSharingAgreement.Status.SIGNED,
         signedById: this.currentUser.id,
         signedAt: new Date(),
+        auditEnabled: true,
+      })
+
+      await InformationSharingAgreementAudit.create({
+        informationSharingAgreementId: this.informationSharingAgreement.id,
+        userId: this.currentUser.id,
+        action: "Signed",
+        description: `${this.currentUser.displayName} signed the agreement`,
       })
 
       await this.createGroups(this.informationSharingAgreement, this.currentUser)

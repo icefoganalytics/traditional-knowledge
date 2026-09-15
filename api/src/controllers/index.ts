@@ -12,6 +12,7 @@ export { ExternalOrganizationsController } from "./external-organizations-contro
 export { GroupsController } from "./groups-controller"
 export { InformationSharingAgreementAccessGrantsController } from "./information-sharing-agreement-access-grants-controller"
 export { InformationSharingAgreementArchiveItemsController } from "./information-sharing-agreement-archive-items-controller"
+export { InformationSharingAgreementAuditsController } from "./information-sharing-agreement-audits-controller"
 export { InformationSharingAgreementsController } from "./information-sharing-agreements-controller"
 export { NotificationsController } from "./notifications-controller"
 export { RetentionsController } from "./retentions-controller"

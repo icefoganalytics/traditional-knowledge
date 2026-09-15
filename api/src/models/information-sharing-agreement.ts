@@ -92,6 +92,11 @@ export class InformationSharingAgreement extends BaseModel<
   @Default("draft")
   declare status: CreationOptional<InformationSharingAgreementStatuses>
 
+  @Attribute(DataTypes.BOOLEAN)
+  @NotNull
+  @Default(false)
+  declare auditEnabled: CreationOptional<boolean>
+
   @Attribute(DataTypes.STRING(100))
   declare identifier: string | null
 

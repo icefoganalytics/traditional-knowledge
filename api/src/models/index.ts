@@ -14,6 +14,7 @@ import InformationSharingAgreement from "@/models/information-sharing-agreement"
 import InformationSharingAgreementAccessGrant from "@/models/information-sharing-agreement-access-grant"
 import InformationSharingAgreementAccessGrantSibling from "@/models/information-sharing-agreement-access-grant-sibling"
 import InformationSharingAgreementArchiveItem from "@/models/information-sharing-agreement-archive-item"
+import InformationSharingAgreementAudit from "@/models/information-sharing-agreement-audit"
 import Notification from "@/models/notification"
 import Retention from "@/models/retention"
 import User from "@/models/user"
@@ -33,6 +34,7 @@ db.addModels([
   InformationSharingAgreementAccessGrant,
   InformationSharingAgreementAccessGrantSibling,
   InformationSharingAgreementArchiveItem,
+  InformationSharingAgreementAudit,
   Notification,
   Retention,
   User,
@@ -51,6 +53,7 @@ Group.establishScopes()
 InformationSharingAgreement.establishScopes()
 InformationSharingAgreementAccessGrant.establishScopes()
 InformationSharingAgreementArchiveItem.establishScopes()
+InformationSharingAgreementAudit.establishScopes()
 Notification.establishScopes()
 Retention.establishScopes()
 User.establishScopes()
@@ -70,6 +73,7 @@ export {
   InformationSharingAgreementAccessGrant,
   InformationSharingAgreementAccessGrantSibling,
   InformationSharingAgreementArchiveItem,
+  InformationSharingAgreementAudit,
   Notification,
   Retention,
   User,

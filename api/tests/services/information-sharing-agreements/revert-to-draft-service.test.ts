@@ -3,6 +3,7 @@ import {
   Group,
   InformationSharingAgreement,
   InformationSharingAgreementArchiveItem,
+  InformationSharingAgreementAudit,
 } from "@/models"
 import { AttachmentTargetTypes } from "@/models/attachment"
 
@@ -16,6 +17,7 @@ import {
 } from "@/tests/factories"
 
 import RevertToDraftService from "@/services/information-sharing-agreements/revert-to-draft-service"
+import UpdateService from "@/services/information-sharing-agreements/update-service"
 
 // Group removal fans out notifications that are irrelevant to reverting; silence them.
 vi.mock("@/mailers/groups/notify-user-of-removal-mailer", () => {
@@ -107,6 +109,63 @@ describe("api/src/services/information-sharing-agreements/revert-to-draft-servic
         await expect(
           RevertToDraftService.perform(informationSharingAgreement, currentUser)
         ).rejects.toThrow("Only signed agreements can be reverted to draft.")
+      })
+
+      describe("audit trail", () => {
+        async function buildAuditableSignedAgreement() {
+          const currentUser = await userFactory.create()
+          const internalGroup = await groupFactory.create({ isExternal: false })
+          const externalGroup = await groupFactory.create({ isExternal: true })
+          const informationSharingAgreement = await informationSharingAgreementFactory.create({
+            status: InformationSharingAgreement.Status.SIGNED,
+            internalGroupId: internalGroup.id,
+            externalGroupId: externalGroup.id,
+            signedById: currentUser.id,
+            signedAt: new Date(),
+            auditEnabled: true,
+          })
+          return { currentUser, informationSharingAgreement }
+        }
+
+        test("records a 'Reverted to draft' audit", async () => {
+          const { currentUser, informationSharingAgreement } =
+            await buildAuditableSignedAgreement()
+
+          await RevertToDraftService.perform(informationSharingAgreement, currentUser)
+
+          const audits = await InformationSharingAgreementAudit.findAll()
+          expect(audits).toEqual([
+            expect.objectContaining({
+              informationSharingAgreementId: informationSharingAgreement.id,
+              userId: currentUser.id,
+              action: "Reverted to draft",
+              description: `${currentUser.displayName} reverted the agreement to draft`,
+            }),
+          ])
+        })
+
+        test("records an 'Updated' audit when a reverted-to-draft agreement is updated", async () => {
+          const { currentUser, informationSharingAgreement } =
+            await buildAuditableSignedAgreement()
+
+          const reverted = await RevertToDraftService.perform(
+            informationSharingAgreement,
+            currentUser
+          )
+          await UpdateService.perform(reverted, { title: "Amended Title" }, currentUser)
+
+          const updateAudits = await InformationSharingAgreementAudit.findAll({
+            where: { action: "Updated" },
+          })
+          expect(updateAudits).toEqual([
+            expect.objectContaining({
+              informationSharingAgreementId: informationSharingAgreement.id,
+              userId: currentUser.id,
+              action: "Updated",
+              description: `${currentUser.displayName} updated the agreement`,
+            }),
+          ])
+        })
       })
     })
   })

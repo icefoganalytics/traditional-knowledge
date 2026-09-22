@@ -4,7 +4,7 @@ GEM
     erb (6.0.6)
     json (2.21.1)
     language_server-protocol (3.17.0.6)
-    local-development-gateway (0.1.0)
+    local-development-gateway (0.1.2)
     logger (1.7.0)
     prettier_print (1.2.1)
     prism (1.9.0)
@@ -31,7 +31,7 @@ PLATFORMS
 
 DEPENDENCIES
   json (>= 2.7.2)
-  local-development-gateway (~> 0.1)
+  local-development-gateway (~> 0.1.2)
   prettier_print (= 1.2.1)
   rdoc
   ruby-lsp (= 0.26.9)
@@ -41,7 +41,7 @@ CHECKSUMS
   erb (6.0.6) sha256=a9b24986700f5bf127c4f297c5403c3ca41b83b0a316c0cd09a096b56e644ae5
   json (2.21.1) sha256=13a43df75d95641443f5702dff350f237164a9d811ff0f2c2800d4d980220583
   language_server-protocol (3.17.0.6) sha256=5ef2c0c138f8267e1bc631d3328347d354f96724b0af22f2c79516120443b7f0
-  local-development-gateway (0.1.0) sha256=0f443837bbc4900ae0f3ea383c2055b27f741e4c81a57d03d0e5a8e9bdc6bff7
+  local-development-gateway (0.1.2) sha256=51e94cb3c614d4c5a310e43d7bb27115efa0873090df8f31cf0e9b497f340082
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
   prettier_print (1.2.1) sha256=a72838b5f23facff21f90a5423cdcdda19e4271092b41f4ea7f50b83929e6ff9
   prism (1.9.0) sha256=7b530c6a9f92c24300014919c9dcbc055bf4cdf51ec30aed099b06cd6674ef85

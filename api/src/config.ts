@@ -46,12 +46,11 @@ export const MATOMO_TRACKER_HOST = stripTrailingSlash(process.env.VITE_MATOMO_HO
 // ====================
 // Authentication & Authorization
 // ====================
-
 // Auth0 Configuration
 export const AUTH0_DOMAIN = stripTrailingSlash(process.env.VITE_AUTH0_DOMAIN || "")
 export const AUTH0_AUDIENCE = process.env.VITE_AUTH0_AUDIENCE
 export const AUTH0_REDIRECT = process.env.VITE_AUTH0_REDIRECT || process.env.FRONTEND_URL || ""
-
+export const QA_ENVIRONMENT = process.env.QA_ENVIRONMENT === "true"
 // ====================
 // Database & Cache Configuration
 // ====================

@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "local-development-gateway", "~> 0.1"
+gem "local-development-gateway", "~> 0.1.2"
 gem "json", ">= 2.7.2"
 gem "rdoc"
 

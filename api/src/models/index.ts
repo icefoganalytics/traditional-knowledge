@@ -1,11 +1,11 @@
 import db from "@/db/db-client"
 
 // Models
-import ArchiveItem from "@/models/archive-item"
-import ArchiveItemAudit from "@/models/archive-item-audit"
-import ArchiveItemCategory from "@/models/archive-item-category"
-import ArchiveItemFile from "@/models/archive-item-file"
-import ArchiveItemInformationSharingAgreementAccessGrant from "@/models/archive-item-information-sharing-agreement-access-grant"
+import KnowledgeItem from "@/models/knowledge-item"
+import KnowledgeItemAudit from "@/models/knowledge-item-audit"
+import KnowledgeItemCategory from "@/models/knowledge-item-category"
+import KnowledgeItemFile from "@/models/knowledge-item-file"
+import KnowledgeItemInformationSharingAgreementAccessGrant from "@/models/knowledge-item-information-sharing-agreement-access-grant"
 import Attachment from "@/models/attachment"
 import Category from "@/models/category"
 import ExternalOrganization from "@/models/external-organization"
@@ -13,7 +13,7 @@ import Group from "@/models/group"
 import InformationSharingAgreement from "@/models/information-sharing-agreement"
 import InformationSharingAgreementAccessGrant from "@/models/information-sharing-agreement-access-grant"
 import InformationSharingAgreementAccessGrantSibling from "@/models/information-sharing-agreement-access-grant-sibling"
-import InformationSharingAgreementArchiveItem from "@/models/information-sharing-agreement-archive-item"
+import InformationSharingAgreementKnowledgeItem from "@/models/information-sharing-agreement-knowledge-item"
 import InformationSharingAgreementAudit from "@/models/information-sharing-agreement-audit"
 import Notification from "@/models/notification"
 import Retention from "@/models/retention"
@@ -21,11 +21,11 @@ import User from "@/models/user"
 import UserGroup from "@/models/user-group"
 
 db.addModels([
-  ArchiveItem,
-  ArchiveItemAudit,
-  ArchiveItemCategory,
-  ArchiveItemFile,
-  ArchiveItemInformationSharingAgreementAccessGrant,
+  KnowledgeItem,
+  KnowledgeItemAudit,
+  KnowledgeItemCategory,
+  KnowledgeItemFile,
+  KnowledgeItemInformationSharingAgreementAccessGrant,
   Attachment,
   Category,
   ExternalOrganization,
@@ -33,7 +33,7 @@ db.addModels([
   InformationSharingAgreement,
   InformationSharingAgreementAccessGrant,
   InformationSharingAgreementAccessGrantSibling,
-  InformationSharingAgreementArchiveItem,
+  InformationSharingAgreementKnowledgeItem,
   InformationSharingAgreementAudit,
   Notification,
   Retention,
@@ -42,17 +42,17 @@ db.addModels([
 ])
 
 // Lazy load scopes
-ArchiveItem.establishScopes()
-ArchiveItemAudit.establishScopes()
-ArchiveItemCategory.establishScopes()
-ArchiveItemFile.establishScopes()
+KnowledgeItem.establishScopes()
+KnowledgeItemAudit.establishScopes()
+KnowledgeItemCategory.establishScopes()
+KnowledgeItemFile.establishScopes()
 Attachment.establishScopes()
 Category.establishScopes()
 ExternalOrganization.establishScopes()
 Group.establishScopes()
 InformationSharingAgreement.establishScopes()
 InformationSharingAgreementAccessGrant.establishScopes()
-InformationSharingAgreementArchiveItem.establishScopes()
+InformationSharingAgreementKnowledgeItem.establishScopes()
 InformationSharingAgreementAudit.establishScopes()
 Notification.establishScopes()
 Retention.establishScopes()
@@ -60,11 +60,11 @@ User.establishScopes()
 UserGroup.establishScopes()
 
 export {
-  ArchiveItem,
-  ArchiveItemAudit,
-  ArchiveItemCategory,
-  ArchiveItemFile,
-  ArchiveItemInformationSharingAgreementAccessGrant,
+  KnowledgeItem,
+  KnowledgeItemAudit,
+  KnowledgeItemCategory,
+  KnowledgeItemFile,
+  KnowledgeItemInformationSharingAgreementAccessGrant,
   Attachment,
   Category,
   ExternalOrganization,
@@ -72,7 +72,7 @@ export {
   InformationSharingAgreement,
   InformationSharingAgreementAccessGrant,
   InformationSharingAgreementAccessGrantSibling,
-  InformationSharingAgreementArchiveItem,
+  InformationSharingAgreementKnowledgeItem,
   InformationSharingAgreementAudit,
   Notification,
   Retention,

@@ -2,7 +2,7 @@ import { isNil } from "lodash"
 import { writeFileSync } from "fs"
 
 import { FileStorageService } from "@/services"
-import { ArchiveItemFile } from "@/models"
+import { KnowledgeItemFile } from "@/models"
 import cache from "@/db/cache-client"
 
 import { bufferToPdf } from "@/utils/buffer-to-pdf"
@@ -27,7 +27,7 @@ export class PDFConverterJob {
 
       const fileInfo = JSON.parse(data)
       const file = await fileStore.downloadFile(fileInfo.originalKey)
-      const fileRecord = await ArchiveItemFile.findBySlugOrPk(fileInfo.id)
+      const fileRecord = await KnowledgeItemFile.findBySlugOrPk(fileInfo.id)
       if (!fileRecord) return
 
       const folderKey = fileInfo.originalKey.substring(0, fileInfo.originalKey.indexOf("/"))

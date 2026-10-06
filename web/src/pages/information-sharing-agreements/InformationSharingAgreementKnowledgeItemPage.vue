@@ -4,13 +4,13 @@
     type="card@3"
   />
   <v-alert
-    v-else-if="isNil(informationSharingAgreementArchiveItem)"
+    v-else-if="isNil(informationSharingAgreementKnowledgeItem)"
     type="error"
     text="Knowledge item not found."
   />
   <v-row
     v-else
-    :key="informationSharingAgreementArchiveItem.archiveItemId"
+    :key="informationSharingAgreementKnowledgeItem.knowledgeItemId"
   >
     <v-col
       cols="12"
@@ -27,7 +27,7 @@
               name: 'information-sharing-agreements/InformationSharingAgreementKnowledgeItemInformationSharingAgreementsPage',
               params: {
                 informationSharingAgreementId,
-                informationSharingAgreementArchiveItemId,
+                informationSharingAgreementKnowledgeItemId,
               },
             }"
           >
@@ -38,7 +38,7 @@
               name: 'information-sharing-agreements/InformationSharingAgreementKnowledgeItemUsersWithAccessPage',
               params: {
                 informationSharingAgreementId,
-                informationSharingAgreementArchiveItemId,
+                informationSharingAgreementKnowledgeItemId,
               },
             }"
           >
@@ -49,10 +49,10 @@
         <router-view></router-view>
       </v-card>
 
-      <ArchiveItemAttachmentsCard
-        :archive-item-id="informationSharingAgreementArchiveItem.archiveItemId"
+      <KnowledgeItemAttachmentsCard
+        :knowledge-item-id="informationSharingAgreementKnowledgeItem.knowledgeItemId"
         class="mt-5"
-        @accessed="reloadArchiveItemAuditCard"
+        @accessed="reloadKnowledgeItemAuditCard"
       />
     </v-col>
 
@@ -67,19 +67,19 @@
           color="error"
           variant="outlined"
           :loading="isDeleting"
-          @click="deleteArchiveItem"
+          @click="deleteKnowledgeItem"
         >
           Delete
         </v-btn>
       </div>
 
-      <ArchiveItemQuickInfoCard
-        :archive-item-id="informationSharingAgreementArchiveItem.archiveItemId"
+      <KnowledgeItemQuickInfoCard
+        :knowledge-item-id="informationSharingAgreementKnowledgeItem.knowledgeItemId"
       />
 
-      <ArchiveItemAuditCard
-        ref="archiveItemAuditCard"
-        :item-id="informationSharingAgreementArchiveItem.archiveItemId"
+      <KnowledgeItemAuditCard
+        ref="knowledgeItemAuditCard"
+        :item-id="informationSharingAgreementKnowledgeItem.knowledgeItemId"
         class="mt-5"
       />
     </v-col>
@@ -96,67 +96,67 @@ import { useRouter } from "vue-router"
 import blockedToTrueConfirm from "@/utils/blocked-to-true-confirm"
 import { formatInformationSharingAgreementNumber } from "@/utils/formatters"
 
-import archiveItemsApi from "@/api/archive-items-api"
+import knowledgeItemsApi from "@/api/knowledge-items-api"
 
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
-import useInformationSharingAgreementArchiveItem from "@/use/use-information-sharing-agreement-archive-item"
+import useInformationSharingAgreementKnowledgeItem from "@/use/use-information-sharing-agreement-knowledge-item"
 import useSnack from "@/use/use-snack"
 
-import ArchiveItemAttachmentsCard from "@/components/archive-items/ArchiveItemAttachmentsCard.vue"
-import ArchiveItemAuditCard from "@/components/archive-items/ArchiveItemAuditCard.vue"
-import ArchiveItemQuickInfoCard from "@/components/archive-items/ArchiveItemQuickInfoCard.vue"
+import KnowledgeItemAttachmentsCard from "@/components/knowledge-items/KnowledgeItemAttachmentsCard.vue"
+import KnowledgeItemAuditCard from "@/components/knowledge-items/KnowledgeItemAuditCard.vue"
+import KnowledgeItemQuickInfoCard from "@/components/knowledge-items/KnowledgeItemQuickInfoCard.vue"
 import PreviewDialog from "@/components/pdf/PreviewDialog.vue"
 
 const props = defineProps<{
   informationSharingAgreementId: string
-  informationSharingAgreementArchiveItemId: string
+  informationSharingAgreementKnowledgeItemId: string
 }>()
 
-const informationSharingAgreementArchiveItemIdAsNumber = computed(() =>
-  parseInt(props.informationSharingAgreementArchiveItemId)
+const informationSharingAgreementKnowledgeItemIdAsNumber = computed(() =>
+  parseInt(props.informationSharingAgreementKnowledgeItemId)
 )
 const {
-  informationSharingAgreementArchiveItem: rawInformationSharingAgreementArchiveItem,
+  informationSharingAgreementKnowledgeItem: rawInformationSharingAgreementKnowledgeItem,
   isLoading,
-} = useInformationSharingAgreementArchiveItem(informationSharingAgreementArchiveItemIdAsNumber)
+} = useInformationSharingAgreementKnowledgeItem(informationSharingAgreementKnowledgeItemIdAsNumber)
 
-const informationSharingAgreementArchiveItem = computed(() => {
-  if (isNil(rawInformationSharingAgreementArchiveItem.value)) {
+const informationSharingAgreementKnowledgeItem = computed(() => {
+  if (isNil(rawInformationSharingAgreementKnowledgeItem.value)) {
     return null
   }
   if (
-    rawInformationSharingAgreementArchiveItem.value.informationSharingAgreementId !==
+    rawInformationSharingAgreementKnowledgeItem.value.informationSharingAgreementId !==
     parseInt(props.informationSharingAgreementId)
   ) {
     return null
   }
-  return rawInformationSharingAgreementArchiveItem.value
+  return rawInformationSharingAgreementKnowledgeItem.value
 })
 
 const informationSharingAgreementNumber = computed(() =>
   formatInformationSharingAgreementNumber(parseInt(props.informationSharingAgreementId))
 )
 
-const archiveItemAuditCard =
-  useTemplateRef<InstanceType<typeof ArchiveItemAuditCard>>("archiveItemAuditCard")
+const knowledgeItemAuditCard =
+  useTemplateRef<InstanceType<typeof KnowledgeItemAuditCard>>("knowledgeItemAuditCard")
 
-function reloadArchiveItemAuditCard() {
-  archiveItemAuditCard.value?.reload()
+function reloadKnowledgeItemAuditCard() {
+  knowledgeItemAuditCard.value?.reload()
 }
 
 const router = useRouter()
 const snack = useSnack()
 const isDeleting = ref(false)
 
-async function deleteArchiveItem() {
-  if (isNil(informationSharingAgreementArchiveItem.value)) return
+async function deleteKnowledgeItem() {
+  if (isNil(informationSharingAgreementKnowledgeItem.value)) return
 
   const result = blockedToTrueConfirm("Are you sure you want to delete this knowledge item?")
   if (result !== true) return
 
   isDeleting.value = true
   try {
-    await archiveItemsApi.delete(informationSharingAgreementArchiveItem.value.archiveItemId)
+    await knowledgeItemsApi.delete(informationSharingAgreementKnowledgeItem.value.knowledgeItemId)
     snack.success("Knowledge item deleted")
     router.push({
       name: "information-sharing-agreements/InformationSharingAgreementPage",

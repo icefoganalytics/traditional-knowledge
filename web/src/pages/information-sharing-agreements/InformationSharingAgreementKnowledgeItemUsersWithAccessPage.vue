@@ -2,7 +2,7 @@
   <v-card>
     <template #text>
       <InformationSharingAgreementAccessGrantsDataIterator
-        v-if="!isNil(archiveItemId)"
+        v-if="!isNil(knowledgeItemId)"
         :filters="informationSharingAgreementAccessGrantsFilters"
       />
     </template>
@@ -13,35 +13,35 @@
 import { isNil } from "lodash"
 import { computed } from "vue"
 
-import useInformationSharingAgreementArchiveItem from "@/use/use-information-sharing-agreement-archive-item"
+import useInformationSharingAgreementKnowledgeItem from "@/use/use-information-sharing-agreement-knowledge-item"
 
 import InformationSharingAgreementAccessGrantsDataIterator from "@/components/information-sharing-agreement-access-grants/InformationSharingAgreementAccessGrantsDataIterator.vue"
 
 const props = defineProps<{
   informationSharingAgreementId: string
-  informationSharingAgreementArchiveItemId: string
+  informationSharingAgreementKnowledgeItemId: string
 }>()
 
-const informationSharingAgreementArchiveItemIdAsNumber = computed(() =>
-  parseInt(props.informationSharingAgreementArchiveItemId)
+const informationSharingAgreementKnowledgeItemIdAsNumber = computed(() =>
+  parseInt(props.informationSharingAgreementKnowledgeItemId)
 )
-const { informationSharingAgreementArchiveItem: rawInformationSharingAgreementArchiveItem } =
-  useInformationSharingAgreementArchiveItem(informationSharingAgreementArchiveItemIdAsNumber)
+const { informationSharingAgreementKnowledgeItem: rawInformationSharingAgreementKnowledgeItem } =
+  useInformationSharingAgreementKnowledgeItem(informationSharingAgreementKnowledgeItemIdAsNumber)
 
-const archiveItemId = computed(() => {
-  if (isNil(rawInformationSharingAgreementArchiveItem.value)) {
+const knowledgeItemId = computed(() => {
+  if (isNil(rawInformationSharingAgreementKnowledgeItem.value)) {
     return null
   }
   if (
-    rawInformationSharingAgreementArchiveItem.value.informationSharingAgreementId !==
+    rawInformationSharingAgreementKnowledgeItem.value.informationSharingAgreementId !==
     parseInt(props.informationSharingAgreementId)
   ) {
     return null
   }
-  return rawInformationSharingAgreementArchiveItem.value.archiveItemId
+  return rawInformationSharingAgreementKnowledgeItem.value.knowledgeItemId
 })
 
 const informationSharingAgreementAccessGrantsFilters = computed(() =>
-  isNil(archiveItemId.value) ? {} : { forArchiveItemId: archiveItemId.value }
+  isNil(knowledgeItemId.value) ? {} : { forKnowledgeItemId: knowledgeItemId.value }
 )
 </script>

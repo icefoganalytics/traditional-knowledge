@@ -1,1 +1,1 @@
-export { archiveItemsApi } from "./archive-items-api"
+export { knowledgeItemsApi } from "./knowledge-items-api"

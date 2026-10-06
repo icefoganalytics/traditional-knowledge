@@ -1,8 +1,8 @@
 import { isNil } from "lodash"
 import { reactive, toRefs } from "vue"
 
-import archiveItemsApi from "@/api/archive-items-api"
-import { type ArchiveItemFile } from "@/api/archive-item-files-api"
+import knowledgeItemsApi from "@/api/knowledge-items-api"
+import { type KnowledgeItemFile } from "@/api/knowledge-item-files-api"
 import useSnack from "@/use/use-snack"
 
 const snack = useSnack()
@@ -13,7 +13,7 @@ const state = reactive<{
   isLoading: boolean
   previewBlob?: Blob | null
   title?: string | null
-  file?: ArchiveItemFile | null
+  file?: KnowledgeItemFile | null
   usePdf: boolean
 }>({
   isLoading: false,
@@ -32,16 +32,16 @@ export function usePdfPreview() {
     return false
   }
 
-  async function showPreview(file: ArchiveItemFile, usePdf: boolean = false) {
-    if (!file.archiveItemId) return
+  async function showPreview(file: KnowledgeItemFile, usePdf: boolean = false) {
+    if (!file.knowledgeItemId) return
     state.isLoading = true
     state.title = (usePdf ? file.pdfFileName : file.originalFileName) ?? "Preview"
     state.file = file
     state.usePdf = usePdf
     state.showDialog = true
 
-    const result = await archiveItemsApi
-      .download(file.archiveItemId, file.id, usePdf)
+    const result = await knowledgeItemsApi
+      .download(file.knowledgeItemId, file.id, usePdf)
       .then((resp) => resp)
       .catch(() => {})
 

@@ -1,14 +1,14 @@
 import db from "@/db/db-client"
 
 // Models
-import ArchiveItemFile from "@/models/archive-item-file"
+import KnowledgeItemFile from "@/models/knowledge-item-file"
 
-db.addModels([ArchiveItemFile])
+db.addModels([KnowledgeItemFile])
 
 // Lazy load scopes
-ArchiveItemFile.establishScopes()
+KnowledgeItemFile.establishScopes()
 
-export { ArchiveItemFile }
+export { KnowledgeItemFile }
 
 // Special db instance will all models loaded
 export default db

@@ -11,6 +11,6 @@ export { DestroyGroupsService } from "./destroy-groups-service"
 export { NotifyOfUpcomingExpiryService } from "./notify-of-upcoming-expiry-service"
 
 // Bundled exports
-export * as ArchiveItems from "./archive-items"
+export * as KnowledgeItems from "./knowledge-items"
 export * as GenerateConfidentialityAcknowledgement from "./generate-confidentiality-acknowledgement"
 export * as GenerateConfidentialityReceipt from "./generate-confidentiality-receipt"

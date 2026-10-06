@@ -1,8 +1,8 @@
 import { InformationSharingAgreement } from "@/models"
 
 import {
-  archiveItemFactory,
-  informationSharingAgreementArchiveItemFactory,
+  knowledgeItemFactory,
+  informationSharingAgreementKnowledgeItemFactory,
   informationSharingAgreementFactory,
   userFactory,
 } from "@/tests/factories"
@@ -18,10 +18,10 @@ describe("api/src/policies/information-sharing-agreements/revert-to-draft-policy
           status: InformationSharingAgreement.Status.SIGNED,
           creatorId: creator.id,
         })
-        const archiveItem = await archiveItemFactory.create({ userId: creator.id })
-        await informationSharingAgreementArchiveItemFactory.create({
+        const knowledgeItem = await knowledgeItemFactory.create({ userId: creator.id })
+        await informationSharingAgreementKnowledgeItemFactory.create({
           informationSharingAgreementId: informationSharingAgreement.id,
-          archiveItemId: archiveItem.id,
+          knowledgeItemId: knowledgeItem.id,
           creatorId: creator.id,
         })
 

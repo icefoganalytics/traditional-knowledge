@@ -7,8 +7,8 @@
       v-if="!isLoading && !isNil(informationSharingAgreement) && !hasKnowledgeItems"
       #dialogs
     >
-      <InformationSharingAgreementArchiveItemCreateDialog
-        ref="informationSharingAgreementArchiveItemCreateDialogRef"
+      <InformationSharingAgreementKnowledgeItemCreateDialog
+        ref="informationSharingAgreementKnowledgeItemCreateDialogRef"
         :information-sharing-agreement="informationSharingAgreement"
         @created="goToInformationSharingAgreementsPage"
       />
@@ -81,10 +81,10 @@ import { isNil } from "lodash"
 import Api from "@/api"
 import useAuthenticatedDownload from "@/use/utils/use-authenticated-download"
 import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
-import useInformationSharingAgreementArchiveItems from "@/use/use-information-sharing-agreement-archive-items"
+import useInformationSharingAgreementKnowledgeItems from "@/use/use-information-sharing-agreement-knowledge-items"
 
 import BaseActionsMenuBtnGroup from "@/components/common/BaseActionsMenuBtnGroup.vue"
-import InformationSharingAgreementArchiveItemCreateDialog from "@/components/information-sharing-agreements/archive-items/InformationSharingAgreementArchiveItemCreateDialog.vue"
+import InformationSharingAgreementKnowledgeItemCreateDialog from "@/components/information-sharing-agreements/knowledge-items/InformationSharingAgreementKnowledgeItemCreateDialog.vue"
 import InformationSharingAgreementRevertToDraftDialog from "@/components/information-sharing-agreements/InformationSharingAgreementRevertToDraftDialog.vue"
 
 const props = defineProps<{
@@ -110,25 +110,25 @@ const hasSignedConfidentialityReceipt = computed(() => {
   return !isNil(signedConfidentialityReceipt)
 })
 
-const informationSharingAgreementArchiveItemsQuery = computed(() => ({
+const informationSharingAgreementKnowledgeItemsQuery = computed(() => ({
   where: {
     informationSharingAgreementId: props.informationSharingAgreementId,
   },
   perPage: 1,
 }))
-const { informationSharingAgreementArchiveItems, isLoading: isLoadingKnowledgeItems } =
-  useInformationSharingAgreementArchiveItems(informationSharingAgreementArchiveItemsQuery)
+const { informationSharingAgreementKnowledgeItems, isLoading: isLoadingKnowledgeItems } =
+  useInformationSharingAgreementKnowledgeItems(informationSharingAgreementKnowledgeItemsQuery)
 const isLoading = computed(
   () => isLoadingInformationSharingAgreement.value || isLoadingKnowledgeItems.value
 )
-const knowledgeItem = computed(() => informationSharingAgreementArchiveItems.value.at(0))
+const knowledgeItem = computed(() => informationSharingAgreementKnowledgeItems.value.at(0))
 const hasKnowledgeItems = computed(() => !isNil(knowledgeItem.value))
-const informationSharingAgreementArchiveItemCreateDialogRef = useTemplateRef(
-  "informationSharingAgreementArchiveItemCreateDialogRef"
+const informationSharingAgreementKnowledgeItemCreateDialogRef = useTemplateRef(
+  "informationSharingAgreementKnowledgeItemCreateDialogRef"
 )
 
-function openCreateArchiveItemDialog() {
-  informationSharingAgreementArchiveItemCreateDialogRef.value?.open()
+function openCreateKnowledgeItemDialog() {
+  informationSharingAgreementKnowledgeItemCreateDialogRef.value?.open()
 }
 
 const primaryButtonAttributes = computed(() => {
@@ -139,14 +139,14 @@ const primaryButtonAttributes = computed(() => {
         name: "information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage",
         params: {
           informationSharingAgreementId: props.informationSharingAgreementId,
-          informationSharingAgreementArchiveItemId: knowledgeItem.value.id,
+          informationSharingAgreementKnowledgeItemId: knowledgeItem.value.id,
         },
       },
     }
   } else {
     return {
       primaryButtonText: "Create Knowledge Item",
-      primaryButtonProps: { onClick: () => openCreateArchiveItemDialog() },
+      primaryButtonProps: { onClick: () => openCreateKnowledgeItemDialog() },
     }
   }
 })

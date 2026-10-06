@@ -26,7 +26,7 @@
           class="mr-3"
           variant="flat"
           title="Toggle Fullscreen"
-          @click="(fullscreen = !fullscreen)"
+          @click="fullscreen = !fullscreen"
         ></v-btn>
         <v-btn
           icon="mdi-close"
@@ -74,7 +74,7 @@ import { useDisplay } from "vuetify"
 import Pdf from "vue-pdf-embed"
 
 import usePreview from "@/use/use-preview"
-import archiveItemsApi from "@/api/archive-items-api"
+import knowledgeItemsApi from "@/api/knowledge-items-api"
 
 const { previewBlob, title, usePdf, showDialog, isLoading, file, hidePreview } = usePreview()
 
@@ -107,10 +107,10 @@ const isImagePreview = computed(() => {
 })
 
 async function downloadClick() {
-  if (!file?.value?.archiveItemId || !previewUrl.value) return
+  if (!file?.value?.knowledgeItemId || !previewUrl.value) return
 
-  const result = await archiveItemsApi.download(
-    file.value.archiveItemId,
+  const result = await knowledgeItemsApi.download(
+    file.value.knowledgeItemId,
     file.value.id,
     usePdf.value
   )

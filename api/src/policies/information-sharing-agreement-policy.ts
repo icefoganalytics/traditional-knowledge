@@ -60,7 +60,7 @@ export class InformationSharingAgreementPolicy extends PolicyFactory(Information
     // Every internal Yukon Government employee can see every agreement that is no
     // longer a draft, plus their own drafts. This exposes the agreement metadata only;
     // the Knowledge Items shared under it stay restricted to those with an access
-    // grant, enforced by ArchiveItemsPolicy. See TK-24.
+    // grant, enforced by KnowledgeItemsPolicy. See TK-24.
     return {
       where: {
         [Op.or]: [

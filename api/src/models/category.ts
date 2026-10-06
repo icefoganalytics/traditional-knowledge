@@ -18,8 +18,8 @@ import {
 } from "@sequelize/core/decorators-legacy"
 
 import BaseModel from "@/models/base-model"
-import ArchiveItem from "./archive-item"
-import ArchiveItemCategory from "./archive-item-category"
+import KnowledgeItem from "./knowledge-item"
+import KnowledgeItemCategory from "./knowledge-item-category"
 import Retention from "@/models/retention"
 
 export class Category extends BaseModel<
@@ -65,18 +65,18 @@ export class Category extends BaseModel<
   })
   declare retention?: NonAttribute<Retention>
 
-  @BelongsToMany(() => ArchiveItem, {
-    through: () => ArchiveItemCategory,
+  @BelongsToMany(() => KnowledgeItem, {
+    through: () => KnowledgeItemCategory,
     foreignKey: "categoryId",
-    otherKey: "archiveItemId",
+    otherKey: "knowledgeItemId",
     throughAssociations: {
-      fromSource: "archiveItemCategories",
+      fromSource: "knowledgeItemCategories",
       toSource: "category",
-      fromTarget: "archiveItemCategories",
-      toTarget: "archiveItem",
+      fromTarget: "knowledgeItemCategories",
+      toTarget: "knowledgeItem",
     },
   })
-  declare archiveItems?: NonAttribute<ArchiveItem[]>
+  declare knowledgeItems?: NonAttribute<KnowledgeItem[]>
 
   // Scopes
   static establishScopes(): void {

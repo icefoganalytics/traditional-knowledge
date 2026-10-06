@@ -35,12 +35,7 @@ export type InformationSharingAgreementAccessGrantIndexView =
 /** Keep in sync with api/src/serializers/information-sharing-agreement-access-grants/reference-serializer.ts */
 export type InformationSharingAgreementAccessGrantAsReference = Pick<
   InformationSharingAgreementAccessGrant,
-  | "id"
-  | "informationSharingAgreementId"
-  | "groupId"
-  | "userId"
-  | "accessLevel"
-  | "creatorId"
+  "id" | "informationSharingAgreementId" | "groupId" | "userId" | "accessLevel" | "creatorId"
 >
 
 export type InformationSharingAgreementAccessGrantWhereOptions = WhereOptions<
@@ -50,7 +45,7 @@ export type InformationSharingAgreementAccessGrantWhereOptions = WhereOptions<
 
 export type InformationSharingAgreementAccessGrantFiltersOptions = FiltersOptions<{
   search: string | string[]
-  forArchiveItemId: number | number[]
+  forKnowledgeItemId: number | number[]
 }>
 
 export type InformationSharingAgreementAccessGrantQueryOptions = QueryOptions<

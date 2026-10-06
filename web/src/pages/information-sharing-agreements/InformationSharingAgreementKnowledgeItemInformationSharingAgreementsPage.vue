@@ -1,11 +1,11 @@
 <template>
   <v-card>
     <template #text>
-      <div v-if="!isNil(archiveItemId)">
-        <InformationSharingAgreementArchiveItemsAsInformationSharingAgreementsEditDataIterator
-          ref="informationSharingAgreementArchiveItemsAsInformationSharingAgreementsEditDataIterator"
-          :where="informationSharingAgreementArchiveItemsWhereOptions"
-          route-query-suffix="InformationSharingAgreementArchiveItems"
+      <div v-if="!isNil(knowledgeItemId)">
+        <InformationSharingAgreementKnowledgeItemsAsInformationSharingAgreementsEditDataIterator
+          ref="informationSharingAgreementKnowledgeItemsAsInformationSharingAgreementsEditDataIterator"
+          :where="informationSharingAgreementKnowledgeItemsWhereOptions"
+          route-query-suffix="InformationSharingAgreementKnowledgeItems"
           @deleted="refreshArchiveAndLinks"
         />
       </div>
@@ -17,60 +17,60 @@
 import { isNil } from "lodash"
 import { computed } from "vue"
 
-import useArchiveItem from "@/use/use-archive-item"
-import useInformationSharingAgreementArchiveItem from "@/use/use-information-sharing-agreement-archive-item"
-import useInformationSharingAgreementArchiveItems from "@/use/use-information-sharing-agreement-archive-items"
+import useKnowledgeItem from "@/use/use-knowledge-item"
+import useInformationSharingAgreementKnowledgeItem from "@/use/use-information-sharing-agreement-knowledge-item"
+import useInformationSharingAgreementKnowledgeItems from "@/use/use-information-sharing-agreement-knowledge-items"
 
-import InformationSharingAgreementArchiveItemsAsInformationSharingAgreementsEditDataIterator from "@/components/information-sharing-agreement-archive-items/InformationSharingAgreementArchiveItemsAsInformationSharingAgreementsEditDataIterator.vue"
+import InformationSharingAgreementKnowledgeItemsAsInformationSharingAgreementsEditDataIterator from "@/components/information-sharing-agreement-knowledge-items/InformationSharingAgreementKnowledgeItemsAsInformationSharingAgreementsEditDataIterator.vue"
 
 const props = defineProps<{
   informationSharingAgreementId: string
-  informationSharingAgreementArchiveItemId: string
+  informationSharingAgreementKnowledgeItemId: string
 }>()
 
-const informationSharingAgreementArchiveItemIdAsNumber = computed(() =>
-  parseInt(props.informationSharingAgreementArchiveItemId)
+const informationSharingAgreementKnowledgeItemIdAsNumber = computed(() =>
+  parseInt(props.informationSharingAgreementKnowledgeItemId)
 )
 const {
-  informationSharingAgreementArchiveItem: rawInformationSharingAgreementArchiveItem,
-  refresh: refreshInformationSharingAgreementArchiveItem,
-} = useInformationSharingAgreementArchiveItem(informationSharingAgreementArchiveItemIdAsNumber)
+  informationSharingAgreementKnowledgeItem: rawInformationSharingAgreementKnowledgeItem,
+  refresh: refreshInformationSharingAgreementKnowledgeItem,
+} = useInformationSharingAgreementKnowledgeItem(informationSharingAgreementKnowledgeItemIdAsNumber)
 
-const archiveItemId = computed(() => {
-  if (isNil(rawInformationSharingAgreementArchiveItem.value)) {
+const knowledgeItemId = computed(() => {
+  if (isNil(rawInformationSharingAgreementKnowledgeItem.value)) {
     return null
   }
   if (
-    rawInformationSharingAgreementArchiveItem.value.informationSharingAgreementId !==
+    rawInformationSharingAgreementKnowledgeItem.value.informationSharingAgreementId !==
     parseInt(props.informationSharingAgreementId)
   ) {
     return null
   }
-  return rawInformationSharingAgreementArchiveItem.value.archiveItemId
+  return rawInformationSharingAgreementKnowledgeItem.value.knowledgeItemId
 })
 
-const { refresh: refreshArchiveItem } = useArchiveItem(archiveItemId)
+const { refresh: refreshKnowledgeItem } = useKnowledgeItem(knowledgeItemId)
 
-const informationSharingAgreementArchiveItemsWhereOptions = computed(() => ({
-  archiveItemId: archiveItemId.value ?? undefined,
+const informationSharingAgreementKnowledgeItemsWhereOptions = computed(() => ({
+  knowledgeItemId: knowledgeItemId.value ?? undefined,
 }))
 
-const informationSharingAgreementArchiveItemsQuery = computed(() => ({
+const informationSharingAgreementKnowledgeItemsQuery = computed(() => ({
   where: {
-    archiveItemId: archiveItemId.value ?? undefined,
+    knowledgeItemId: knowledgeItemId.value ?? undefined,
   },
   perPage: 1,
 }))
-const { refresh: refreshInformationSharingAgreementArchiveItems } =
-  useInformationSharingAgreementArchiveItems(informationSharingAgreementArchiveItemsQuery, {
-    skipWatchIf: () => isNil(archiveItemId.value),
+const { refresh: refreshInformationSharingAgreementKnowledgeItems } =
+  useInformationSharingAgreementKnowledgeItems(informationSharingAgreementKnowledgeItemsQuery, {
+    skipWatchIf: () => isNil(knowledgeItemId.value),
   })
 
 async function refreshArchiveAndLinks() {
   await Promise.all([
-    refreshArchiveItem(),
-    refreshInformationSharingAgreementArchiveItems(),
-    refreshInformationSharingAgreementArchiveItem(),
+    refreshKnowledgeItem(),
+    refreshInformationSharingAgreementKnowledgeItems(),
+    refreshInformationSharingAgreementKnowledgeItem(),
   ])
 }
 </script>

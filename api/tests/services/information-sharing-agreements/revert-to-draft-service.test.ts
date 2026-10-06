@@ -2,16 +2,16 @@ import {
   Attachment,
   Group,
   InformationSharingAgreement,
-  InformationSharingAgreementArchiveItem,
+  InformationSharingAgreementKnowledgeItem,
   InformationSharingAgreementAudit,
 } from "@/models"
 import { AttachmentTargetTypes } from "@/models/attachment"
 
 import {
-  archiveItemFactory,
+  knowledgeItemFactory,
   attachmentFactory,
   groupFactory,
-  informationSharingAgreementArchiveItemFactory,
+  informationSharingAgreementKnowledgeItemFactory,
   informationSharingAgreementFactory,
   userFactory,
 } from "@/tests/factories"
@@ -22,19 +22,31 @@ import UpdateService from "@/services/information-sharing-agreements/update-serv
 // Group removal fans out notifications that are irrelevant to reverting; silence them.
 vi.mock("@/mailers/groups/notify-user-of-removal-mailer", () => {
   const NotifyUserOfRemovalMailerMock = { perform: vi.fn() }
-  return { NotifyUserOfRemovalMailer: NotifyUserOfRemovalMailerMock, default: NotifyUserOfRemovalMailerMock }
+  return {
+    NotifyUserOfRemovalMailer: NotifyUserOfRemovalMailerMock,
+    default: NotifyUserOfRemovalMailerMock,
+  }
 })
 vi.mock("@/mailers/groups/notify-admins-of-removed-user-mailer", () => {
   const NotifyAdminsOfRemovedUserMailerMock = { perform: vi.fn() }
-  return { NotifyAdminsOfRemovedUserMailer: NotifyAdminsOfRemovedUserMailerMock, default: NotifyAdminsOfRemovedUserMailerMock }
+  return {
+    NotifyAdminsOfRemovedUserMailer: NotifyAdminsOfRemovedUserMailerMock,
+    default: NotifyAdminsOfRemovedUserMailerMock,
+  }
 })
 vi.mock("@/services/notifications/groups/notify-user-of-removal-service", () => {
   const NotifyUserOfRemovalServiceMock = { perform: vi.fn() }
-  return { NotifyUserOfRemovalService: NotifyUserOfRemovalServiceMock, default: NotifyUserOfRemovalServiceMock }
+  return {
+    NotifyUserOfRemovalService: NotifyUserOfRemovalServiceMock,
+    default: NotifyUserOfRemovalServiceMock,
+  }
 })
 vi.mock("@/services/notifications/groups/notify-admins-of-removed-user-service", () => {
   const NotifyAdminsOfRemovedUserServiceMock = { perform: vi.fn() }
-  return { NotifyAdminsOfRemovedUserService: NotifyAdminsOfRemovedUserServiceMock, default: NotifyAdminsOfRemovedUserServiceMock }
+  return {
+    NotifyAdminsOfRemovedUserService: NotifyAdminsOfRemovedUserServiceMock,
+    default: NotifyAdminsOfRemovedUserServiceMock,
+  }
 })
 
 describe("api/src/services/information-sharing-agreements/revert-to-draft-service.ts", () => {
@@ -57,7 +69,10 @@ describe("api/src/services/information-sharing-agreements/revert-to-draft-servic
       test("reverts to draft and clears the signing metadata", async () => {
         const { currentUser, informationSharingAgreement } = await buildSignedAgreement()
 
-        const reverted = await RevertToDraftService.perform(informationSharingAgreement, currentUser)
+        const reverted = await RevertToDraftService.perform(
+          informationSharingAgreement,
+          currentUser
+        )
 
         expect(reverted.status).toBe(InformationSharingAgreement.Status.DRAFT)
         expect(reverted.signedById).toBeNull()
@@ -87,17 +102,20 @@ describe("api/src/services/information-sharing-agreements/revert-to-draft-servic
 
       test("reverts even when knowledge items are linked, keeping the links", async () => {
         const { currentUser, informationSharingAgreement } = await buildSignedAgreement()
-        const archiveItem = await archiveItemFactory.create({ userId: currentUser.id })
-        const link = await informationSharingAgreementArchiveItemFactory.create({
+        const knowledgeItem = await knowledgeItemFactory.create({ userId: currentUser.id })
+        const link = await informationSharingAgreementKnowledgeItemFactory.create({
           informationSharingAgreementId: informationSharingAgreement.id,
-          archiveItemId: archiveItem.id,
+          knowledgeItemId: knowledgeItem.id,
           creatorId: currentUser.id,
         })
 
-        const reverted = await RevertToDraftService.perform(informationSharingAgreement, currentUser)
+        const reverted = await RevertToDraftService.perform(
+          informationSharingAgreement,
+          currentUser
+        )
 
         expect(reverted.status).toBe(InformationSharingAgreement.Status.DRAFT)
-        expect(await InformationSharingAgreementArchiveItem.findByPk(link.id)).not.toBeNull()
+        expect(await InformationSharingAgreementKnowledgeItem.findByPk(link.id)).not.toBeNull()
       })
 
       test("throws when the agreement is not signed", async () => {
@@ -128,8 +146,7 @@ describe("api/src/services/information-sharing-agreements/revert-to-draft-servic
         }
 
         test("records a 'Reverted to draft' audit", async () => {
-          const { currentUser, informationSharingAgreement } =
-            await buildAuditableSignedAgreement()
+          const { currentUser, informationSharingAgreement } = await buildAuditableSignedAgreement()
 
           await RevertToDraftService.perform(informationSharingAgreement, currentUser)
 
@@ -145,8 +162,7 @@ describe("api/src/services/information-sharing-agreements/revert-to-draft-servic
         })
 
         test("records an 'Updated' audit when a reverted-to-draft agreement is updated", async () => {
-          const { currentUser, informationSharingAgreement } =
-            await buildAuditableSignedAgreement()
+          const { currentUser, informationSharingAgreement } = await buildAuditableSignedAgreement()
 
           const reverted = await RevertToDraftService.perform(
             informationSharingAgreement,

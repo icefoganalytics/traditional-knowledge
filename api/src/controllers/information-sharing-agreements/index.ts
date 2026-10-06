@@ -1,5 +1,5 @@
 // Nested Resources
-export { ArchiveItemsController } from "./archive-items-controller"
+export { KnowledgeItemsController } from "./knowledge-items-controller"
 
 // Stateful Actions
 export { RevertToDraftController } from "./revert-to-draft-controller"

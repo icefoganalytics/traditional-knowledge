@@ -23,17 +23,17 @@ import {
 } from "@/middlewares"
 
 import {
-  ArchiveItemAuditsController,
-  ArchiveItemFilesController,
+  KnowledgeItemAuditsController,
+  KnowledgeItemFilesController,
   Downloads,
-  ArchiveItemsController,
+  KnowledgeItemsController,
   AttachmentsController,
   CategoriesController,
   CurrentUserController,
   ExternalOrganizationsController,
   GroupsController,
   InformationSharingAgreementAccessGrantsController,
-  InformationSharingAgreementArchiveItemsController,
+  InformationSharingAgreementKnowledgeItemsController,
   InformationSharingAgreementAuditsController,
   InformationSharingAgreements,
   InformationSharingAgreementsController,
@@ -97,9 +97,7 @@ router
   .delete(Notifications.ReadController.destroy)
 
 router.route("/api/users").get(UsersController.index).post(UsersController.create)
-router
-  .route("/api/users/directory-users")
-  .post(Users.DirectoryUsersController.create)
+router.route("/api/users/directory-users").post(Users.DirectoryUsersController.create)
 router
   .route("/api/users/:id")
   .get(UsersController.show)
@@ -132,18 +130,24 @@ router
   .delete(CategoriesController.destroy)
 
 router
-  .route("/api/archive-items")
-  .get(ArchiveItemsController.index)
-  .post(ArchiveItemsController.create)
+  .route("/api/knowledge-items")
+  .get(KnowledgeItemsController.index)
+  .post(KnowledgeItemsController.create)
 router
-  .route("/api/archive-items/:archiveItemId")
-  .get(ArchiveItemsController.show)
-  .patch(ArchiveItemsController.update)
-  .delete(ArchiveItemsController.destroy)
+  .route("/api/knowledge-items/:knowledgeItemId")
+  .get(KnowledgeItemsController.show)
+  .patch(KnowledgeItemsController.update)
+  .delete(KnowledgeItemsController.destroy)
 
-router.route("/api/archive-items/:archiveItemId/files").post(ArchiveItemFilesController.create)
-router.route("/api/archive-items/:archiveItemId/files/:fileId").get(ArchiveItemFilesController.show)
-router.route("/api/archive-items/:archiveItemId/audits").get(ArchiveItemAuditsController.index)
+router
+  .route("/api/knowledge-items/:knowledgeItemId/files")
+  .post(KnowledgeItemFilesController.create)
+router
+  .route("/api/knowledge-items/:knowledgeItemId/files/:fileId")
+  .get(KnowledgeItemFilesController.show)
+router
+  .route("/api/knowledge-items/:knowledgeItemId/audits")
+  .get(KnowledgeItemAuditsController.index)
 
 router
   .route("/api/external-organizations")
@@ -188,8 +192,8 @@ router
   )
   .post(InformationSharingAgreements.GenerateConfidentialityReceiptController.create)
 router
-  .route("/api/information-sharing-agreements/:informationSharingAgreementId/archive-items")
-  .post(InformationSharingAgreements.ArchiveItemsController.create)
+  .route("/api/information-sharing-agreements/:informationSharingAgreementId/knowledge-items")
+  .post(InformationSharingAgreements.KnowledgeItemsController.create)
 router
   .route("/api/information-sharing-agreements/:informationSharingAgreementId/audits")
   .get(InformationSharingAgreementAuditsController.index)
@@ -206,16 +210,16 @@ router
   .delete(InformationSharingAgreementAccessGrantsController.destroy)
 
 router
-  .route("/api/information-sharing-agreement-archive-items")
-  .get(InformationSharingAgreementArchiveItemsController.index)
-  .post(InformationSharingAgreementArchiveItemsController.create)
+  .route("/api/information-sharing-agreement-knowledge-items")
+  .get(InformationSharingAgreementKnowledgeItemsController.index)
+  .post(InformationSharingAgreementKnowledgeItemsController.create)
 router
   .route(
-    "/api/information-sharing-agreement-archive-items/:informationSharingAgreementArchiveItemId"
+    "/api/information-sharing-agreement-knowledge-items/:informationSharingAgreementKnowledgeItemId"
   )
-  .get(InformationSharingAgreementArchiveItemsController.show)
-  .patch(InformationSharingAgreementArchiveItemsController.update)
-  .delete(InformationSharingAgreementArchiveItemsController.destroy)
+  .get(InformationSharingAgreementKnowledgeItemsController.show)
+  .patch(InformationSharingAgreementKnowledgeItemsController.update)
+  .delete(InformationSharingAgreementKnowledgeItemsController.destroy)
 
 router.route("/api/user-groups").get(UserGroupsController.index).post(UserGroupsController.create)
 router

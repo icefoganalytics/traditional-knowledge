@@ -60,7 +60,7 @@ const routes: RouteRecordRaw[] = [
         props: true,
       },
       {
-        path: "sharing-agreements/:informationSharingAgreementId/knowledge-items/:informationSharingAgreementArchiveItemId",
+        path: "sharing-agreements/:informationSharingAgreementId/knowledge-items/:informationSharingAgreementKnowledgeItemId",
         component: () =>
           import("@/pages/information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage.vue"),
         props: true,
@@ -321,40 +321,40 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "knowledge-items",
-        name: "archive-items/ArchiveItemListPage",
-        component: () => import("@/pages/archive-items/ArchiveItemListPage.vue"),
+        name: "knowledge-items/KnowledgeItemListPage",
+        component: () => import("@/pages/knowledge-items/KnowledgeItemListPage.vue"),
         meta: { title: "Traditional Knowledge" },
         props: true,
       },
       {
         path: "knowledge-items/new",
-        name: "archive-items/ArchiveItemNewPage",
-        component: () => import("@/pages/archive-items/ArchiveItemNewPage.vue"),
+        name: "knowledge-items/KnowledgeItemNewPage",
+        component: () => import("@/pages/knowledge-items/KnowledgeItemNewPage.vue"),
         props: true,
       },
       {
-        path: "knowledge-items/:archiveItemId",
-        component: () => import("@/pages/archive-items/ArchiveItemPage.vue"),
+        path: "knowledge-items/:knowledgeItemId",
+        component: () => import("@/pages/knowledge-items/KnowledgeItemPage.vue"),
         props: true,
         children: [
           {
             path: "",
-            name: "archive-items/ArchiveItemPage",
+            name: "knowledge-items/KnowledgeItemPage",
             redirect: {
-              name: "archive-items/ArchiveItemInformationSharingAgreementsPage",
+              name: "knowledge-items/KnowledgeItemInformationSharingAgreementsPage",
             },
           },
           {
             path: "sharing-agreements",
-            name: "archive-items/ArchiveItemInformationSharingAgreementsPage",
+            name: "knowledge-items/KnowledgeItemInformationSharingAgreementsPage",
             component: () =>
-              import("@/pages/archive-items/ArchiveItemInformationSharingAgreementsPage.vue"),
+              import("@/pages/knowledge-items/KnowledgeItemInformationSharingAgreementsPage.vue"),
             props: true,
           },
           {
             path: "users-with-access",
-            name: "archive-items/ArchiveItemUsersWithAccessPage",
-            component: () => import("@/pages/archive-items/ArchiveItemUsersWithAccessPage.vue"),
+            name: "knowledge-items/KnowledgeItemUsersWithAccessPage",
+            component: () => import("@/pages/knowledge-items/KnowledgeItemUsersWithAccessPage.vue"),
             props: true,
           },
         ],

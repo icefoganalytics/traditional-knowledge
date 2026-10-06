@@ -25,7 +25,7 @@ import Attachment, { AttachmentTargetTypes } from "@/models/attachment"
 import BaseModel from "@/models/base-model"
 import Group from "@/models/group"
 import InformationSharingAgreementAccessGrant from "@/models/information-sharing-agreement-access-grant"
-import InformationSharingAgreementArchiveItem from "@/models/information-sharing-agreement-archive-item"
+import InformationSharingAgreementKnowledgeItem from "@/models/information-sharing-agreement-knowledge-item"
 import User from "@/models/user"
 
 export enum InformationSharingAgreementAccessLevels {
@@ -310,19 +310,19 @@ export class InformationSharingAgreement extends BaseModel<
   })
   declare accessGrants?: NonAttribute<InformationSharingAgreementAccessGrant[]>
 
-  @HasMany(() => InformationSharingAgreementArchiveItem, {
+  @HasMany(() => InformationSharingAgreementKnowledgeItem, {
     foreignKey: "informationSharingAgreementId",
     inverse: "informationSharingAgreement",
   })
-  declare informationSharingAgreementArchiveItems?: NonAttribute<
-    InformationSharingAgreementArchiveItem[]
+  declare informationSharingAgreementKnowledgeItems?: NonAttribute<
+    InformationSharingAgreementKnowledgeItem[]
   >
 
   // Scopes
   static establishScopes(): void {
     this.addSearchScope(["title", "description"])
 
-    this.addScope("notAssociatedWithArchiveItem", (archiveItemId: number) => {
+    this.addScope("notAssociatedWithKnowledgeItem", (knowledgeItemId: number) => {
       return {
         where: {
           id: {
@@ -333,19 +333,19 @@ export class InformationSharingAgreement extends BaseModel<
                 FROM
                   information_sharing_agreement_archive_items
                 WHERE
-                  archive_item_id = :archiveItemId
+                  archive_item_id = :knowledgeItemId
                   AND deleted_at IS NULL
               )
             `,
           },
         },
         replacements: {
-          archiveItemId,
+          knowledgeItemId,
         },
       }
     })
 
-    this.addScope("notLinkedToAnyArchiveItem", () => {
+    this.addScope("notLinkedToAnyKnowledgeItem", () => {
       return {
         where: {
           [Op.and]: sql`

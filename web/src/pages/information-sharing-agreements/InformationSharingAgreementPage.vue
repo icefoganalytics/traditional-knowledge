@@ -55,6 +55,14 @@
           :disclosure-notes="informationSharingAgreement.disclosureNotes"
         />
 
+        <InformationSharingAgreementSignedDocumentsCard
+          v-if="!isNil(informationSharingAgreement.signedConfidentialityAcknowledgement)"
+          class="mt-6 rounded-lg"
+          :information-sharing-agreement-id="informationSharingAgreementIdAsNumber"
+          :acknowledgement="informationSharingAgreement.signedConfidentialityAcknowledgement"
+          :receipt="informationSharingAgreement.signedConfidentialityReceipt"
+        />
+
         <div class="mt-4 d-flex flex-column flex-md-row justify-space-between ga-3 px-6 py-4">
           <InformationSharingAgreementActionsMenu
             :information-sharing-agreement-id="informationSharingAgreementIdAsNumber"
@@ -92,6 +100,7 @@ import InformationSharingAgreementAdditionalDetailsCard from "@/components/infor
 import InformationSharingAgreementBasicInformationCard from "@/components/information-sharing-agreements/InformationSharingAgreementBasicInformationCard.vue"
 import InformationSharingAgreementConfidentialityCard from "@/components/information-sharing-agreements/InformationSharingAgreementConfidentialityCard.vue"
 import InformationSharingAgreementDurationCard from "@/components/information-sharing-agreements/InformationSharingAgreementDurationCard.vue"
+import InformationSharingAgreementSignedDocumentsCard from "@/components/information-sharing-agreements/InformationSharingAgreementSignedDocumentsCard.vue"
 
 const props = defineProps<{
   informationSharingAgreementId: string

@@ -5,7 +5,15 @@ import BaseSerializer from "@/serializers/base-serializer"
 
 export type AttachmentAsReference = Pick<
   Attachment,
-  "id" | "targetId" | "targetType" | "name" | "size" | "mimeType" | "sha256Checksum" | "createdAt"
+  | "id"
+  | "targetId"
+  | "targetType"
+  | "name"
+  | "size"
+  | "mimeType"
+  | "sha256Checksum"
+  | "createdAt"
+  | "updatedAt"
 >
 
 export class ReferenceSerializer extends BaseSerializer<Attachment> {
@@ -19,6 +27,7 @@ export class ReferenceSerializer extends BaseSerializer<Attachment> {
       "mimeType",
       "sha256Checksum",
       "createdAt",
+      "updatedAt",
     ])
   }
 }

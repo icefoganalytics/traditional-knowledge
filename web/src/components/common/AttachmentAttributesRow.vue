@@ -5,12 +5,15 @@
       <div class="d-flex align-center justify-space-between text-caption text-medium-emphasis mt-1">
         <div>
           <div>{{ formattedDate }}</div>
+          <div>Uploaded {{ formattedDate }}</div>
           <div>{{ formattedSize }}</div>
         </div>
         <v-icon
           :color="iconColor"
           size="28"
-        >{{ icon }}</v-icon>
+        >
+          {{ icon }}
+        </v-icon>
       </div>
     </v-col>
 
@@ -65,6 +68,6 @@ const icon = computed(() => {
   return "mdi-file"
 })
 
-const formattedDate = computed(() => formatDateTime(props.attachment.createdAt))
+const formattedDate = computed(() => formatDateTime(props.attachment.updatedAt))
 const formattedSize = computed(() => formatBytes(props.attachment.size))
 </script>

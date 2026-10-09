@@ -11,6 +11,12 @@
     >
       {{ file.originalFileName }}
     </v-card-title>
+    <v-card-subtitle
+      v-if="file.createdAt"
+      class="pb-2"
+    >
+      Uploaded {{ formatDateTime(file.createdAt) }}
+    </v-card-subtitle>
     <v-divider />
 
     <v-card-text class="pa-2">
@@ -104,7 +110,7 @@ import { ref } from "vue"
 import { useDisplay } from "vuetify"
 
 import { getFileIcon } from "@/utils/file-icons"
-import { formatBytes } from "@/utils/formatters"
+import { formatBytes, formatDateTime } from "@/utils/formatters"
 
 import knowledgeItemsApi from "@/api/knowledge-items-api"
 import { type KnowledgeItemFile } from "@/api/knowledge-item-files-api"
@@ -144,6 +150,7 @@ async function previewFile(usePdf: boolean = false) {
 
 <style scoped>
 :deep(.v-card-title),
+:deep(.v-card-subtitle),
 :deep(.v-card-text),
 :deep(.v-card-text p) {
   color: rgb(var(--v-theme-on-secondary));

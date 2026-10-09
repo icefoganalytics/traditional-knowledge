@@ -31,6 +31,29 @@
       />
     </v-list-item>
     <v-list-item
+      v-if="!isNil(knowledgeItem)"
+      :to="{
+        name: 'information-sharing-agreements/InformationSharingAgreementKnowledgeItemPage',
+        params: {
+          informationSharingAgreementId,
+          informationSharingAgreementKnowledgeItemId: knowledgeItem.id,
+        },
+      }"
+    >
+      <v-list-item-title>View Knowledge Item</v-list-item-title>
+      <template #prepend>
+        <v-icon
+          size="small"
+          color="primary"
+          icon="mdi-book-open-variant"
+        />
+      </template>
+      <v-tooltip
+        activator="parent"
+        text="View the knowledge item linked to this agreement."
+      />
+    </v-list-item>
+    <v-list-item
       :loading="isDownloadingDraft"
       @click="downloadDraft"
     >
@@ -88,6 +111,7 @@
 <script setup lang="ts">
 import { computed, ref, toRefs } from "vue"
 import { useRouter } from "vue-router"
+import { isNil } from "lodash"
 
 import informationSharingAgreementsApi, {
   InformationSharingAgreementConfidentialityType,
@@ -95,6 +119,7 @@ import informationSharingAgreementsApi, {
 
 import useAuthenticatedDownload from "@/use/utils/use-authenticated-download"
 import useInformationSharingAgreement from "@/use/use-information-sharing-agreement"
+import useInformationSharingAgreementKnowledgeItems from "@/use/use-information-sharing-agreement-knowledge-items"
 import useSnack from "@/use/use-snack"
 
 import BaseActionsMenuBtnGroup from "@/components/common/BaseActionsMenuBtnGroup.vue"
@@ -111,6 +136,17 @@ const { informationSharingAgreementId } = toRefs(props)
 const { informationSharingAgreement, isLoading, policy } = useInformationSharingAgreement(
   informationSharingAgreementId
 )
+
+const informationSharingAgreementKnowledgesQuery = computed(() => ({
+  where: {
+    informationSharingAgreementId: props.informationSharingAgreementId,
+  },
+  perPage: 1,
+}))
+const { informationSharingAgreementKnowledgeItems } = useInformationSharingAgreementKnowledgeItems(
+  informationSharingAgreementKnowledgesQuery
+)
+const knowledgeItem = computed(() => informationSharingAgreementKnowledgeItems.value.at(0))
 
 const generateConfidentialityAcknowledgementUrl = computed(() =>
   informationSharingAgreementsApi.generateConfidentialityAcknowledgementPath(

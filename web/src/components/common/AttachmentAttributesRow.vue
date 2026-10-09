@@ -4,7 +4,6 @@
       <div class="text-body-2 font-weight-medium">{{ attachment.name }}</div>
       <div class="d-flex align-center justify-space-between text-caption text-medium-emphasis mt-1">
         <div>
-          <div>{{ formattedDate }}</div>
           <div>Uploaded {{ formattedDate }}</div>
           <div>{{ formattedSize }}</div>
         </div>

@@ -28,6 +28,11 @@ export default {
       expiration_date: "Expiration Date",
       undetermined_with_default_expiration: "Undetermined with Default Expiration",
     },
+    statuses: {
+      draft: "Draft",
+      signed: "Signed",
+      closed: "Closed",
+    },
   },
   user: {
     roles: {

@@ -78,6 +78,7 @@
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useRouteQuery } from "@vueuse/router"
+import { useI18n } from "vue-i18n"
 import { isNil } from "lodash"
 
 import { formatDate } from "@/utils/formatters"
@@ -112,6 +113,8 @@ const props = withDefaults(
   }
 )
 
+const { t } = useI18n()
+
 const headers = ref([
   {
     title: "Title",
@@ -125,6 +128,14 @@ const headers = ref([
   {
     title: "Internal Group",
     key: "internalGroupId",
+  },
+  {
+    title: "Status",
+    key: "status",
+    value: (item: unknown) => {
+      const { status } = item as InformationSharingAgreementAsIndex
+      return t(`informationSharingAgreement.statuses.${status}`)
+    },
   },
   {
     title: "Start Date",

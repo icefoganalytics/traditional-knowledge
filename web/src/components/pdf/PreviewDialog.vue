@@ -46,8 +46,14 @@
         >
           Loading...
         </div>
+        <iframe
+          v-if="previewUrl && isPdfPreview && supportsPDFs"
+          :src="previewUrl"
+          :title="title ?? 'PDF preview'"
+          :style="pdfFrameStyle"
+        ></iframe>
         <pdf
-          v-if="previewUrl && isPdfPreview"
+          v-else-if="previewUrl && isPdfPreview"
           :source="previewUrl"
           :width="previewWidth"
           style="border: 1px black solid; margin-right: 10px; width: 100%; height: 100%"
@@ -72,6 +78,7 @@
 import { computed, ref, watch } from "vue"
 import { useDisplay } from "vuetify"
 import Pdf from "vue-pdf-embed"
+import { supportsPDFs } from "pdfobject"
 
 import usePreview from "@/use/use-preview"
 import knowledgeItemsApi from "@/api/knowledge-items-api"
@@ -82,6 +89,14 @@ const fullscreen = ref(false)
 const { width } = useDisplay()
 const previewWidth = computed(() => {
   return fullscreen.value ? width.value - 96 : 766
+})
+
+const pdfFrameStyle = computed(() => {
+  return {
+    border: "1px solid black",
+    width: "100%",
+    height: fullscreen.value ? "90vh" : "70vh",
+  }
 })
 
 const previewUrl = ref<string | null>(null)

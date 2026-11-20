@@ -122,7 +122,7 @@ const pageTitle = computed(() => {
   return `${formatInformationSharingAgreementNumber(id)} - ${title}`
 })
 
-useBreadcrumbs(pageTitle, [
+const breadcrumbs = computed(() => [
   BASE_CRUMB,
   {
     title: "Information Sharing Agreements",
@@ -131,7 +131,7 @@ useBreadcrumbs(pageTitle, [
     },
   },
   {
-    title: formatInformationSharingAgreementNumber(informationSharingAgreementIdAsNumber.value),
+    title: informationSharingAgreement.value?.title,
     to: {
       name: "information-sharing-agreements/InformationSharingAgreementPage",
       params: {
@@ -140,4 +140,6 @@ useBreadcrumbs(pageTitle, [
     },
   },
 ])
+
+useBreadcrumbs(pageTitle, breadcrumbs)
 </script>

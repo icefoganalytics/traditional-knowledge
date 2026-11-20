@@ -24,6 +24,7 @@
           name: 'InformationSharingAgreementsPage',
         }"
         :exact="false"
+        class="mt-4"
         prepend-icon="mdi-file-search"
       >
         <template #title>

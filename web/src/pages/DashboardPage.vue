@@ -8,18 +8,29 @@
       <v-card class="border">
         <v-card-text>
           <p class="text-subtitle-1 mb-4">
-            The Vault provides layers of secure storage for Yukon First Nations and Indigenous
-            Governments to share their Traditional Knowledge with the Government of Yukon. An
-            Information Sharing Agreement sets the terms of the sharing, and Traditional Knowledge
-            is then added under that agreement.
+            The Vault provides two layers of secure storage: one to store signed Information Sharing
+            Agreements (ISAs) and the other to store the corresponding Traditional Knowledge (TK).
           </p>
 
           <v-row>
             <v-col cols="12">
               <DashboardStepCard
                 :step="1"
-                title="Create an Information Sharing Agreement"
-                description="Set out the terms under which Traditional Knowledge will be shared with the Government of Yukon."
+                description="View Information Sharing Agreements."
+                icon="mdi-file-search"
+                :to="{
+                  name: 'InformationSharingAgreementsPage',
+                }"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col cols="12">
+              <DashboardStepCard
+                :step="2"
+                title="Add an Information Sharing Agreement"
+                description="Create an Information Sharing Agreement from a template, upload it here and enter the details into this Vault. ISAs set out the terms and conditions under which TK will be shared with the Yukon government."
                 icon="mdi-file-document-edit"
                 :to="{
                   name: 'information-sharing-agreements/InformationSharingAgreementNewPage',
@@ -29,24 +40,11 @@
           </v-row>
 
           <v-row>
-            <v-col>
-              <p>
-                <router-link
-                  :to="{
-                    name: 'InformationSharingAgreementsPage',
-                  }"
-                  >View the Information Sharing Agreements</router-link
-                >
-              </p>
-            </v-col>
-          </v-row>
-
-          <v-row>
             <v-col cols="12">
               <DashboardStepCard
-                :step="2"
+                :step="3"
                 title="Add Traditional Knowledge"
-                description="Open an Information Sharing Agreement to add Traditional Knowledge under its terms."
+                description="Click here to upload TK under the corresponding ISA."
                 icon="mdi-archive"
                 :to="{
                   name: 'InformationSharingAgreementsPage',
@@ -68,9 +66,9 @@
 import DashboardStepCard from "@/components/common/DashboardStepCard.vue"
 import VaultInfoCard from "@/components/common/VaultInfoCard.vue"
 import VaultStatisticsCard from "@/components/common/VaultStatisticsCard.vue"
-import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
+import useBreadcrumbs from "@/use/use-breadcrumbs"
 
-useBreadcrumbs("Home", [BASE_CRUMB])
+useBreadcrumbs("Dashboard", [])
 </script>
 
 <style>

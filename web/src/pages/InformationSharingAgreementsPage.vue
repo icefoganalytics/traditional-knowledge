@@ -8,13 +8,14 @@
           density="compact"
         />
         <v-btn
+          class="text-none"
           color="primary"
           :to="{
             name: 'information-sharing-agreements/InformationSharingAgreementNewPage',
           }"
           style="height: 40px"
         >
-          <span class="text-pre-wrap">New Agreement</span>
+          <span class="text-pre-wrap">Create new agreement</span>
         </v-btn>
       </div>
 
@@ -27,7 +28,7 @@
 import { computed, ref } from "vue"
 import { isEmpty, isNil } from "lodash"
 
-import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
+import useBreadcrumbs from "@/use/use-breadcrumbs"
 
 import FilterSearchDebouncedTextField from "@/components/common/tables/FilterSearchDebouncedTextField.vue"
 import InformationSharingAgreementsEditDataTableServer from "@/components/information-sharing-agreements/InformationSharingAgreementsEditDataTableServer.vue"
@@ -42,5 +43,9 @@ const filters = computed(() => {
   }
 })
 
-useBreadcrumbs("Information Sharing Agreements", [BASE_CRUMB])
+useBreadcrumbs("Information Sharing Agreements", [
+  {
+    title: "Select the ISA you want to add TK to.",
+  },
+])
 </script>

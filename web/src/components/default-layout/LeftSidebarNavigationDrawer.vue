@@ -16,22 +16,42 @@
         color="black"
         :to="{ name: 'DashboardPage' }"
       >
-        <span class="text-h6">Home</span>
+        <span class="text-h6">Main Menu</span>
       </v-list-item>
 
       <v-list-item
-        title="Sharing Agreements"
         :to="{
           name: 'InformationSharingAgreementsPage',
         }"
         :exact="false"
-        prepend-icon="mdi-file-document-edit"
+        class="mt-4"
+        prepend-icon="mdi-file-search"
       >
+        <template #title>
+          <span class="text-wrap">View Information Sharing Agreements</span>
+        </template>
         <v-tooltip
           activator="parent"
           text="Information Sharing Agreements (ISAs)"
         />
       </v-list-item>
+
+      <v-list-item
+        title="Step 1: Create an ISA"
+        :to="{
+          name: 'information-sharing-agreements/InformationSharingAgreementNewPage',
+        }"
+        prepend-icon="mdi-file-document-edit"
+      />
+
+      <v-list-item
+        title="Step 2: Add TK"
+        :to="{
+          name: 'InformationSharingAgreementsPage',
+        }"
+        exact
+        prepend-icon="mdi-archive"
+      />
 
       <v-list-item
         v-if="hasAdminAreaAccess"

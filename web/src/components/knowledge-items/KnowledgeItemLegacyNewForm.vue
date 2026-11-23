@@ -47,7 +47,7 @@
             can select as many as are applicable to this item. If it is not listed, please directly
             type in the name and click enter.
           </p>
-          <YukonFirstNationsComboBox
+          <YukonFirstNationsLegacyComboBox
             v-model="createItem.yukonFirstNations"
             label="Yukon First Nations"
             multiple
@@ -185,7 +185,7 @@ import FileDrop from "@/components/common/FileDrop.vue"
 import FileUploadGuidance from "@/components/common/FileUploadGuidance.vue"
 import RetentionSelect from "@/components/retentions/RetentionSelect.vue"
 import SecurityLevelSelect from "@/components/knowledge-items/SecurityLevelSelect.vue"
-import YukonFirstNationsComboBox from "@/components/knowledge-items/YukonFirstNationsComboBox.vue"
+import YukonFirstNationsLegacyComboBox from "@/components/knowledge-items/YukonFirstNationsLegacyComboBox.vue"
 
 const rules = {
   required: (value: string | null) => !!value || "Field is required",

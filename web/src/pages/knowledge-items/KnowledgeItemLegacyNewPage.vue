@@ -1,11 +1,11 @@
 <template>
-  <KnowledgeItemNewForm />
+  <KnowledgeItemLegacyNewForm />
 </template>
 
 <script setup lang="ts">
 import useBreadcrumbs, { BASE_CRUMB } from "@/use/use-breadcrumbs"
 
-import KnowledgeItemNewForm from "@/components/knowledge-items/KnowledgeItemNewForm.vue"
+import KnowledgeItemLegacyNewForm from "@/components/knowledge-items/KnowledgeItemLegacyNewForm.vue"
 
 useBreadcrumbs("New Knowledge Item", [
   BASE_CRUMB,

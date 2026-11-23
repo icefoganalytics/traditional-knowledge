@@ -1,57 +1,16 @@
 <template>
   <v-card>
-    <v-card-title class="bg-grey-lighten-4 d-flex align-center ga-3 px-6 py-4">
+    <v-card-title class="bg-grey-lighten-4 d-flex align-center ga-3 px-6 py-4 text-wrap">
       <v-icon color="accent">mdi-lock-outline</v-icon>
-      <span>Confidentiality</span>
+      <span>{{ confidentialitySentence }}</span>
     </v-card-title>
     <v-divider />
     <v-card-text class="pa-6 pa-md-8">
-      <v-row class="mb-6">
-        <v-col
-          cols="12"
-          md="6"
-        >
-          <div class="text-overline text-grey-darken-1 mb-2">Confidentiality Type</div>
-          <div class="text-subtitle-1 font-weight-bold">
-            <span v-if="isNil(confidentialityType)">Not configured</span>
-            <span v-else-if="confidentialityType === InformationSharingAgreementConfidentialityType.ACCORDANCE">
-              ACCORDANCE
-            </span>
-            <span v-else-if="confidentialityType === InformationSharingAgreementConfidentialityType.ACCEPTED_IN_CONFIDENCE">
-              ACCEPTED IN CONFIDENCE
-            </span>
-            <span v-else>Unknown type</span>
-          </div>
-        </v-col>
-        <v-col
-          cols="12"
-          md="6"
-        >
-          <div class="text-overline text-grey-darken-1 mb-2">Description</div>
-          <div class="text-subtitle-1 font-weight-medium text-grey-darken-3">
-            {{ confidentialityDescription || "Not specified" }}
-          </div>
-        </v-col>
-      </v-row>
-
-      <v-divider class="my-6" />
-
-      <div>
-        <div class="text-overline text-grey-darken-1 mb-4">
-          Authorised application of Traditional Knowledge (TK)
-        </div>
-        <div class="mb-4">
-          Government of Yukon (YG) acknowledges the confidentiality and access identified above and
-          will receive Traditional Knowledge (TK) as/in:
-        </div>
-        <div class="text-grey-darken-3 whitespace-pre-wrap">
-          {{ authorizedApplication || "Not specified" }}
-        </div>
-        <p class="text-body-2 font-italic text-grey-darken-1 mt-6">
-          Describes how Traditional Knowledge (TK) may be reflected in or considered for the
-          described purpose. Includes if Government of Yukon (YG) intends to share any materials
-          pertaining to the outcome of this agreement.
-        </p>
+      <div class="text-body-2 text-grey-darken-1 mb-2">
+        This TK is intended to be reflected or considered to:
+      </div>
+      <div class="text-grey-darken-3 whitespace-pre-wrap">
+        {{ authorizedApplication || "Not specified" }}
       </div>
     </v-card-text>
   </v-card>
@@ -59,8 +18,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue"
-import { isNil } from "lodash"
-import { useI18n } from "vue-i18n"
 
 import { InformationSharingAgreementConfidentialityType } from "@/api/information-sharing-agreements-api"
 
@@ -69,14 +26,15 @@ const props = defineProps<{
   authorizedApplication: string | null | undefined
 }>()
 
-const { t } = useI18n()
-
-const confidentialityDescription = computed(() => {
-  if (isNil(props.confidentialityType)) {
-    return ""
+const confidentialitySentence = computed(() => {
+  switch (props.confidentialityType) {
+    case InformationSharingAgreementConfidentialityType.ACCORDANCE:
+      return "This TK is being accepted in accordance with the terms and conditions of this ISA."
+    case InformationSharingAgreementConfidentialityType.ACCEPTED_IN_CONFIDENCE:
+      return "This TK is being formally accepted in confidence. Please refer to the Confidentiality Receipt for more details."
+    default:
+      return "Confidentiality is not configured"
   }
-
-  return t(`informationSharingAgreement.confidentialityDescriptions.${props.confidentialityType}`)
 })
 </script>
 

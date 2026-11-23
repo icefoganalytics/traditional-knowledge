@@ -5,7 +5,7 @@ const routes: RouteRecordRaw[] = [
     path: "/",
     name: "SignInPage",
     component: () => import("@/pages/SignInPage.vue"),
-    meta: { requiresAuth: false, title: "Sign In" },
+    meta: { requiresAuth: false, title: "Sign in" },
   },
   {
     path: "/callback",
@@ -58,6 +58,7 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import("@/pages/information-sharing-agreements/InformationSharingAgreementPage.vue"),
         props: true,
+        meta: { title: "Add TK to ISA" },
       },
       {
         path: "sharing-agreements/:informationSharingAgreementId/knowledge-items/:informationSharingAgreementKnowledgeItemId",
@@ -330,6 +331,12 @@ const routes: RouteRecordRaw[] = [
         path: "knowledge-items/new",
         name: "knowledge-items/KnowledgeItemNewPage",
         component: () => import("@/pages/knowledge-items/KnowledgeItemNewPage.vue"),
+        meta: { title: "Add TK" },
+      },
+      {
+        path: "knowledge-items/legacy/new",
+        name: "knowledge-items/KnowledgeItemLegacyNewPage",
+        component: () => import("@/pages/knowledge-items/KnowledgeItemLegacyNewPage.vue"),
         props: true,
       },
       {

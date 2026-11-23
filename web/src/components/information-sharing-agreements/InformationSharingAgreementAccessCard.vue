@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title class="bg-grey-lighten-4 d-flex align-center ga-3 px-6 py-4">
       <v-icon color="accent">mdi-key-outline</v-icon>
-      <span>Access</span>
+      <span>Authorized access for YG staff</span>
     </v-card-title>
     <v-divider />
     <v-card-text class="pa-6 pa-md-8">
@@ -12,10 +12,18 @@
           lg="7"
         >
           <div class="mb-4">
-            <div class="text-overline text-grey-darken-1 mb-2">Access Level</div>
+            <div class="text-body-2 text-grey-darken-1 mb-2">
+              The TK associated with this ISA will be viewable by the following YG staff:
+            </div>
             <div class="text-h6 font-weight-bold text-primary d-flex align-center ga-2">
               <v-icon color="primary">mdi-lock-open-outline</v-icon>
-              <span>{{ accessLevelLabel }}</span>
+              <span>{{ authorizedViewers }}</span>
+            </div>
+            <div
+              v-if="hasAdditionalAccessRestrictions && !isEmpty(additionalAccessRestrictions)"
+              class="mt-2 font-weight-medium whitespace-pre-wrap"
+            >
+              {{ additionalAccessRestrictions }}
             </div>
           </div>
 
@@ -26,72 +34,6 @@
             uphold the equivalent protection standards YG would normally apply to information
             provided by another government that is considered confidential.
           </p>
-
-          <template
-            v-if="
-              accessLevel === InformationSharingAgreementAccessLevels.PROTECTED_AND_LIMITED &&
-              accessLevelDepartmentRestriction
-            "
-          >
-            <div class="mt-4">
-              <div class="text-body-2 text-grey-darken-1 mb-1">Department Restriction</div>
-              <div class="font-weight-medium">{{ accessLevelDepartmentRestriction }}</div>
-            </div>
-          </template>
-
-          <template
-            v-else-if="
-              accessLevel === InformationSharingAgreementAccessLevels.CONFIDENTIAL_AND_RESTRICTED
-            "
-          >
-            <v-row class="mt-4">
-              <v-col
-                v-if="accessLevelDepartmentRestriction"
-                cols="12"
-                md="4"
-              >
-                <div class="text-body-2 text-grey-darken-1 mb-1">Department</div>
-                <div class="font-weight-medium">{{ accessLevelDepartmentRestriction }}</div>
-              </v-col>
-              <v-col
-                v-if="accessLevelBranchRestriction"
-                cols="12"
-                md="4"
-              >
-                <div class="text-body-2 text-grey-darken-1 mb-1">Branch</div>
-                <div class="font-weight-medium">{{ accessLevelBranchRestriction }}</div>
-              </v-col>
-              <v-col
-                v-if="accessLevelUnitRestriction"
-                cols="12"
-                md="4"
-              >
-                <div class="text-body-2 text-grey-darken-1 mb-1">Unit</div>
-                <div class="font-weight-medium">{{ accessLevelUnitRestriction }}</div>
-              </v-col>
-              <v-col cols="12">
-                <div class="text-body-2 text-grey-darken-1 mb-1">Has Additional Measures</div>
-                <v-chip
-                  :color="hasAdditionalAccessRestrictions ? 'success' : 'grey'"
-                  variant="tonal"
-                  size="small"
-                  class="font-weight-medium"
-                >
-                  {{ hasAdditionalAccessRestrictions ? "Yes" : "No" }}
-                </v-chip>
-              </v-col>
-            </v-row>
-
-            <div
-              v-if="hasAdditionalAccessRestrictions && additionalAccessRestrictions"
-              class="mt-4"
-            >
-              <div class="text-body-2 text-grey-darken-1 mb-1">Additional Measures</div>
-              <div class="font-weight-medium whitespace-pre-wrap">
-                {{ additionalAccessRestrictions }}
-              </div>
-            </div>
-          </template>
         </v-col>
 
         <v-col
@@ -134,12 +76,25 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const accessLevelLabel = computed(() => {
-  if (isNil(props.accessLevel)) {
-    return "Not configured"
+const authorizedViewers = computed(() => {
+  switch (props.accessLevel) {
+    case InformationSharingAgreementAccessLevels.INTERNAL:
+      return "All YG staff across all YG departments."
+    case InformationSharingAgreementAccessLevels.PROTECTED_AND_LIMITED:
+      return `YG staff from ${props.accessLevelDepartmentRestriction || "Not specified"}.`
+    case InformationSharingAgreementAccessLevels.CONFIDENTIAL_AND_RESTRICTED: {
+      const unitBranchDepartmentHierarchy = [
+        props.accessLevelUnitRestriction,
+        props.accessLevelBranchRestriction,
+        props.accessLevelDepartmentRestriction,
+      ]
+        .filter(Boolean)
+        .join(" within ")
+      return `YG staff within ${unitBranchDepartmentHierarchy || "Not specified"}.`
+    }
+    default:
+      return "Not configured"
   }
-
-  return t(`informationSharingAgreement.accessLevels.${props.accessLevel}`)
 })
 
 const accessGuidelines = computed(() => {

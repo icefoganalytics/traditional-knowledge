@@ -12,13 +12,16 @@
         goToInformationSharingAgreementPage(item.id)
     "
   >
+    <template #item.title="{ item }">
+      <strong>{{ item.title }}</strong>
+    </template>
     <template #item.externalGroupId="{ item }">
       <em v-if="isNil(item.externalGroupId) || isNil(item.externalGroupContactId)"
         >No external group</em
       >
       <template v-else>
-        <GroupChip :group-id="item.externalGroupId" />
-        <UserChip :user-id="item.externalGroupContactId" />
+        <div><GroupNameText :group-id="item.externalGroupId" /></div>
+        <div><UserNameText :user-id="item.externalGroupContactId" /></div>
       </template>
     </template>
     <template #item.internalGroupId="{ item }">
@@ -26,12 +29,12 @@
         >No internal group</em
       >
       <template v-else>
-        <GroupChip :group-id="item.internalGroupId" />
-        <UserChip :user-id="item.internalGroupContactId" />
+        <div><GroupNameText :group-id="item.internalGroupId" /></div>
+        <div><UserNameText :user-id="item.internalGroupContactId" /></div>
       </template>
     </template>
     <template #item.creatorId="{ item }">
-      <UserChip :user-id="item.creatorId" />
+      <UserNameText :user-id="item.creatorId" />
     </template>
     <template #item.actions="{ item }">
       <div class="d-flex justify-end align-center">
@@ -93,8 +96,8 @@ import useInformationSharingAgreements, {
   type InformationSharingAgreementFiltersOptions,
 } from "@/use/use-information-sharing-agreements"
 
-import GroupChip from "@/components/groups/GroupChip.vue"
-import UserChip from "@/components/users/UserChip.vue"
+import GroupNameText from "@/components/groups/GroupNameText.vue"
+import UserNameText from "@/components/users/UserNameText.vue"
 
 type InformationSharingAgreementTableRow = {
   item: InformationSharingAgreementAsIndex
@@ -122,11 +125,11 @@ const headers = ref([
     minWidth: "300px",
   },
   {
-    title: "External Group",
+    title: "YFN or Indigenous Government",
     key: "externalGroupId",
   },
   {
-    title: "Internal Group",
+    title: "YG Department",
     key: "internalGroupId",
   },
   {
@@ -138,7 +141,7 @@ const headers = ref([
     },
   },
   {
-    title: "Start Date",
+    title: "ISA Start Date",
     key: "startDate",
     value: (item: unknown) => {
       const { startDate } = item as InformationSharingAgreementAsIndex
@@ -146,7 +149,7 @@ const headers = ref([
     },
   },
   {
-    title: "End Date",
+    title: "ISA End Date",
     key: "endDate",
     value: (item: unknown) => {
       const { endDate } = item as InformationSharingAgreementAsIndex
@@ -154,7 +157,7 @@ const headers = ref([
     },
   },
   {
-    title: "Creator",
+    title: "YG Designated Contact",
     key: "creatorId",
   },
   {

@@ -11,7 +11,12 @@
 
       <div>
         <div class="text-overline">Step {{ step }}</div>
-        <div class="text-h6">{{ title }}</div>
+        <div
+          v-if="title"
+          class="text-h6"
+        >
+          {{ title }}
+        </div>
         <span class="text-subtitle-2">{{ description }}</span>
       </div>
     </v-card-text>
@@ -23,7 +28,7 @@ import { type RouteLocationRaw } from "vue-router"
 
 defineProps<{
   step: number
-  title: string
+  title?: string
   description: string
   icon: string
   to: RouteLocationRaw

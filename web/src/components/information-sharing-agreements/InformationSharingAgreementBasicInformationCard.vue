@@ -1,21 +1,22 @@
 <template>
   <v-card>
-    <v-card-title class="bg-grey-lighten-4 d-flex align-center ga-3 px-6 py-4">
+    <v-card-title class="bg-grey-lighten-4 d-flex align-center ga-3 px-6 py-4 text-wrap">
       <slot name="title">
         <v-icon color="accent">mdi-information-outline</v-icon>
-        Basic Information
+        Review the information below to confirm this is the ISA to which you intend to add
+        Traditional Knowledge (TK)
       </slot>
     </v-card-title>
     <v-divider />
     <v-card-text class="pa-6 pa-md-8">
       <div class="mb-6">
-        <div class="text-overline text-grey-darken-1 mb-2">ISA Title</div>
+        <div class="text-body-2 text-grey-darken-1 mb-2">ISA title</div>
         <div class="text-h5 font-weight-bold">{{ title }}</div>
       </div>
 
       <div class="mb-6">
-        <div class="text-overline text-grey-darken-1 mb-2">
-          Purpose of Traditional Knowledge (TK) Information
+        <div class="text-body-2 text-grey-darken-1 mb-2">
+          The TK is being provided for the purpose of informing:
         </div>
         <div class="text-body-1 text-grey-darken-3 whitespace-pre-wrap">
           {{ purpose || "Not specified" }}
@@ -37,11 +38,11 @@
               mdi-account-group
             </v-icon>
             <span class="font-weight-bold text-primary">
-              Yukon First Nation or Indigenous Government Contact
+              Yukon First Nation or Indigenous Government contact
             </span>
           </div>
           <div class="mb-3">
-            <div class="text-body-2 text-grey-darken-1 mb-1">Contact Name</div>
+            <div class="text-body-2 text-grey-darken-1 mb-1">Contact name</div>
             <span
               v-if="isNil(externalGroupContactId)"
               class="font-weight-medium"
@@ -83,10 +84,10 @@
             >
               mdi-bank
             </v-icon>
-            <span class="font-weight-bold text-primary">Government of Yukon (YG) Contact</span>
+            <span class="font-weight-bold text-primary">YG contact</span>
           </div>
           <div class="mb-3">
-            <div class="text-body-2 text-grey-darken-1 mb-1">Contact Name</div>
+            <div class="text-body-2 text-grey-darken-1 mb-1">YG contact name</div>
             <span
               v-if="isNil(internalGroupContactId)"
               class="font-weight-medium"
@@ -104,7 +105,7 @@
             </div>
           </div>
           <div>
-            <div class="text-body-2 text-grey-darken-1 mb-1">Manager Contact Name</div>
+            <div class="text-body-2 text-grey-darken-1 mb-1">YG manager</div>
             <span
               v-if="isNil(internalGroupSecondaryContactId)"
               class="font-weight-medium"

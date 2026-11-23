@@ -10,7 +10,7 @@ export type Breadcrumb = {
 }
 
 export const BASE_CRUMB: Breadcrumb = {
-  title: "Home",
+  title: "Dashboard",
   disabled: false,
   to: {
     name: "DashboardPage",

@@ -47,12 +47,12 @@
               >
                 Sign in
               </v-btn>
-              <div class="text-subtitle-1 mt-5">Sign in using MyYukon Credentials</div>
+              <div class="text-subtitle-1 mt-5">Sign in using your MyYukon credentials</div>
               <v-divider class="my-2" />
               <em style="font-weight: 700">
-                The MyYukon service is being used for safe and secure access to the TK Vault. The TK
-                Vault is a shared space for intergovernmental collaboration and is not publicly
-                accessible
+                The MyYukon service is being used for safe and secure access to the Traditional
+                Knowledge Vault. The Vault is a shared space for intergovernmental collaboration and
+                is not publicly accessible.
               </em>
             </div>
 

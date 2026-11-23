@@ -1,22 +1,27 @@
 <template>
   <v-card
     class="mb-6 border"
-    title="What is this?"
+    title="Why two separate layers?"
     prepend-icon="mdi-comment-question"
   >
     <v-divider />
     <v-card-text>
       <p class="text-subtitle-1 mb-3">
-        The Vault provides highly secure and durable long-term storage for digital files. Those
-        packets are called <strong>Knowledge Items</strong>.
+        This Vault provides highly secure and durable storage for digital files including:
       </p>
       <p class="mb-3">
-        <strong>Knowledge Items</strong> include metadata and attachments. The metadata determines who
-        has access to the item and how long they will be stored in the Vault.
+        <strong>Information Sharing Agreement (ISA):</strong> The official record that outlines the
+        working arrangements each government has agreed to, including: designated contacts for each
+        government, contact details, authorized access and applications for Yukon government (YG)
+        staff and an expiration date. When an ISA expires, any TK shared under its authority will be
+        removed from the Vault. The ISA itself will remain on file as part of the parties’ records;
+        however, it will become inactive and cease to have any effect after the expiry date.
       </p>
       <p class="mb-0">
-        <strong>Attachments</strong> are converted to PDF documents automatically and digitally
-        signed to ensure they can never be modified once submitted.
+        <strong>Traditional Knowledge (TK):</strong> This is the protected content that has been
+        shared with YG under the mutually agreed upon conditions in the associated ISA. TK is only
+        viewable by the authorized YG staff (as identified in the ISA) and the staff of the Yukon
+        First Nation (YFN) or Indigenous government (as the Rightful Owners) that shared the TK.
       </p>
     </v-card-text>
   </v-card>

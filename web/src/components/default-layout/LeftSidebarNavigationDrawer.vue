@@ -37,7 +37,7 @@
       </v-list-item>
 
       <v-list-item
-        title="Create an ISA"
+        title="Step 1: Create an ISA"
         :to="{
           name: 'information-sharing-agreements/InformationSharingAgreementNewPage',
         }"
@@ -45,7 +45,7 @@
       />
 
       <v-list-item
-        title="Add TK"
+        title="Step 2: Add TK"
         :to="{
           name: 'knowledge-items/KnowledgeItemNewPage',
         }"

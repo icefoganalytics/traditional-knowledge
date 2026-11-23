@@ -31,7 +31,8 @@
       >
         <FileDrop @files-dropped="attachDroppedFiles">
           <p class="mb-4">
-            Adding TK to <strong>{{ informationSharingAgreement?.title }}</strong>
+            Adding Traditional Knowledge Item to
+            <strong>{{ informationSharingAgreement?.title }}</strong>
           </p>
           <v-checkbox
             v-model="knowledgeItemAttributes.confidentialityReceipt"

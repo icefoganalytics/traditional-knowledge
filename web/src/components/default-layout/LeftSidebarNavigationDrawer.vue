@@ -37,20 +37,11 @@
       </v-list-item>
 
       <v-list-item
-        title="Step 1: Create an ISA"
+        title="Create an ISA"
         :to="{
           name: 'information-sharing-agreements/InformationSharingAgreementNewPage',
         }"
         prepend-icon="mdi-file-document-edit"
-      />
-
-      <v-list-item
-        title="Step 2: Add TK"
-        :to="{
-          name: 'InformationSharingAgreementsPage',
-        }"
-        exact
-        prepend-icon="mdi-archive"
       />
 
       <v-list-item

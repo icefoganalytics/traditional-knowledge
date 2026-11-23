@@ -45,6 +45,14 @@
       />
 
       <v-list-item
+        title="Add TK"
+        :to="{
+          name: 'knowledge-items/KnowledgeItemNewPage',
+        }"
+        prepend-icon="mdi-archive"
+      />
+
+      <v-list-item
         v-if="hasAdminAreaAccess"
         title="Administration"
         :to="{ name: 'administration/DashboardPage' }"

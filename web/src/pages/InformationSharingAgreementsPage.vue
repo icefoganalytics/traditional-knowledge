@@ -43,9 +43,5 @@ const filters = computed(() => {
   }
 })
 
-useBreadcrumbs("Information Sharing Agreements", [
-  {
-    title: "Select the ISA you want to add TK to.",
-  },
-])
+useBreadcrumbs("Information Sharing Agreements", [])
 </script>

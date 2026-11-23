@@ -328,6 +328,12 @@ const routes: RouteRecordRaw[] = [
         props: true,
       },
       {
+        path: "knowledge-items/new",
+        name: "knowledge-items/KnowledgeItemNewPage",
+        component: () => import("@/pages/knowledge-items/KnowledgeItemNewPage.vue"),
+        meta: { title: "Add TK" },
+      },
+      {
         path: "knowledge-items/legacy/new",
         name: "knowledge-items/KnowledgeItemLegacyNewPage",
         component: () => import("@/pages/knowledge-items/KnowledgeItemLegacyNewPage.vue"),

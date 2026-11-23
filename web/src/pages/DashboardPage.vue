@@ -47,7 +47,7 @@
                 description="Click here to upload TK under the corresponding ISA."
                 icon="mdi-archive"
                 :to="{
-                  name: 'InformationSharingAgreementsPage',
+                  name: 'knowledge-items/KnowledgeItemNewPage',
                 }"
               />
             </v-col>

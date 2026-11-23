@@ -6,7 +6,7 @@ export type Breadcrumb = {
   title?: string
   disabled?: boolean
   exact?: boolean
-  to?: RouteLocationRaw
+  to: RouteLocationRaw
 }
 
 export const BASE_CRUMB: Breadcrumb = {
